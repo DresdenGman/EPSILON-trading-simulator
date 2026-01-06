@@ -1,6 +1,6 @@
 # UI Migration Guide - From Tkinter to CustomTkinter
 
-This comprehensive guide covers the migration of the EPSILON Trading Simulator UI from standard Tkinter to CustomTkinter for a modern, professional appearance.
+This comprehensive guide covers the migration of the Stock Trading Simulator UI from standard Tkinter to CustomTkinter for a modern, professional appearance.
 
 ## Table of Contents
 
