@@ -1,145 +1,158 @@
-# Stock Trading Simulator
+# EPSILON – Stock Trading & Analytics Simulator
 
-A comprehensive stock trading simulation platform with advanced features including equity curve analysis, limit orders, stop-loss/take-profit orders, and real-time performance metrics.
+**EPSILON** (or **EPSILON TRADE**) is a quantitative stock trading simulator focused on precision, risk management, and post‑trade analytics.  
+It combines realistic order execution, equity‑curve analysis, and optional AI‑assisted review into a single desktop application.
+
+> Motto: **“Epsilon small, precision maximal.”**
 
 ## Screenshots
 
 ### Main Interface
+
 ![Main Interface](screenshots/main_interface.png)
 
-*The main trading interface showing stock selection, portfolio management, K-line charts, and performance metrics*
+*The main trading interface showing stock selection, portfolio management, K‑line charts, and performance metrics.*
 
-## Features
+## Feature Overview
 
 ### Core Trading Features
-- **Real-time Stock Data**: Support for both real market data (via akshare) and mock data generation
-- **Buy/Sell Operations**: Execute trades with configurable transaction costs (fees, slippage)
-- **Portfolio Management**: Track holdings, costs, and profit/loss in real-time
-- **Trade History**: Complete record of all transactions with detailed information
+
+- **Real‑time / Mock Stock Data**: Supports both real market data (via `akshare`) and fully offline mock data generation.  
+- **Buy / Sell Operations**: Execute trades with configurable transaction costs (fees and slippage).  
+- **Portfolio Management**: Track holdings, cost basis, and P&L in real time.  
+- **Trade History**: Complete record of all transactions with detailed fields.
 
 ### Advanced Order Types
-- **Limit Orders**: Place buy/sell orders at specific price levels
-- **Stop-Loss Orders**: Automatically sell when price drops below threshold
-- **Take-Profit Orders**: Automatically sell when price reaches target profit
-- **Pending Orders Management**: View and cancel pending orders
+
+- **Limit Orders**: Place buy/sell orders at specific price levels.  
+- **Stop‑Loss Orders**: Automatically sell when price drops below a defined threshold.  
+- **Take‑Profit Orders**: Automatically sell when price reaches a target profit.  
+- **Pending Orders Management**: View and cancel outstanding orders in a dedicated panel.
 
 ### Performance Analytics
-- **Equity Curve**: Visual representation of portfolio value over time
-- **Performance Metrics**:
-  - Total Return & CAGR (Compound Annual Growth Rate)
-  - Sharpe Ratio (risk-adjusted returns)
-  - Maximum Drawdown
-  - Win Rate & Profit Factor
-- **Real-time Updates**: Metrics update automatically as trades are executed
+
+- **Equity Curve**: Visual representation of portfolio value over time.  
+- **Performance Metrics** (via `analysis/performance.py`):  
+  - Total Return & CAGR (Compound Annual Growth Rate)  
+  - Sharpe Ratio (risk‑adjusted returns)  
+  - Maximum Drawdown  
+  - Win Rate & Profit Factor  
+- **Real‑time Updates**: Metrics update automatically as trades are executed.
 
 ### Risk Management
-- **Auto Trading Rules**:
-  - Stop-loss protection (automatic sell on loss threshold)
-  - Scale in/out (gradual position adjustment)
-- **Configurable Trading Costs**: Customize fee rates, minimum fees, and slippage
-- **Portfolio Diversification**: Manage multiple stocks simultaneously
+
+- **Auto Trading Rules**:  
+  - Stop‑loss protection (automatic liquidate when loss exceeds threshold)  
+  - Scale in / scale out (gradual position adjustment around thresholds)  
+- **Configurable Trading Costs**: Customize fee rates, minimum fee per trade, and slippage.  
+- **Portfolio Diversification**: Manage multiple symbols simultaneously.
 
 ### Data & Visualization
-- **K-line Charts**: 60-day candlestick charts with volume indicators
-- **Historical Data**: Synthetic OHLC data generation for offline use
-- **News Events**: Simulate market events (good/bad news) affecting stock prices
-- **Date Navigation**: Backtest by navigating through historical dates
+
+- **K‑line Charts**: 60‑day candlestick charts with volume indicators.  
+- **Historical Data**: Synthetic OHLC data generation for offline / mock‑only mode.  
+- **News Events**: Simulate good/bad news events that affect stock prices.  
+- **Date Navigation**: Step through historical dates to backtest behaviour.
 
 ### User Interface
-- **Modern UI**: Clean, intuitive interface with organized panels
-- **Stock Universe Management**: Customize the list of tradable stocks
-- **Calendar Integration**: Easy date selection for historical trading
-- **Responsive Layout**: Efficient use of screen space with organized panels
+
+- **Modern UI Option**: Optional CustomTkinter‑based components (via `ui/modern_ui.py`) for a more polished look.  
+- **Stock Universe Management**: Customize the list of tradable symbols.  
+- **Calendar Integration**: Quickly pick trading dates.  
+- **Efficient Layout**: Panels organized for fast, keyboard‑and‑mouse driven workflows.
 
 ## Installation
 
 ### Prerequisites
-- Python 3.7 or higher
-- tkinter (usually included with Python)
 
-### Dependencies
+- Python **3.12** (recommended) or Python 3.10+  
+- `tkinter` (usually bundled with Python; on macOS, prefer the official installer from `python.org` if missing).
 
-Install required packages:
+### Install Dependencies
+
+Make sure `pip` matches the Python you intend to run:
 
 ```bash
-pip install -r requirements.txt
+python3.12 -m pip install -r requirements.txt
 ```
 
 ### Optional Dependencies
 
-For real market data (optional):
+For real market data (instead of pure mock data):
+
 ```bash
 pip install akshare
 ```
 
-If `akshare` is not available, the simulator will automatically use mock data mode.
+If `akshare` is not available, EPSILON will automatically fall back to **mock data mode**.
 
-## Usage
+## Getting Started
 
-### Basic Usage
+### Run the Simulator
 
-1. Run the simulator:
+Recommended modern entry point:
+
+```bash
+python main.py
+```
+
+Legacy entry point (kept for backward compatibility):
+
 ```bash
 python mock.py
 ```
 
-2. On first launch, you'll be prompted to set your initial capital.
+On first launch you will be prompted to set your initial capital.
 
-3. Select a date using the calendar (defaults to today).
+### Basic Workflow
 
-4. Choose a stock from the list.
+1. **Select a date** using the calendar (defaults to today).  
+2. **Choose a stock** from the universe list.  
+3. **Enter shares** and click **Buy** or **Sell**.  
+4. Observe updates in:  
+   - Portfolio table  
+   - Performance metrics panel  
+   - Equity curve chart
 
-5. Enter the number of shares and click "Buy" or "Sell".
+### Placing Advanced Orders
 
-### Placing Orders
+1. Select a stock from the list.  
+2. In the **Orders** panel:  
+   - Choose **Side**: Buy or Sell  
+   - Choose **Type**: Limit, Stop Loss, or Take Profit  
+   - Enter **Price / Trigger**: target limit price or trigger price  
+   - Enter **Shares**  
+   - Click **Place Order**  
+3. Orders will execute automatically when market price meets the specified conditions.
 
-1. Select a stock from the list.
-2. In the "Orders" panel:
-   - Choose **Side**: Buy or Sell
-   - Choose **Type**: Limit, Stop Loss, or Take Profit
-   - Enter **Price/Trigger**: Target price for limit orders, trigger price for stop/take-profit
-   - Enter **Shares**: Number of shares
-   - Click **Place Order**
+### Risk Configuration
 
-3. Orders will execute automatically when conditions are met (price reaches limit/trigger).
+Open **Trading Settings** to configure:
 
-### Managing Risk
-
-Access **Trading Settings** to configure:
-- Fee rate (as fraction of trade value)
-- Minimum fee per trade
-- Slippage per share
-- Stop-loss threshold (%)
-- Scale in/out thresholds and fractions
+- Fee rate (fraction of trade value)  
+- Minimum fee per trade  
+- Slippage per share  
+- Stop‑loss threshold (%)  
+- Scale in / out thresholds and fractions
 
 ### Performance Tracking
 
-View your performance metrics in the left panel:
-- **Total Return**: Overall portfolio return percentage
-- **CAGR**: Annualized return rate
-- **Sharpe Ratio**: Risk-adjusted performance
-- **Max Drawdown**: Largest peak-to-trough decline
-- **Win Rate**: Percentage of profitable trades
-- **Profit Factor**: Ratio of gross profit to gross loss
+The performance panel shows:
 
-The equity curve chart shows your portfolio value over time.
+- **Total Return** – Overall portfolio return percentage  
+- **CAGR** – Annualized return rate  
+- **Sharpe Ratio** – Risk‑adjusted performance  
+- **Max Drawdown** – Largest peak‑to‑trough decline  
+- **Win Rate** – Percentage of profitable trades  
+- **Profit Factor** – Gross profit / gross loss ratio  
 
-## File Structure
+The equity curve chart visualizes portfolio value over time.
 
-```
-TRADING/
-├── mock.py                 # Main application file
-├── stock_data.json          # Cached stock price data (auto-generated)
-├── trade_data.json          # Trade records and account data (auto-generated)
-├── stock_list.json          # Custom stock universe (optional)
-└── stock_events.json        # Market event definitions (optional)
-```
-
-## Configuration
+## Configuration & Data Modes
 
 ### Mock Data Mode
 
-By default, the simulator uses mock data if `akshare` is unavailable. To force mock mode:
+By default, the simulator uses mock data if `akshare` is unavailable. To **force mock mode**:
 
 ```bash
 export STOCK_SIM_USE_MOCK=1
@@ -148,7 +161,7 @@ python mock.py
 
 ### Custom Stock Universe
 
-Create `stock_list.json` in the same directory:
+Create a `stock_list.json` in the project root:
 
 ```json
 {
@@ -158,67 +171,87 @@ Create `stock_list.json` in the same directory:
 }
 ```
 
-## Features in Detail
+EPSILON will use this list as the tradable stock universe.
 
-### Equity Curve Analysis
-The equity curve tracks your portfolio value over time, allowing you to:
-- Visualize performance trends
-- Identify periods of drawdown
-- Assess strategy effectiveness
+## AI Analysis & Export (EPSILON Review)
 
-### Order Execution Logic
-- **Limit Orders**: Execute when market price reaches or exceeds your limit price
-- **Stop-Loss**: Triggers when price falls to or below trigger price
-- **Take-Profit**: Triggers when price rises to or above trigger price
+EPSILON includes an **AI‑assisted review pipeline** and export tools:
 
-Orders are checked automatically when:
-- Stock data is loaded
-- Date changes
-- Manual refresh occurs
+- **CSV exports** for trades, equity curve, and positions.  
+- **Structured JSON** report with performance metrics.  
+- **Human‑readable Markdown reports** summarizing your trading performance.  
+- **AI Analysis** (via OpenAI / Google Gemini / Qwen) that turns statistics into actionable insights.
 
-### Auto Trading Rules
-Configure automatic trading based on:
-- **Stop-Loss**: Sell entire position if loss exceeds threshold
-- **Scale Out**: Sell portion of position when profit reaches threshold
-- **Scale In**: Buy more shares when loss reaches threshold (but before stop-loss)
+For detailed usage, see:
+
+- `AI_ANALYSIS_GUIDE.md` – How to run exports and AI analysis, and what each report contains.  
+- `AI_PROVIDERS_GUIDE.md` – How to choose and configure Qwen, Gemini, or OpenAI (with China‑friendly recommendations).
+
+## Project Structure (Public Runtime)
+
+The Python application is organized as follows:
+
+```text
+.
+├── main.py                 # Recommended entry point
+├── mock.py                 # Legacy entry point (still supported)
+├── export_analysis.py      # Export & AI analysis helper
+├── analysis/               # Performance metrics and equity curve logic
+├── data/                   # Stock data management
+├── trading/                # Trading and portfolio logic
+├── ui/                     # UI helpers and modern UI wrapper
+├── utils/                  # Logging, config, and shared utilities
+├── tests/                  # Automated tests
+└── docs/                   # Additional guides (UI migration, etc.)
+```
+
+For a more detailed breakdown intended specifically for GitHub users, see:
+
+- `release/STRUCTURE.md`
+
+> Note: The `website/` directory is a separate marketing/documentation site and **not required** to run EPSILON.
 
 ## Troubleshooting
 
 ### Matplotlib Not Available
-If charts don't display, install matplotlib:
+
+If charts do not display:
+
 ```bash
 pip install matplotlib
 ```
 
 ### No Stock Data
-- Check internet connection if using real data
-- Mock data mode will work offline
-- Verify stock codes are valid (for real data mode)
+
+- Check internet connection if you expect live data via `akshare`.  
+- Mock data mode works fully offline.  
+- Verify that stock codes are valid for the selected mode.
 
 ### Orders Not Executing
-- Ensure current stock price has reached trigger/limit price
-- Check that you have sufficient cash (for buy orders) or shares (for sell orders)
-- Verify order status in the orders table
+
+- Ensure current price has actually reached your limit / trigger price.  
+- Confirm you have sufficient **cash** (for buys) or **shares** (for sells).  
+- Check order status in the orders table.
+
+For AI‑related issues (API keys, regional restrictions, quotas), refer to:
+
+- `AI_ANALYSIS_GUIDE.md`  
+- `AI_PROVIDERS_GUIDE.md`
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Feel free to open issues or submit pull requests for:
+
+- New order types  
+- New analytics or visualizations  
+- UI/UX improvements  
+- Documentation and examples
 
 ## License
 
-This project is open source and available under the MIT License.
+This project is open source and available under the **MIT License**.
 
 ## Acknowledgments
 
-- Uses [akshare](https://github.com/akfamily/akshare) for real market data (optional)
-- Built with Python, tkinter, and matplotlib
-
-## Future Enhancements
-
-Potential features for future versions:
-- Technical indicators overlay (MA, MACD, RSI) on K-line charts
-- Trade record export/import (CSV/JSON)
-- Multiple account support
-- Dark/light theme toggle
-- Extended order types (trailing stops, OCO orders)
-
+- Uses [`akshare`](https://github.com/akfamily/akshare) for optional real market data.  
+- Built with Python, Tkinter, Matplotlib, and optional CustomTkinter for modern UI components.
