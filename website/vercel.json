@@ -1,0 +1,14 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/video",
+      "has": [
+        {
+          "type": "host",
+          "value": "(?<subdomain>video)\\.(?<domain>.*)"
+        }
+      ]
+    }
+  ]
+}
