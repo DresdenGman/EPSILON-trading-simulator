@@ -11,6 +11,7 @@ downloads/
 eggs/
 .eggs/
 lib/
+!website/lib/
 lib64/
 parts/
 sdist/
@@ -45,4 +46,10 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Local docs / media (avoid pushing large or personal files)
+*.pdf
+!website/public/*.pdf
+screenshots/*.mp4
+Untitled
 
