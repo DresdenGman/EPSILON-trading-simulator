@@ -1,6 +1,6 @@
-# Build Instructions for EPSILON Trading Simulator
+# Build Instructions for Stock Trading Simulator
 
-This document provides instructions for building the EPSILON Trading Simulator as standalone executables for Windows, macOS, and Linux.
+This document provides instructions for building the Stock Trading Simulator as standalone executables for Windows, macOS, and Linux.
 
 ## Prerequisites
 
@@ -193,7 +193,7 @@ chmod +x dist/StockTradingSimulator
 
 ```bash
 # Create DMG
-hdiutil create -volname "EPSILON Trading Simulator" -srcfolder dist/StockTradingSimulator.app -ov -format UDZO StockTradingSimulator.dmg
+hdiutil create -volname "Stock Trading Simulator" -srcfolder dist/StockTradingSimulator.app -ov -format UDZO StockTradingSimulator.dmg
 ```
 
 ### Linux: AppImage

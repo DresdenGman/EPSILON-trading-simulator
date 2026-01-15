@@ -1,4 +1,4 @@
-# EPSILON Project Development Summary
+# Project Development Summary
 
 This document summarizes all improvements made during the project optimization process.
 
