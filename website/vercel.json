@@ -6,7 +6,7 @@
       "has": [
         {
           "type": "host",
-          "value": "(?<subdomain>video)\\.(?<domain>.*)"
+          "value": "video.*"
         }
       ]
     }
