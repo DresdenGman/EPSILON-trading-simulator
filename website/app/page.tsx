@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   ArrowRight,
   Lock,
@@ -28,7 +29,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="h-7 w-7 overflow-hidden rounded-sm border border-epsilon-gold bg-black/60">
-                <img src="/epsilon-logo.png" alt="EPSILON logo" className="h-full w-full object-cover" />
+                <Image src="/epsilon-logo.png" alt="EPSILON logo" width={28} height={28} className="h-full w-full object-cover" />
               </div>
               <span className="font-mono text-sm tracking-[0.35em] text-epsilon-gold">EPSILON</span>
             </div>
@@ -465,12 +466,12 @@ export default function Home() {
                   Experience the full simulator interface directly in your browser. All features are
                   functional — place orders, view charts, and analyze performance metrics.
                 </p>
-                <Button asChild variant="primary" size="md" className="w-full">
-                  <Link href="/simulator">
+                <Link href="/simulator">
+                  <Button variant="primary" size="md" className="w-full">
                     Launch Simulator Demo
                     <ArrowRight className="ml-2 h-3.5 w-3.5" />
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -546,17 +547,16 @@ export default function Home() {
                     <p className="mt-2 text-xs text-gray-400">PDF Document</p>
                     <p className="text-[10px] text-gray-500">603 KB</p>
                   </div>
-                  <Button
-                    asChild
-                    variant="primary"
-                    size="lg"
-                    className="w-full epsilon-gold-glow"
-                  >
-                    <a href="/epsilon-business-plan.pdf" download>
+                  <a href="/epsilon-business-plan.pdf" download>
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      className="w-full epsilon-gold-glow"
+                    >
                       <Download className="mr-2 h-4 w-4" />
                       Download Business Plan
-                    </a>
-                  </Button>
+                    </Button>
+                  </a>
                 </div>
               </div>
             </CardContent>
@@ -658,26 +658,25 @@ export default function Home() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button asChild variant="primary" size="md">
-                <Link href="/simulator">
+              <Link href="/simulator">
+                <Button variant="primary" size="md">
                   View Simulator Demo
                   <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="md"
-                className="border-epsilon-gold/60 text-epsilon-gold"
+                </Button>
+              </Link>
+              <a
+                href="https://github.com/DresdenGman/EPSILON-trading-simulator"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <a
-                  href="https://github.com/DresdenGman/EPSILON-trading-simulator"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Button
+                  variant="outline"
+                  size="md"
+                  className="border-epsilon-gold/60 text-epsilon-gold"
                 >
                   View on GitHub
-                </a>
-              </Button>
+                </Button>
+              </a>
             </div>
           </div>
         </section>
