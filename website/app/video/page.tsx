@@ -14,11 +14,11 @@ export default function VideoPage() {
           <p className="text-sm text-gray-400">Introduction Video</p>
         </div>
 
-        {/* Video Player Container */}
-        <div className="relative w-full bg-black border border-[#333] rounded-sm overflow-hidden epsilon-gold-glow shadow-2xl">
+        {/* Video Player Container - 3:2 aspect ratio */}
+        <div className="relative w-full bg-black border border-[#333] rounded-sm overflow-hidden epsilon-gold-glow shadow-2xl" style={{ aspectRatio: '3/2' }}>
           <VideoPlayer
             src="/epsilon-intro.mp4"
-            className="w-full"
+            className="w-full h-full"
             autoPlay={false}
             muted={false}
             loop={false}

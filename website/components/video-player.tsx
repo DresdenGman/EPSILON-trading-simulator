@@ -48,13 +48,14 @@ export function VideoPlayer({ src, className = '', autoPlay = true, muted = true
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       <video
-        className="w-full h-auto"
+        className="w-full h-full object-contain"
         src={src}
         autoPlay={autoPlay}
         muted={muted}
         loop={loop}
         playsInline
         controls
+        style={{ objectFit: 'contain' }}
       />
       <Button
         variant="ghost"
