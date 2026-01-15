@@ -15,10 +15,10 @@ export default function VideoPage() {
         </div>
 
         {/* Video Player Container */}
-        <div className="relative w-full aspect-video bg-black border border-[#333] rounded-sm overflow-hidden epsilon-gold-glow shadow-2xl">
+        <div className="relative w-full bg-black border border-[#333] rounded-sm overflow-hidden epsilon-gold-glow shadow-2xl">
           <VideoPlayer
             src="/epsilon-intro.mp4"
-            className="w-full h-full"
+            className="w-full"
             autoPlay={false}
             muted={false}
             loop={false}

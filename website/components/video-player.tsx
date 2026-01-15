@@ -48,7 +48,7 @@ export function VideoPlayer({ src, className = '', autoPlay = true, muted = true
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       <video
-        className="h-full w-full object-cover"
+        className="w-full h-auto"
         src={src}
         autoPlay={autoPlay}
         muted={muted}
