@@ -93,10 +93,12 @@ export default function Home() {
             <div className="relative flex items-center justify-center">
               <div className="relative w-full max-w-md overflow-hidden rounded-sm border border-[#333] bg-black/80">
                 <div className="absolute inset-0 epsilon-grid-background opacity-25" />
-                <VideoPlayer
-                  src="/epsilon-intro.mp4"
-                  className="relative z-10 h-56 w-full border-b border-[#333]"
-                />
+                <div className="relative z-10 h-56 w-full border-b border-[#333]">
+                  <VideoPlayer
+                    src="/epsilon-intro.mp4"
+                    className="h-full w-full"
+                  />
+                </div>
                 <div className="relative z-10 flex items-center justify-between px-3 py-2 text-[11px] text-gray-400">
                   <span className="font-mono text-xs text-epsilon-gold">Diamond Challenge · Demo</span>
                   <span>Approcher Team · EPSILON LABS</span>
@@ -488,7 +490,9 @@ export default function Home() {
                   fits into quantitative education.
                 </p>
                 <div className="rounded-sm border border-[#333] bg-black/50 overflow-hidden">
-                  <VideoPlayer src="/epsilon-intro.mp4" className="h-40 w-full" />
+                  <div className="h-40 w-full">
+                    <VideoPlayer src="/epsilon-intro.mp4" className="h-full w-full" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
