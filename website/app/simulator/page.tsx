@@ -40,21 +40,21 @@ export default function SimulatorPage() {
     <div className="min-h-screen bg-[#050505] text-gray-200">
       <div className="flex min-h-screen">
         {/* Sidebar */}
-        <aside className="flex w-16 flex-col items-center border-r border-[#333] bg-[#050505] py-4 text-gray-500">
-          <div className="mb-6 flex h-8 w-8 items-center justify-center rounded-sm border border-epsilon-gold text-[10px] font-mono text-epsilon-gold">
-            ε
+        <aside className="flex w-16 flex-col items-center border-r border-[#282828] bg-[#050505] py-4 text-gray-500 shadow-inset-card">
+          <div className="mb-6 flex h-8 w-8 items-center justify-center border border-epsilon-gold/60 bg-black/60 epsilon-gold-glow">
+            <span className="text-[10px] font-mono font-semibold text-epsilon-gold">ε</span>
           </div>
           <nav className="mt-2 flex flex-col gap-5 text-xs">
-            <button className="flex h-8 w-8 items-center justify-center rounded-sm bg-[#181818] text-epsilon-gold">
+            <button className="flex h-8 w-8 items-center justify-center bg-[#121212] text-epsilon-gold shadow-inset-button transition-all duration-epsilon ease-epsilon hover:bg-[#141414]">
               <LineChart className="h-4 w-4" />
             </button>
-            <button className="flex h-8 w-8 items-center justify-center rounded-sm border border-transparent hover:border-[#444]">
+            <button className="flex h-8 w-8 items-center justify-center border border-transparent transition-all duration-epsilon ease-epsilon hover:border-epsilon-gold/50 hover:bg-[#121212]">
               <BarChart2 className="h-4 w-4" />
             </button>
-            <button className="flex h-8 w-8 items-center justify-center rounded-sm border border-transparent hover:border-[#444]">
+            <button className="flex h-8 w-8 items-center justify-center border border-transparent transition-all duration-epsilon ease-epsilon hover:border-epsilon-gold/50 hover:bg-[#121212]">
               <Database className="h-4 w-4" />
             </button>
-            <button className="mt-auto flex h-8 w-8 items-center justify-center rounded-sm border border-transparent hover:border-[#444]">
+            <button className="mt-auto flex h-8 w-8 items-center justify-center border border-transparent transition-all duration-epsilon ease-epsilon hover:border-epsilon-gold/50 hover:bg-[#121212]">
               <Settings className="h-4 w-4" />
             </button>
           </nav>
@@ -63,35 +63,35 @@ export default function SimulatorPage() {
         {/* Main content */}
         <div className="flex flex-1 flex-col">
           {/* Top bar */}
-          <header className="border-b border-[#333] bg-[#0A0A0A] px-5 py-3">
+          <header className="border-b border-[#282828] bg-[#0A0A0A] px-5 py-3 shadow-inset-card">
             <div className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-6">
                 <div className="space-y-0.5">
-                  <p className="text-[10px] uppercase tracking-[0.16em] text-gray-500">
+                  <p className="text-[10px] font-normal uppercase tracking-label text-gray-500">
                     Total Equity
                   </p>
-                  <p className="font-mono text-sm text-epsilon-gold">$ 100,000.00</p>
+                  <p className="font-mono text-sm font-semibold text-epsilon-gold">$ 100,000.00</p>
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-[10px] uppercase tracking-[0.16em] text-gray-500">
+                  <p className="text-[10px] font-normal uppercase tracking-label text-gray-500">
                     Daily P&amp;L
                   </p>
-                  <p className="font-mono text-sm text-success-soft">+ $ 1,240.50</p>
+                  <p className="font-mono text-sm font-semibold text-success-soft">+ $ 1,240.50</p>
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-[10px] uppercase tracking-[0.16em] text-gray-500">
+                  <p className="text-[10px] font-normal uppercase tracking-label text-gray-500">
                     Buying Power
                   </p>
-                  <p className="font-mono text-sm text-gray-200">$ 200,000.00</p>
+                  <p className="font-mono text-sm font-semibold text-gray-200">$ 200,000.00</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="rounded-sm border border-[#333] bg-[#101010] px-3 py-1.5 text-[11px] text-gray-300">
-                  <span className="font-mono text-xs text-epsilon-gold">Sharpe 2.1</span>
+                <div className="border border-[#282828] bg-[#101010] px-3 py-1.5 text-[11px] font-normal text-gray-300 shadow-inset-button">
+                  <span className="font-mono text-xs font-semibold text-epsilon-gold">Sharpe 2.1</span>
                   <span className="mx-2 text-gray-500">|</span>
-                  <span className="font-mono text-xs text-danger-soft">Drawdown -4.5%</span>
+                  <span className="font-mono text-xs font-semibold text-danger-soft">Drawdown -4.5%</span>
                 </div>
-                <span className="text-[10px] text-gray-500">SIMULATOR · REAL DATA MODE</span>
+                <span className="text-[10px] font-normal text-gray-500">SIMULATOR · REAL DATA MODE</span>
               </div>
             </div>
           </header>
@@ -100,31 +100,31 @@ export default function SimulatorPage() {
           <div className="grid flex-1 grid-cols-[minmax(0,2.4fr)_minmax(0,1.1fr)] gap-3 bg-[#050505] p-4">
             {/* Left column: chart + logs */}
             <div className="flex flex-col gap-3">
-              <Card className="flex-1 bg-[#0B0B0B]">
+              <Card className="flex-1 bg-[#0B0B0B] border-[#282828]">
                 <CardHeader className="flex items-center justify-between pb-2">
                   <div>
-                    <CardTitle className="text-xs text-gray-100">AAPL · 5m Candles</CardTitle>
-                    <p className="mt-0.5 text-[10px] text-gray-500">
+                    <CardTitle className="text-xs font-medium text-gray-100">AAPL · 5m Candles</CardTitle>
+                    <p className="mt-0.5 text-[10px] font-normal text-gray-500">
                       Demo data · For layout illustration only
                     </p>
                   </div>
                   <div className="flex gap-1">
-                    <Button size="sm" variant="ghost" className="px-2 text-[10px]">
+                    <Button size="sm" variant="ghost" className="px-2 text-[10px] font-normal">
                       1D
                     </Button>
-                    <Button size="sm" variant="ghost" className="px-2 text-[10px]">
+                    <Button size="sm" variant="ghost" className="px-2 text-[10px] font-normal">
                       5D
                     </Button>
                     <Button
                       size="sm"
                       variant="primary"
-                      className="px-2 text-[10px] font-mono epsilon-gold-glow"
+                      className="px-2 text-[10px] font-mono font-semibold"
                     >
                       1M
                     </Button>
                   </div>
                 </CardHeader>
-                <CardContent className="h-64 border-t border-[#333] pt-3">
+                <CardContent className="h-64 border-t border-[#282828] pt-3">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={chartData}>
                       <defs>
@@ -174,13 +174,13 @@ export default function SimulatorPage() {
                 </CardContent>
               </Card>
 
-              <Card className="h-40 bg-black">
+              <Card className="h-40 bg-[#050505] border-[#282828]">
                 <CardHeader className="flex items-center justify-between pb-1">
-                  <CardTitle className="text-[11px] text-gray-300">Event Log</CardTitle>
-                  <span className="font-mono text-[10px] text-gray-500">stdout · simulator</span>
+                  <CardTitle className="text-[11px] font-medium text-gray-300">Event Log</CardTitle>
+                  <span className="font-mono text-[10px] font-normal text-gray-500">stdout · simulator</span>
                 </CardHeader>
-                <CardContent className="h-28 overflow-hidden border-t border-[#222] bg-[#050505] px-3 py-2">
-                  <div className="h-full overflow-y-auto font-mono text-[10px] leading-relaxed text-gray-400">
+                <CardContent className="h-28 overflow-hidden border-t border-[#282828] bg-[#050505] px-3 py-2">
+                  <div className="h-full overflow-y-auto font-mono text-[10px] font-normal leading-relaxed text-gray-400">
                     {logLines.map((line) => (
                       <div key={line}>{line}</div>
                     ))}
@@ -191,27 +191,27 @@ export default function SimulatorPage() {
 
             {/* Right column: order entry + AI box */}
             <div className="flex flex-col gap-3">
-              <Card className="bg-[#0B0B0B]">
+              <Card className="bg-[#0B0B0B] border-[#282828]">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-xs text-gray-100">Order Entry</CardTitle>
+                  <CardTitle className="text-xs font-medium text-gray-100">Order Entry</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3 border-t border-[#333] pt-3 text-[11px]">
+                <CardContent className="space-y-3 border-t border-[#282828] pt-3 text-[11px]">
                   <div className="grid grid-cols-[1.4fr_1fr] gap-2">
                     <div>
-                      <label className="mb-1 block text-[10px] uppercase tracking-[0.18em] text-gray-500">
+                      <label className="mb-1 block text-[10px] font-normal uppercase tracking-label text-gray-500">
                         Symbol
                       </label>
                       <input
-                        className="h-7 w-full rounded-sm border border-[#333] bg-[#050505] px-2 font-mono text-[11px] text-gray-100 outline-none focus:border-epsilon-gold"
+                        className="h-7 w-full border border-[#282828] bg-[#050505] px-2 font-mono text-[11px] font-normal text-gray-100 shadow-inset-button outline-none transition-all duration-epsilon ease-epsilon focus:border-epsilon-gold/60"
                         defaultValue="AAPL"
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-[10px] uppercase tracking-[0.18em] text-gray-500">
+                      <label className="mb-1 block text-[10px] font-normal uppercase tracking-label text-gray-500">
                         Quantity
                       </label>
                       <input
-                        className="h-7 w-full rounded-sm border border-[#333] bg-[#050505] px-2 font-mono text-[11px] text-gray-100 outline-none focus:border-epsilon-gold"
+                        className="h-7 w-full border border-[#282828] bg-[#050505] px-2 font-mono text-[11px] font-normal text-gray-100 shadow-inset-button outline-none transition-all duration-epsilon ease-epsilon focus:border-epsilon-gold/60"
                         defaultValue="100"
                       />
                     </div>
@@ -219,19 +219,19 @@ export default function SimulatorPage() {
 
                   <div className="grid grid-cols-[1.4fr_1fr] gap-2">
                     <div>
-                      <label className="mb-1 block text-[10px] uppercase tracking-[0.18em] text-gray-500">
+                      <label className="mb-1 block text-[10px] font-normal uppercase tracking-label text-gray-500">
                         Limit Price
                       </label>
                       <input
-                        className="h-7 w-full rounded-sm border border-[#333] bg-[#050505] px-2 font-mono text-[11px] text-gray-100 outline-none focus:border-epsilon-gold"
+                        className="h-7 w-full border border-[#282828] bg-[#050505] px-2 font-mono text-[11px] font-normal text-gray-100 shadow-inset-button outline-none transition-all duration-epsilon ease-epsilon focus:border-epsilon-gold/60"
                         defaultValue="188.20"
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-[10px] uppercase tracking-[0.18em] text-gray-500">
+                      <label className="mb-1 block text-[10px] font-normal uppercase tracking-label text-gray-500">
                         Mode
                       </label>
-                      <select className="h-7 w-full rounded-sm border border-[#333] bg-[#050505] px-2 text-[11px] text-gray-100 outline-none focus:border-epsilon-gold">
+                      <select className="h-7 w-full border border-[#282828] bg-[#050505] px-2 text-[11px] font-normal text-gray-100 shadow-inset-button outline-none transition-all duration-epsilon ease-epsilon focus:border-epsilon-gold/60">
                         <option>Real Data · Online</option>
                         <option>Mock Data · Offline</option>
                       </select>
@@ -254,33 +254,33 @@ export default function SimulatorPage() {
                       Sell
                     </Button>
                   </div>
-                  <p className="text-[10px] text-gray-500">
+                  <p className="text-[10px] font-normal text-gray-500">
                     Orders in EPSILON never leave this machine. Use it to train decision-making,
                     not to send real capital.
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="bg-[#0B0B0B]">
+              <Card className="bg-[#0B0B0B] border-[#282828]">
                 <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center justify-between text-xs text-gray-100">
+                  <CardTitle className="flex items-center justify-between text-xs font-medium text-gray-100">
                     AI Risk Co-Pilot
-                    <span className="rounded-sm border border-epsilon-gold/60 bg-[#17130a] px-2 py-0.5 font-mono text-[10px] text-epsilon-gold">
+                    <span className="border border-epsilon-gold/60 bg-[#17130a]/40 px-2 py-0.5 font-mono text-[10px] font-semibold text-epsilon-gold shadow-inset-button">
                       Rating · A+
                     </span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2 border-t border-[#333] pt-3 text-[11px] text-gray-300">
+                <CardContent className="space-y-2 border-t border-[#282828] pt-3 text-[11px] font-light text-gray-300">
                   <p>
                     Current position and proposed order keep total exposure inside your configured
                     risk envelope. Max drawdown for this path is within acceptable bounds.
                   </p>
-                  <ul className="list-disc pl-4 text-[11px] text-gray-400">
+                  <ul className="list-disc pl-4 text-[11px] font-light text-gray-400">
                     <li>Position size &lt; 2% of equity per trade.</li>
                     <li>Portfolio-level volatility trending down over last 10 sessions.</li>
                     <li>No single-name exposure above 15% of total risk budget.</li>
                   </ul>
-                  <p className="pt-1 text-[10px] text-gray-500">
+                  <p className="pt-1 text-[10px] font-normal text-gray-500">
                     This is a deterministic, local model — tuned for education, not prediction.
                   </p>
                 </CardContent>

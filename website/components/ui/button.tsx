@@ -3,21 +3,21 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-epsilon-gold disabled:pointer-events-none disabled:opacity-50 rounded-sm border',
+  'inline-flex items-center justify-center whitespace-nowrap text-xs font-medium transition-all duration-epsilon ease-epsilon focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-epsilon-gold disabled:pointer-events-none disabled:opacity-50 rounded-sm border shadow-inset-button',
   {
     variants: {
       variant: {
         primary:
-          'bg-epsilon-gold text-black border-epsilon-gold hover:bg-[#d4b26d] hover:border-[#d4b26d]',
+          'bg-gradient-to-b from-epsilon-gold to-epsilon-goldMuted text-black border-epsilon-gold font-semibold hover:from-[#D4B26D] hover:to-epsilon-gold hover:epsilon-gold-glow-hover',
         outline:
-          'bg-transparent text-gray-200 border-border hover:border-epsilon-gold hover:text-epsilon-gold',
+          'bg-transparent text-gray-200 border-[#282828] hover:border-epsilon-gold hover:text-epsilon-gold hover:bg-epsilon-gold/10',
         subtle:
-          'bg-[#161616] text-gray-200 border-border hover:border-[#444444] hover:bg-[#1b1b1b]',
-        ghost: 'border-transparent hover:bg-[#181818]',
+          'bg-[#101010] text-gray-200 border-[#383838] hover:border-[#404040] hover:bg-[#141414]',
+        ghost: 'border-transparent hover:bg-[#121212]',
         destructive:
-          'bg-danger-soft/70 text-white border-danger-soft hover:bg-danger-soft hover:border-danger-soft',
+          'bg-danger-soft/60 text-white border-danger-soft/70 hover:bg-danger-soft/70 hover:border-danger-soft',
         success:
-          'bg-success-soft/80 text-white border-success-soft hover:bg-success-soft hover:border-success-soft',
+          'bg-success-soft/60 text-white border-success-soft/70 hover:bg-success-soft/70 hover:border-success-soft',
       },
       size: {
         sm: 'h-8 px-3',
