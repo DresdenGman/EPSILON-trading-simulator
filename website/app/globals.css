@@ -6,16 +6,23 @@
   html {
     @apply bg-background text-foreground antialiased;
     background: linear-gradient(to bottom, #0A0A0A 0%, #080808 100%);
+    scroll-behavior: smooth;
   }
 
   body {
     @apply min-h-screen bg-background text-foreground;
+    background: linear-gradient(to bottom, #0A0A0A 0%, #080808 100%);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   * {
     @apply border-border;
+  }
+
+  /* Smooth scroll for anchor links */
+  a[href^="#"] {
+    scroll-behavior: smooth;
   }
 }
 
@@ -26,8 +33,7 @@
 
   /* 极细网格背景 - 哑光质感 */
   .epsilon-grid-background {
-    background-image: 
-      linear-gradient(to right, rgba(26, 26, 26, 0.15) 1px, transparent 1px),
+    background-image: linear-gradient(to right, rgba(26, 26, 26, 0.15) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(26, 26, 26, 0.15) 1px, transparent 1px);
     background-size: 80px 80px;
     opacity: 0.15;
@@ -35,59 +41,32 @@
 
   /* 哑光鎏金光晕 - 内敛不扩散 */
   .epsilon-gold-glow {
-    box-shadow: 
-      inset 0 0 0 1px rgba(184, 149, 79, 0.2),
-      0 0 12px rgba(184, 149, 79, 0.2);
+    box-shadow: inset 0 0 8px rgba(184, 149, 79, 0.2), 0 0 12px rgba(184, 149, 79, 0.15);
   }
 
   .epsilon-gold-glow-hover {
-    box-shadow: 
-      inset 0 0 0 1px rgba(184, 149, 79, 0.3),
-      0 0 15px rgba(184, 149, 79, 0.25);
+    box-shadow: inset 0 0 10px rgba(212, 178, 109, 0.25), 0 0 15px rgba(212, 178, 109, 0.2);
   }
 
   /* 极淡菱形细网格 - 金融科技精密感 */
   .epsilon-mesh {
     background-image: 
-      repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 2px,
-        rgba(31, 31, 31, 0.1) 2px,
-        rgba(31, 31, 31, 0.1) 4px
-      ),
-      repeating-linear-gradient(
-        -45deg,
-        transparent,
-        transparent 2px,
-        rgba(31, 31, 31, 0.1) 2px,
-        rgba(31, 31, 31, 0.1) 4px
-      );
+      linear-gradient(45deg, rgba(31, 31, 31, 0.1) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(31, 31, 31, 0.1) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(31, 31, 31, 0.1) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(31, 31, 31, 0.1) 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
     opacity: 0.1;
   }
 
-  /* 哑光金渐变 */
-  .epsilon-gold-gradient {
-    background: linear-gradient(to bottom, #C5A059 0%, #B8954F 100%);
-  }
-
-  .epsilon-gold-gradient-hover {
-    background: linear-gradient(to bottom, #D4B26D 0%, #C5A059 100%);
-  }
-
-  /* 凹陷式精密金融终端质感 */
+  /* 凹陷式内阴影 - 金融终端质感 */
   .epsilon-inset-shadow {
-    box-shadow: inset 0 0 0 1px rgba(21, 21, 21, 1);
+    box-shadow: inset 0 1px 1px rgba(21, 21, 21, 0.8);
   }
 
-  /* 平滑滚动 */
-  html {
-    scroll-behavior: smooth;
-  }
-
-  /* 文字抗锯齿 */
-  * {
-    text-rendering: optimizeLegibility;
+  .epsilon-inset-shadow-gold {
+    box-shadow: inset 0 1px 1px rgba(184, 149, 79, 0.3);
   }
 }
 

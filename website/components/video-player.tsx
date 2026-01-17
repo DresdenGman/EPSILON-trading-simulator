@@ -61,7 +61,7 @@ export function VideoPlayer({ src, className = '', autoPlay = true, muted = true
         variant="ghost"
         size="icon"
         onClick={toggleFullscreen}
-        className="absolute bottom-2 right-2 h-8 w-8 bg-black/60 text-white hover:bg-black/80"
+        className="absolute bottom-3 right-3 h-8 w-8 bg-black/50 text-epsilon-gold hover:bg-black/70 hover:text-epsilon-goldHover transition-all duration-280 ease-out-slow"
         aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
       >
         {isFullscreen ? (

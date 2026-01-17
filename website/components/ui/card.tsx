@@ -5,7 +5,7 @@ export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
   return (
     <div
       className={cn(
-        'rounded-sm border border-[#282828] bg-[#101010] text-foreground shadow-inset-card transition-all duration-epsilon ease-epsilon',
+        'rounded-sm border border-[#282828] bg-[#101010] text-foreground epsilon-inset-shadow transition-all duration-280 ease-out-slow hover:border-epsilon-gold/50 hover:bg-[#121212]',
         className,
       )}
       {...props}
@@ -30,6 +30,6 @@ export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHead
 }
 
 export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('px-4 pb-3 pt-1 text-xs text-gray-350 leading-[1.4]', className)} {...props} />
+  return <div className={cn('px-3.5 pb-3 pt-1 text-xs text-gray-350 leading-relaxed', className)} {...props} />
 }
 

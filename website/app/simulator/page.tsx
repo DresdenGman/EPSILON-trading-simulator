@@ -37,24 +37,24 @@ const logLines = [
 
 export default function SimulatorPage() {
   return (
-    <div className="min-h-screen bg-[#050505] text-gray-200">
+    <div className="min-h-screen bg-[#0A0A0A] text-gray-200">
       <div className="flex min-h-screen">
         {/* Sidebar */}
-        <aside className="flex w-16 flex-col items-center border-r border-[#282828] bg-[#050505] py-4 text-gray-500 shadow-inset-card">
-          <div className="mb-6 flex h-8 w-8 items-center justify-center border border-epsilon-gold/60 bg-black/60 epsilon-gold-glow">
+        <aside className="flex w-16 flex-col items-center border-r border-[#303030] bg-[#050505] py-4 text-gray-500">
+          <div className="mb-6 flex h-8 w-8 items-center justify-center border border-epsilon-gold/70 bg-black/60 epsilon-inset-shadow-gold">
             <span className="text-[10px] font-mono font-semibold text-epsilon-gold">ε</span>
           </div>
           <nav className="mt-2 flex flex-col gap-5 text-xs">
-            <button className="flex h-8 w-8 items-center justify-center bg-[#121212] text-epsilon-gold shadow-inset-button transition-all duration-epsilon ease-epsilon hover:bg-[#141414]">
+            <button className="flex h-8 w-8 items-center justify-center bg-[#121212] text-epsilon-gold epsilon-inset-shadow transition-all duration-280 ease-out-slow hover:bg-[#141414]">
               <LineChart className="h-4 w-4" />
             </button>
-            <button className="flex h-8 w-8 items-center justify-center border border-transparent transition-all duration-epsilon ease-epsilon hover:border-epsilon-gold/50 hover:bg-[#121212]">
+            <button className="flex h-8 w-8 items-center justify-center border border-transparent transition-all duration-280 ease-out-slow hover:border-[#404040] hover:bg-[#121212]">
               <BarChart2 className="h-4 w-4" />
             </button>
-            <button className="flex h-8 w-8 items-center justify-center border border-transparent transition-all duration-epsilon ease-epsilon hover:border-epsilon-gold/50 hover:bg-[#121212]">
+            <button className="flex h-8 w-8 items-center justify-center border border-transparent transition-all duration-280 ease-out-slow hover:border-[#404040] hover:bg-[#121212]">
               <Database className="h-4 w-4" />
             </button>
-            <button className="mt-auto flex h-8 w-8 items-center justify-center border border-transparent transition-all duration-epsilon ease-epsilon hover:border-epsilon-gold/50 hover:bg-[#121212]">
+            <button className="mt-auto flex h-8 w-8 items-center justify-center border border-transparent transition-all duration-280 ease-out-slow hover:border-[#404040] hover:bg-[#121212]">
               <Settings className="h-4 w-4" />
             </button>
           </nav>
@@ -63,62 +63,62 @@ export default function SimulatorPage() {
         {/* Main content */}
         <div className="flex flex-1 flex-col">
           {/* Top bar */}
-          <header className="border-b border-[#282828] bg-[#0A0A0A] px-5 py-3 shadow-inset-card">
+          <header className="border-b border-[#303030] bg-[#0A0A0A] px-5 py-3 epsilon-inset-shadow">
             <div className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-6">
                 <div className="space-y-0.5">
-                  <p className="text-[10px] font-normal uppercase tracking-label text-gray-500">
+                  <p className="text-[10px] font-normal uppercase tracking-normal text-gray-500">
                     Total Equity
                   </p>
                   <p className="font-mono text-sm font-semibold text-epsilon-gold">$ 100,000.00</p>
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-[10px] font-normal uppercase tracking-label text-gray-500">
+                  <p className="text-[10px] font-normal uppercase tracking-normal text-gray-500">
                     Daily P&amp;L
                   </p>
                   <p className="font-mono text-sm font-semibold text-success-soft">+ $ 1,240.50</p>
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-[10px] font-normal uppercase tracking-label text-gray-500">
+                  <p className="text-[10px] font-normal uppercase tracking-normal text-gray-500">
                     Buying Power
                   </p>
                   <p className="font-mono text-sm font-semibold text-gray-200">$ 200,000.00</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="border border-[#282828] bg-[#101010] px-3 py-1.5 text-[11px] font-normal text-gray-300 shadow-inset-button">
+                <div className="border border-[#282828] bg-[#101010] px-3 py-1.5 text-[11px] font-light text-gray-300 epsilon-inset-shadow">
                   <span className="font-mono text-xs font-semibold text-epsilon-gold">Sharpe 2.1</span>
                   <span className="mx-2 text-gray-500">|</span>
                   <span className="font-mono text-xs font-semibold text-danger-soft">Drawdown -4.5%</span>
                 </div>
-                <span className="text-[10px] font-normal text-gray-500">SIMULATOR · REAL DATA MODE</span>
+                <span className="text-[10px] font-light text-gray-500">SIMULATOR · REAL DATA MODE</span>
               </div>
             </div>
           </header>
 
           {/* Workspace grid */}
-          <div className="grid flex-1 grid-cols-[minmax(0,2.4fr)_minmax(0,1.1fr)] gap-3 bg-[#050505] p-4">
+          <div className="grid flex-1 grid-cols-[minmax(0,2.4fr)_minmax(0,1.1fr)] gap-4 bg-[#050505] p-4">
             {/* Left column: chart + logs */}
-            <div className="flex flex-col gap-3">
-              <Card className="flex-1 bg-[#0B0B0B] border-[#282828]">
+            <div className="flex flex-col gap-4">
+              <Card className="flex-1 border-[#282828] bg-[#0B0B0B]">
                 <CardHeader className="flex items-center justify-between pb-2">
                   <div>
                     <CardTitle className="text-xs font-medium text-gray-100">AAPL · 5m Candles</CardTitle>
-                    <p className="mt-0.5 text-[10px] font-normal text-gray-500">
+                    <p className="mt-1 text-[10px] font-light text-gray-500">
                       Demo data · For layout illustration only
                     </p>
                   </div>
                   <div className="flex gap-1">
-                    <Button size="sm" variant="ghost" className="px-2 text-[10px] font-normal">
+                    <Button size="sm" variant="ghost" className="px-2 text-[10px]">
                       1D
                     </Button>
-                    <Button size="sm" variant="ghost" className="px-2 text-[10px] font-normal">
+                    <Button size="sm" variant="ghost" className="px-2 text-[10px]">
                       5D
                     </Button>
                     <Button
                       size="sm"
                       variant="primary"
-                      className="px-2 text-[10px] font-mono font-semibold"
+                      className="px-2 text-[10px] font-mono epsilon-gold-glow"
                     >
                       1M
                     </Button>
@@ -129,32 +129,32 @@ export default function SimulatorPage() {
                     <AreaChart data={chartData}>
                       <defs>
                         <linearGradient id="epsilonGold" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#C5A059" stopOpacity={0.9} />
-                          <stop offset="100%" stopColor="#C5A059" stopOpacity={0.02} />
+                          <stop offset="0%" stopColor="#C5A059" stopOpacity={0.8} />
+                          <stop offset="100%" stopColor="#C5A059" stopOpacity={0.05} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid
-                        stroke="#222"
+                        stroke="#1A1A1A"
                         strokeDasharray="3 3"
                         horizontal={true}
                         vertical={false}
                       />
                       <XAxis
                         dataKey="date"
-                        stroke="#555"
+                        stroke="#404040"
                         tickLine={false}
-                        tick={{ fontSize: 10 }}
+                        tick={{ fontSize: 10, fill: '#9CA3AF' }}
                       />
                       <YAxis
-                        stroke="#555"
+                        stroke="#404040"
                         tickLine={false}
-                        tick={{ fontSize: 10 }}
+                        tick={{ fontSize: 10, fill: '#9CA3AF' }}
                         domain={['dataMin - 1', 'dataMax + 1']}
                       />
                       <Tooltip
                         contentStyle={{
                           background: '#0B0B0B',
-                          border: '1px solid #333',
+                          border: '1px solid #282828',
                           borderRadius: 2,
                           fontSize: 10,
                         }}
@@ -164,7 +164,7 @@ export default function SimulatorPage() {
                         type="monotone"
                         dataKey="close"
                         stroke="#C5A059"
-                        strokeWidth={1}
+                        strokeWidth={1.5}
                         fill="url(#epsilonGold)"
                         dot={false}
                         activeDot={{ r: 3, fill: '#C5A059' }}
@@ -174,13 +174,13 @@ export default function SimulatorPage() {
                 </CardContent>
               </Card>
 
-              <Card className="h-40 bg-[#050505] border-[#282828]">
+              <Card className="h-40 border-[#282828] bg-[#050505]">
                 <CardHeader className="flex items-center justify-between pb-1">
                   <CardTitle className="text-[11px] font-medium text-gray-300">Event Log</CardTitle>
-                  <span className="font-mono text-[10px] font-normal text-gray-500">stdout · simulator</span>
+                  <span className="font-mono text-[10px] font-light text-gray-500">stdout · simulator</span>
                 </CardHeader>
                 <CardContent className="h-28 overflow-hidden border-t border-[#282828] bg-[#050505] px-3 py-2">
-                  <div className="h-full overflow-y-auto font-mono text-[10px] font-normal leading-relaxed text-gray-400">
+                  <div className="h-full overflow-y-auto font-mono text-[10px] font-light leading-relaxed text-gray-400">
                     {logLines.map((line) => (
                       <div key={line}>{line}</div>
                     ))}
@@ -190,28 +190,28 @@ export default function SimulatorPage() {
             </div>
 
             {/* Right column: order entry + AI box */}
-            <div className="flex flex-col gap-3">
-              <Card className="bg-[#0B0B0B] border-[#282828]">
+            <div className="flex flex-col gap-4">
+              <Card className="border-[#282828] bg-[#0B0B0B]">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-medium text-gray-100">Order Entry</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 border-t border-[#282828] pt-3 text-[11px]">
                   <div className="grid grid-cols-[1.4fr_1fr] gap-2">
                     <div>
-                      <label className="mb-1 block text-[10px] font-normal uppercase tracking-label text-gray-500">
+                      <label className="mb-1 block text-[10px] font-normal uppercase tracking-normal text-gray-500">
                         Symbol
                       </label>
                       <input
-                        className="h-7 w-full border border-[#282828] bg-[#050505] px-2 font-mono text-[11px] font-normal text-gray-100 shadow-inset-button outline-none transition-all duration-epsilon ease-epsilon focus:border-epsilon-gold/60"
+                        className="h-7 w-full border border-[#282828] bg-[#050505] px-2 font-mono text-[11px] font-light text-gray-100 outline-none transition-all duration-280 ease-out-slow focus:border-epsilon-gold epsilon-inset-shadow"
                         defaultValue="AAPL"
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-[10px] font-normal uppercase tracking-label text-gray-500">
+                      <label className="mb-1 block text-[10px] font-normal uppercase tracking-normal text-gray-500">
                         Quantity
                       </label>
                       <input
-                        className="h-7 w-full border border-[#282828] bg-[#050505] px-2 font-mono text-[11px] font-normal text-gray-100 shadow-inset-button outline-none transition-all duration-epsilon ease-epsilon focus:border-epsilon-gold/60"
+                        className="h-7 w-full border border-[#282828] bg-[#050505] px-2 font-mono text-[11px] font-light text-gray-100 outline-none transition-all duration-280 ease-out-slow focus:border-epsilon-gold epsilon-inset-shadow"
                         defaultValue="100"
                       />
                     </div>
@@ -219,19 +219,19 @@ export default function SimulatorPage() {
 
                   <div className="grid grid-cols-[1.4fr_1fr] gap-2">
                     <div>
-                      <label className="mb-1 block text-[10px] font-normal uppercase tracking-label text-gray-500">
+                      <label className="mb-1 block text-[10px] font-normal uppercase tracking-normal text-gray-500">
                         Limit Price
                       </label>
                       <input
-                        className="h-7 w-full border border-[#282828] bg-[#050505] px-2 font-mono text-[11px] font-normal text-gray-100 shadow-inset-button outline-none transition-all duration-epsilon ease-epsilon focus:border-epsilon-gold/60"
+                        className="h-7 w-full border border-[#282828] bg-[#050505] px-2 font-mono text-[11px] font-light text-gray-100 outline-none transition-all duration-280 ease-out-slow focus:border-epsilon-gold epsilon-inset-shadow"
                         defaultValue="188.20"
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-[10px] font-normal uppercase tracking-label text-gray-500">
+                      <label className="mb-1 block text-[10px] font-normal uppercase tracking-normal text-gray-500">
                         Mode
                       </label>
-                      <select className="h-7 w-full border border-[#282828] bg-[#050505] px-2 text-[11px] font-normal text-gray-100 shadow-inset-button outline-none transition-all duration-epsilon ease-epsilon focus:border-epsilon-gold/60">
+                      <select className="h-7 w-full border border-[#282828] bg-[#050505] px-2 text-[11px] font-light text-gray-100 outline-none transition-all duration-280 ease-out-slow focus:border-epsilon-gold epsilon-inset-shadow">
                         <option>Real Data · Online</option>
                         <option>Mock Data · Offline</option>
                       </select>
@@ -254,23 +254,23 @@ export default function SimulatorPage() {
                       Sell
                     </Button>
                   </div>
-                  <p className="text-[10px] font-normal text-gray-500">
+                  <p className="text-[10px] font-light text-gray-500">
                     Orders in EPSILON never leave this machine. Use it to train decision-making,
                     not to send real capital.
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="bg-[#0B0B0B] border-[#282828]">
+              <Card className="border-[#282828] bg-[#0B0B0B]">
                 <CardHeader className="pb-2">
                   <CardTitle className="flex items-center justify-between text-xs font-medium text-gray-100">
                     AI Risk Co-Pilot
-                    <span className="border border-epsilon-gold/60 bg-[#17130a]/40 px-2 py-0.5 font-mono text-[10px] font-semibold text-epsilon-gold shadow-inset-button">
+                    <span className="border border-epsilon-gold/60 bg-[#17130a]/50 px-2 py-0.5 font-mono text-[10px] font-semibold text-epsilon-gold epsilon-inset-shadow-gold">
                       Rating · A+
                     </span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2 border-t border-[#282828] pt-3 text-[11px] font-light text-gray-300">
+                <CardContent className="space-y-2 border-t border-[#282828] pt-3 text-[11px] font-light leading-relaxed text-gray-300">
                   <p>
                     Current position and proposed order keep total exposure inside your configured
                     risk envelope. Max drawdown for this path is within acceptable bounds.
@@ -280,7 +280,7 @@ export default function SimulatorPage() {
                     <li>Portfolio-level volatility trending down over last 10 sessions.</li>
                     <li>No single-name exposure above 15% of total risk budget.</li>
                   </ul>
-                  <p className="pt-1 text-[10px] font-normal text-gray-500">
+                  <p className="pt-1 text-[10px] font-light text-gray-500">
                     This is a deterministic, local model — tuned for education, not prediction.
                   </p>
                 </CardContent>
