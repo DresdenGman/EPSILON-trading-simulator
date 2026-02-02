@@ -5,6 +5,7 @@ tkcalendar>=1.6.0
 
 # Visualization (optional but recommended)
 matplotlib>=3.3.0
+mplfinance>=0.12.0
 
 # Real market data (optional)
 # Uncomment the line below if you want real market data support

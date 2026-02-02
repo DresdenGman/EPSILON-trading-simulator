@@ -65,6 +65,13 @@ Install required packages (make sure pip matches the Python you will run):
 python3.12 -m pip install -r requirements.txt
 ```
 
+This will install the following packages:
+- **pandas** (>=1.3.0) - Data manipulation and analysis
+- **numpy** (>=1.20.0) - Numerical computing
+- **tkcalendar** (>=1.6.0) - Calendar widget for date selection
+- **matplotlib** (>=3.3.0) - Chart visualization (optional but recommended)
+- **mplfinance** (>=0.12.0) - Professional candlestick charts for K-line visualization (optional but recommended)
+
 ### Optional Dependencies
 
 For real market data (optional):
@@ -72,7 +79,19 @@ For real market data (optional):
 pip install akshare
 ```
 
-If `akshare` is not available, the simulator will automatically use mock data mode.
+**Note**: `akshare` is not included in `requirements.txt` by default. If `akshare` is not available, the simulator will automatically use mock data mode.
+
+### Complete Installation Command
+
+To install all dependencies including optional ones:
+
+```bash
+# Install core dependencies
+python3.12 -m pip install -r requirements.txt
+
+# Install real market data support (optional)
+pip install akshare
+```
 
 ## Usage
 
@@ -212,10 +231,12 @@ Configure automatic trading based on:
 ## Troubleshooting
 
 ### Matplotlib Not Available
-If charts don't display, install matplotlib:
+If charts don't display, install matplotlib (should already be included via `requirements.txt`):
 ```bash
 pip install matplotlib
 ```
+
+**Note**: Matplotlib is listed in `requirements.txt` as an optional but recommended dependency. If you skipped installing it, you can install it separately using the command above.
 
 ### No Stock Data
 - Check internet connection if using real data
