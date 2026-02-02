@@ -28,7 +28,7 @@ export default function DownloadPage() {
       <main className="epsilon-shell space-y-20 py-12">
         {/* Hero */}
         <section className="space-y-4">
-          <div>
+            <div>
             <p className="text-xs font-medium uppercase tracking-normal text-gray-500">Download</p>
             <h1 className="mt-2 text-3xl font-medium text-gray-100 md:text-4xl">
               Download Stock Trading Simulator
@@ -37,7 +37,7 @@ export default function DownloadPage() {
               Choose a platform build, or work directly from source. All distributions share the same
               core simulation engine.
             </p>
-          </div>
+            </div>
         </section>
 
         {/* Platform Downloads */}
@@ -64,12 +64,12 @@ export default function DownloadPage() {
                 <Link href="#" className="block">
                   <Button variant="primary" size="lg" className="w-full">
                     <Download className="mr-2 h-4 w-4" />
-                    Download for Windows (.exe)
+                Download for Windows (.exe)
                   </Button>
-                </Link>
+              </Link>
                 <p className="text-[10px] font-light leading-relaxed text-gray-500">
-                  If SmartScreen warns about an unknown publisher, choose &quot;More info&quot; and
-                  confirm if you trust the source.
+                If SmartScreen warns about an unknown publisher, choose &quot;More info&quot; and
+                confirm if you trust the source.
                 </p>
               </CardContent>
             </Card>
@@ -79,7 +79,7 @@ export default function DownloadPage() {
                 <div className="flex items-center gap-3">
                   <Apple className="h-5 w-5 text-gray-300" />
                   <CardTitle className="text-sm">macOS</CardTitle>
-                </div>
+              </div>
                 <p className="mt-1 text-[11px] font-light text-gray-500">macOS 10.14 or later</p>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -88,9 +88,9 @@ export default function DownloadPage() {
                     <Download className="mr-2 h-4 w-4" />
                     Download for macOS
                   </Button>
-                </Link>
+              </Link>
                 <p className="text-[10px] font-light leading-relaxed text-gray-500">
-                  On first launch, you may need to open via Finder context menu to bypass Gatekeeper.
+                On first launch, you may need to open via Finder context menu to bypass Gatekeeper.
                 </p>
               </CardContent>
             </Card>
@@ -100,18 +100,18 @@ export default function DownloadPage() {
                 <div className="flex items-center gap-3">
                   <Terminal className="h-5 w-5 text-gray-300" />
                   <CardTitle className="text-sm">Linux</CardTitle>
-                </div>
+              </div>
                 <p className="mt-1 text-[11px] font-light text-gray-500">Most modern distributions</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Link href="#" className="block">
                   <Button variant="primary" size="lg" className="w-full">
                     <Download className="mr-2 h-4 w-4" />
-                    Download for Linux
+                Download for Linux
                   </Button>
-                </Link>
+              </Link>
                 <p className="text-[10px] font-light leading-relaxed text-gray-500">
-                  Remember to mark the file as executable before running it from the terminal.
+                Remember to mark the file as executable before running it from the terminal.
                 </p>
               </CardContent>
             </Card>
@@ -120,7 +120,7 @@ export default function DownloadPage() {
 
         {/* Installation Steps */}
         <section className="space-y-6">
-          <div>
+            <div>
             <p className="text-xs font-medium uppercase tracking-normal text-gray-500">Install</p>
             <h2 className="mt-2 text-lg font-medium text-gray-100">High-level installation steps</h2>
           </div>
@@ -171,7 +171,7 @@ export default function DownloadPage() {
 
         {/* From Source */}
         <section className="space-y-6">
-          <div>
+            <div>
             <p className="text-xs font-medium uppercase tracking-normal text-gray-500">From source</p>
             <h2 className="mt-2 text-lg font-medium text-gray-100">Running the Python project directly</h2>
             <p className="mt-2 text-xs font-light leading-relaxed text-gray-400">
