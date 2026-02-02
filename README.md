@@ -124,16 +124,43 @@ View your performance metrics in the left panel:
 
 The equity curve chart shows your portfolio value over time.
 
-## File Structure
+## Project Structure
 
 ```
-TRADING/
-├── mock.py                 # Main application file
-├── stock_data.json          # Cached stock price data (auto-generated)
-├── trade_data.json          # Trade records and account data (auto-generated)
-├── stock_list.json          # Custom stock universe (optional)
-└── stock_events.json        # Market event definitions (optional)
+stock-trading-simulator/
+├── mock.py                  # Main desktop application file
+├── main.py                  # Alternative entry point
+├── requirements.txt         # Python dependencies
+├── README.md                # This file
+│
+├── analysis/                # Performance analysis modules
+│   ├── __init__.py
+│   └── performance.py
+│
+├── data/                    # Data management modules
+│   ├── __init__.py
+│   └── stock_data_manager.py
+│
+├── trading/                 # Trading logic modules
+│   ├── __init__.py
+│   └── trade_manager.py
+│
+├── utils/                   # Utility modules
+│   ├── __init__.py
+│   ├── config.py
+│   └── logger.py
+│
+├── website/                 # Next.js website (see website/README.md)
+│   ├── app/                 # Next.js app directory
+│   ├── components/          # React components
+│   ├── public/             # Static assets
+│   ├── package.json        # Node.js dependencies
+│   └── README.md           # Website-specific README
+│
+└── screenshots/            # Project screenshots
 ```
+
+**Note**: JSON data files (`stock_data.json`, `trade_data.json`, etc.) are auto-generated and excluded from git.
 
 ## Configuration
 
@@ -199,6 +226,63 @@ pip install matplotlib
 - Ensure current stock price has reached trigger/limit price
 - Check that you have sufficient cash (for buy orders) or shares (for sell orders)
 - Verify order status in the orders table
+
+## Website Deployment
+
+This project includes a Next.js website in the `website/` directory. To deploy the website:
+
+### Prerequisites
+- Node.js 18+ and npm
+- A Vercel account (recommended) or other hosting platform
+
+### Deploy to Vercel (Recommended)
+
+1. **Connect to GitHub**:
+   - Push your code to GitHub (if not already done)
+   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
+   - Click "Add New Project"
+   - Import your GitHub repository
+
+2. **Configure Project**:
+   - Root Directory: Set to `website`
+   - Framework Preset: Next.js (auto-detected)
+   - Build Command: `npm run build` (default)
+   - Output Directory: `.next` (default)
+   - Install Command: `npm install` (default)
+
+3. **Deploy**:
+   - Click "Deploy"
+   - Vercel will automatically build and deploy your site
+   - Your site will be available at `your-project.vercel.app`
+
+4. **Automatic Deployments**:
+   - Every push to `main` branch will trigger a new deployment
+   - Preview deployments are created for pull requests
+
+### Manual Deployment
+
+If you prefer to deploy manually:
+
+```bash
+cd website
+npm install
+npm run build
+npm start
+```
+
+### Environment Variables
+
+No environment variables are required for basic deployment. The website works out of the box.
+
+### Custom Domain
+
+To use a custom domain:
+1. Go to your project settings in Vercel Dashboard
+2. Navigate to "Domains"
+3. Add your custom domain
+4. Follow DNS configuration instructions
+
+For more details, see `website/README.md`.
 
 ## Contributing
 

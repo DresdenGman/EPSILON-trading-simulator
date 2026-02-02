@@ -48,10 +48,49 @@ This website can be deployed to various platforms:
 
 The easiest way to deploy is using [Vercel](https://vercel.com):
 
+#### Option 1: Via Vercel Dashboard (Recommended)
+
+1. **Push your code to GitHub**:
+   ```bash
+   git add .
+   git commit -m "Deploy website"
+   git push origin main
+   ```
+
+2. **Connect to Vercel**:
+   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
+   - Click "Add New Project"
+   - Import your GitHub repository: `DresdenGman/EPSILON-trading-simulator`
+
+3. **Configure Project Settings**:
+   - **Root Directory**: `website` (important!)
+   - **Framework Preset**: Next.js (auto-detected)
+   - **Build Command**: `npm run build` (default)
+   - **Output Directory**: `.next` (default)
+   - **Install Command**: `npm install` (default)
+
+4. **Deploy**:
+   - Click "Deploy"
+   - Wait for build to complete (usually 1-2 minutes)
+   - Your site will be live at `your-project.vercel.app`
+
+5. **Automatic Deployments**:
+   - Every push to `main` branch triggers automatic deployment
+   - Preview deployments are created for pull requests
+
+#### Option 2: Via Vercel CLI
+
 ```bash
 npm i -g vercel
+cd website
 vercel
 ```
+
+Follow the prompts to deploy.
+
+#### Important Configuration
+
+Make sure to set the **Root Directory** to `website` in Vercel project settings, since the website is in a subdirectory of the repository.
 
 ## Customization
 
