@@ -1905,6 +1905,8 @@ class StockTradeSimulator:
                 fg_color=self.panel_bg,
                 hover_color=self.hover_color,
                 text_color=self.text_color,
+                border_color=self.border_color,
+                border_width=1,
                 corner_radius=6,
                 height=35
             )
@@ -1918,8 +1920,10 @@ class StockTradeSimulator:
             fg=self.text_color,
             font=('Segoe UI', self.base_font_size + 2, 'bold'),
             width=6,
-            relief='flat',
-            borderwidth=0,
+            relief='solid',
+            borderwidth=1,
+            highlightbackground=self.border_color,
+            highlightthickness=0,
             cursor='hand2',
             padx=10,
             pady=5
@@ -1936,6 +1940,8 @@ class StockTradeSimulator:
                 fg_color=self.panel_bg,
                 hover_color=self.hover_color,
                 text_color=self.text_color,
+                border_color=self.border_color,
+                border_width=1,
                 corner_radius=6,
                 height=35
             )
@@ -1949,8 +1955,10 @@ class StockTradeSimulator:
             fg=self.text_color,
             font=('Segoe UI', self.base_font_size + 2, 'bold'),
             width=6,
-            relief='flat',
-            borderwidth=0,
+            relief='solid',
+            borderwidth=1,
+            highlightbackground=self.border_color,
+            highlightthickness=0,
             cursor='hand2',
             padx=10,
             pady=5
@@ -2208,6 +2216,8 @@ class StockTradeSimulator:
                 fg_color=self.panel_bg,
                 hover_color=self.hover_color,
                 text_color=self.text_color,
+                border_color=self.border_color,
+                border_width=1,
                 corner_radius=6,
                 height=32
             ).pack(side=tk.LEFT, padx=(5, 4))
@@ -2219,8 +2229,10 @@ class StockTradeSimulator:
             bg=self.panel_bg,
             fg=self.text_color,
             font=('Segoe UI', self.base_font_size, 'bold'),
-            relief='flat',
-            borderwidth=0,
+            relief='solid',
+            borderwidth=1,
+            highlightbackground=self.border_color,
+            highlightthickness=0,
             cursor='hand2',
             padx=10,
             pady=4
@@ -2236,6 +2248,8 @@ class StockTradeSimulator:
                 fg_color=self.panel_bg,
                 hover_color=self.hover_color,
                 text_color=self.success_color,
+                border_color=self.success_color,
+                border_width=1,
                 corner_radius=6,
                 height=32
             ).pack(side=tk.LEFT, padx=(0, 4))
@@ -2247,8 +2261,10 @@ class StockTradeSimulator:
             bg=self.panel_bg,
             fg=self.success_color,
             font=('Segoe UI', self.base_font_size, 'bold'),
-            relief='flat',
-            borderwidth=0,
+            relief='solid',
+            borderwidth=1,
+            highlightbackground=self.success_color,
+            highlightthickness=0,
             cursor='hand2',
             padx=8,
             pady=4
@@ -2264,6 +2280,8 @@ class StockTradeSimulator:
                 fg_color=self.panel_bg,
                 hover_color=self.hover_color,
                 text_color=self.danger_color,
+                border_color=self.danger_color,
+                border_width=1,
                 corner_radius=6,
                 height=32
             ).pack(side=tk.LEFT, padx=(0, 0))
@@ -2275,8 +2293,10 @@ class StockTradeSimulator:
             bg=self.panel_bg,
             fg=self.danger_color,
             font=('Segoe UI', self.base_font_size, 'bold'),
-            relief='flat',
-            borderwidth=0,
+            relief='solid',
+            borderwidth=1,
+            highlightbackground=self.danger_color,
+            highlightthickness=0,
             cursor='hand2',
             padx=8,
             pady=4
@@ -2573,6 +2593,8 @@ class StockTradeSimulator:
                 fg_color=self.panel_bg,
                 hover_color=self.hover_color,
                 text_color=self.text_color,
+                border_color=self.border_color,
+                border_width=1,
                 corner_radius=6,
                 height=32
             ).pack(side=tk.LEFT, padx=(0, 0))
@@ -2584,8 +2606,10 @@ class StockTradeSimulator:
             bg=self.panel_bg,
             fg=self.text_color,
             font=('Segoe UI', self.base_font_size, 'bold'),
-            relief='flat',
-            borderwidth=0,
+            relief='solid',
+            borderwidth=1,
+            highlightbackground=self.border_color,
+            highlightthickness=0,
             cursor='hand2',
             padx=10,
             pady=4
@@ -2665,6 +2689,8 @@ class StockTradeSimulator:
                 fg_color=self.panel_bg,
                 hover_color=self.hover_color,
                 text_color=self.text_color,
+                border_color=self.border_color,
+                border_width=1,
                 corner_radius=6,
                 height=32
             )
@@ -2677,8 +2703,10 @@ class StockTradeSimulator:
             bg=self.panel_bg,
             fg=self.text_color,
             font=('Segoe UI', self.base_font_size + 1, 'bold'),
-            relief='flat',
-            borderwidth=0,
+            relief='solid',
+            borderwidth=1,
+            highlightbackground=self.border_color,
+            highlightthickness=0,
             cursor='hand2',
             padx=10,
             pady=5

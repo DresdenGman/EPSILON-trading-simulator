@@ -53,3 +53,16 @@ Thumbs.db
 screenshots/*.mp4
 Untitled
 
+
+# Node modules
+node_modules/
+website/node_modules/
+.next/
+website/.next/
+out/
+website/out/
+
+# Environment files
+.env
+.env.local
+.env*.local

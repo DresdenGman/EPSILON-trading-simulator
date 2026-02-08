@@ -12,8 +12,8 @@ const buttonVariants = cva(
         outline:
           'bg-transparent text-gray-200 border-[#282828] hover:border-epsilon-gold hover:text-epsilon-gold hover:bg-epsilon-gold/10',
         subtle:
-          'bg-[#101010] text-gray-200 border-[#383838] hover:border-[#404040] hover:bg-[#141414]',
-        ghost: 'border-transparent hover:bg-[#121212]',
+          'bg-[#1A1A1A] text-gray-200 border-[#404040] hover:border-[#505050] hover:bg-[#202020]',
+        ghost: 'border-transparent hover:bg-[#1A1A1A] hover:border-[#2A2A2A]',
         destructive:
           'bg-gradient-to-b from-danger-soft/70 to-danger-soft/60 text-white border-danger-soft hover:from-danger-softHover hover:to-danger-soft hover:border-danger-softHover',
         success:

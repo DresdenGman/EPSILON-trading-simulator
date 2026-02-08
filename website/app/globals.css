@@ -4,14 +4,15 @@
 
 @layer base {
   html {
-    @apply bg-background text-foreground antialiased;
-    background: linear-gradient(to bottom, #0A0A0A 0%, #080808 100%);
+    @apply antialiased;
+    background: #ffffff;
     scroll-behavior: smooth;
   }
 
   body {
-    @apply min-h-screen bg-background text-foreground;
-    background: linear-gradient(to bottom, #0A0A0A 0%, #080808 100%);
+    @apply min-h-screen;
+    background: #ffffff;
+    color: #111827;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
