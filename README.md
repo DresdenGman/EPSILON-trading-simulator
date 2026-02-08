@@ -51,6 +51,30 @@ A comprehensive stock trading simulation platform with advanced features includi
 - **Calendar Integration**: Easy date selection for historical trading
 - **Responsive Layout**: Efficient use of screen space with organized panels
 
+### The Quant Arena: Algorithmic Trading Tournament
+- **Strategy Interface**: Standardized base class for implementing trading strategies
+- **Automated Backtesting**: Run strategies on historical data with configurable parameters
+- **Tournament Engine**: Batch test multiple strategies and generate rankings
+- **Performance Ranking**: Strategies ranked by risk-adjusted metrics (Sharpe Ratio, CAGR, Max Drawdown)
+- **Example Strategies**: Included examples (Buy & Hold, Moving Average, Momentum)
+- **Extensible Design**: Easy to add custom strategies by inheriting from `BaseStrategy`
+
+### Spectral Analysis (频谱分析)
+- **FFT-Based Frequency Analysis**: Analyze price time series in frequency domain using Fast Fourier Transform
+- **Cycle Detection**: Automatically identify dominant trading cycles (e.g., 30-day cycle, 7-day cycle)
+- **Visual Spectrum Chart**: Interactive power spectrum visualization showing frequency components
+- **Period Identification**: Human-readable period descriptions (days, weeks, months, years)
+- **Easy Access**: Click 📈 button in main interface to analyze current stock
+
+### Stress Testing (压力测试) - Complete Implementation
+- **Stage 1 - Jump Diffusion Model**: Randomly introduces extreme price movements (black swan events)
+- **Stage 2 - Extreme Value Distribution**: Uses statistical methods (GEV/Pareto) to generate tail risk
+- **Stage 3 - Quantile Regression**: Machine learning-based prediction of extreme quantiles
+- **Configurable Parameters**: Adjustable jump probability, sizes, distribution types, and ML settings
+- **Realistic Stress Scenarios**: Simulates flash crashes, market panics, and sudden shocks
+- **Easy Configuration**: Access via Trading Settings → Stress Test Settings
+- **Strategy Testing**: Test how strategies perform under extreme market conditions
+
 ## Installation
 
 ### Prerequisites
@@ -143,6 +167,262 @@ View your performance metrics in the left panel:
 
 The equity curve chart shows your portfolio value over time.
 
+## The Quant Arena: Strategy Tournament
+
+### Overview
+
+The Quant Arena is a platform for algorithmic trading strategy competitions. It allows you to:
+- Implement custom trading strategies using a standardized interface
+- Backtest strategies on historical data
+- Run tournaments to compare multiple strategies
+- Rank strategies by risk-adjusted performance metrics (Sharpe Ratio)
+
+### Creating a Strategy
+
+To create your own strategy, create a Python file in the `strategies/` directory and inherit from `BaseStrategy`:
+
+```python
+from strategies.base_strategy import BaseStrategy
+from typing import Dict, List, Tuple
+
+class MyStrategy(BaseStrategy):
+    def init(self):
+        """Initialize your strategy parameters."""
+        self.lookback = 20
+        self.threshold = 0.02
+    
+    def next(self, current_data: Dict, portfolio: Dict[str, int]) -> List[Tuple[str, str, int]]:
+        """Generate trading signals.
+        
+        Args:
+            current_data: Contains 'date', 'prices', 'history', 'available_stocks', 'cash'
+            portfolio: Current holdings {stock_code: shares}
+        
+        Returns:
+            List of (action, stock_code, shares) tuples
+            - action: 'buy', 'sell', or 'hold'
+            - stock_code: Stock code (e.g., 'AAPL')
+            - shares: Number of shares (positive integer)
+        """
+        actions = []
+        prices = current_data.get('prices', {})
+        history = current_data.get('history', {})
+        
+        for code, price in prices.items():
+            if code not in history:
+                continue
+            
+            # Your trading logic here
+            df = history[code]
+            # ... analyze data and generate signals ...
+            
+            if should_buy:
+                actions.append(('buy', code, 10))
+            elif should_sell:
+                current_shares = portfolio.get(code, 0)
+                if current_shares > 0:
+                    actions.append(('sell', code, current_shares))
+        
+        return actions
+```
+
+### Running a Tournament
+
+Use the command-line tool to run a tournament:
+
+```bash
+# Run with default settings (last 60 days)
+python run_tournament.py
+
+# Run for specific date range
+python run_tournament.py --start-date 2024-01-01 --end-date 2024-03-31
+
+# Use mock data (for offline testing)
+python run_tournament.py --use-mock-data
+
+# Custom strategies directory
+python run_tournament.py --strategies-dir my_strategies
+```
+
+The tournament will:
+1. Discover all strategy classes in the strategies directory
+2. Run each strategy on the same historical data
+3. Calculate performance metrics (Sharpe Ratio, CAGR, Max Drawdown, etc.)
+4. Rank strategies by Sharpe Ratio (primary) and Total Return (secondary)
+5. Display results in a formatted table
+
+### Example Strategies
+
+The project includes three example strategies in `strategies/example_strategy.py`:
+
+1. **BuyAndHoldStrategy**: Buys equal amounts of all stocks on the first day and holds
+2. **MovingAverageStrategy**: Uses moving average crossover (buy when price > MA, sell when price < MA)
+3. **MomentumStrategy**: Buys stocks with positive momentum, sells those with negative momentum
+
+### Performance Metrics
+
+Strategies are ranked using the following metrics:
+
+- **Sharpe Ratio**: Risk-adjusted return (annualized). Higher is better. Primary ranking metric.
+- **Total Return**: Overall return percentage. Secondary ranking metric.
+- **CAGR**: Compound Annual Growth Rate
+- **Max Drawdown**: Largest peak-to-trough decline
+- **Win Rate**: Percentage of profitable trades
+- **Profit Factor**: Ratio of gross profit to gross loss
+
+### Strategy Interface Details
+
+The `next()` method receives:
+
+- `current_data['date']`: Current trading date (datetime.date)
+- `current_data['prices']`: Current prices for all stocks {code: price}
+- `current_data['history']`: Historical OHLC DataFrames {code: DataFrame}
+- `current_data['available_stocks']`: List of available stock codes
+- `current_data['cash']`: Current available cash
+- `portfolio`: Current holdings {stock_code: number_of_shares}
+
+The method should return a list of trading actions. Each action is a tuple:
+- `('buy', 'AAPL', 10)`: Buy 10 shares of AAPL
+- `('sell', 'MSFT', 5)`: Sell 5 shares of MSFT
+- `[]`: Hold (no action)
+
+## Spectral Analysis (频谱分析)
+
+### Overview
+
+Spectral analysis uses Fast Fourier Transform (FFT) to analyze stock price time series in the frequency domain, identifying dominant trading cycles and periodic patterns.
+
+### Using Spectral Analysis
+
+1. **Open the Analysis Window**:
+   - Select a stock from the stock list
+   - Click the 📈 button in the main interface toolbar
+   - The spectral analysis window will open
+
+2. **Run Analysis**:
+   - Click "🔍 开始分析" (Start Analysis) button
+   - The system will analyze the last 365 days of price data
+   - Results will show dominant cycles and display a power spectrum chart
+
+3. **Understanding Results**:
+   - **主要交易周期** (Dominant Cycles): Top 5 most significant cycles identified
+   - **周期描述**: Human-readable format (e.g., "30天周期", "2.5周周期")
+   - **频率**: Frequency in cycles per day
+   - **功率占比**: Percentage of total power in the spectrum
+   - **频谱图**: Visual representation of power spectrum with marked dominant cycles
+
+### Example Output
+
+```
+🎯 主要交易周期:
+
+1. 30天周期 (30.00天)
+   频率: 0.033333 周期/天
+   功率占比: 15.23%
+
+2. 7天周期 (7.00天)
+   频率: 0.142857 周期/天
+   功率占比: 8.45%
+```
+
+### Technical Details
+
+- **Data Window**: Uses 365 days of historical data for better frequency resolution
+- **Period Range**: Analyzes cycles from 2 days to 365 days
+- **Window Function**: Applies Hanning window to reduce spectral leakage
+- **Detrending**: Removes DC component (mean) before FFT analysis
+
+### Use Cases
+
+- **Cycle Detection**: Identify recurring patterns in stock prices
+- **Strategy Development**: Use cycle information to time entries/exits
+- **Market Research**: Understand periodic behavior in different stocks
+- **Risk Management**: Identify potential cyclical risks
+
+## Stress Testing (压力测试)
+
+### Overview
+
+Stress testing generates extreme market scenarios (black swan events) to test how trading strategies perform under adverse conditions. This is essential for evaluating strategy robustness and risk tolerance.
+
+### Stage 1: Jump Diffusion Model
+
+The jump diffusion model adds random extreme price movements to normal price fluctuations, simulating events like flash crashes, sudden market shocks, or panic selling.
+
+### Stage 2: Extreme Value Distribution
+
+The extreme value distribution uses statistical methods (GEV or Pareto distributions) to generate realistic tail risk scenarios. This provides more accurate modeling of rare but possible extreme events compared to simple threshold-based approaches.
+
+### Using Stress Testing
+
+1. **Open Settings**:
+   - Click "Trading Settings" button in the main interface
+   - Click "Stress Test Settings" button in the settings dialog
+
+2. **Configure Parameters**:
+   - **Enable Stress Testing**: Toggle to enable/disable
+   
+   **Stage 1 - Jump Diffusion:**
+   - **Jump Probability**: Probability of a jump event (e.g., 0.02 = 2%)
+   - **Jump Sizes**: List of jump magnitudes (e.g., -0.20, -0.15, -0.10 for -20%, -15%, -10% crashes)
+   - **Jump Direction**: Choose "down" (crashes), "up" (surges), or "both"
+   
+**Stage 2 - Extreme Value Distribution:**
+- **Extreme Probability**: Probability of extreme value event (e.g., 0.01 = 1%)
+- **Distribution Type**: Choose "GEV" (Generalized Extreme Value), "Pareto", or "Simple"
+- **Extreme Threshold**: Threshold for extreme events (e.g., -0.15 for -15%)
+
+**Stage 3 - Quantile Regression:**
+- **Enable Quantile Regression**: Toggle to enable machine learning-based prediction
+- **Quantile Level**: Quantile level to predict (e.g., 0.01 for 1% tail risk)
+
+3. **Apply Settings**:
+   - Click "Save" to apply settings
+   - **Important**: You need to reload stock data for changes to take effect
+
+### Example Configuration
+
+- **Moderate Stress**: 2% probability, jumps of -15%, -10%, -5%
+- **Aggressive Stress**: 5% probability, jumps of -25%, -20%, -15%, -10%
+- **Custom**: Adjust based on your testing needs
+
+### Use Cases
+
+- **Strategy Robustness**: Test how strategies handle extreme market conditions
+- **Risk Assessment**: Identify maximum potential losses under stress
+- **Strategy Optimization**: Find and fix vulnerabilities before real trading
+- **Educational**: Understand the impact of black swan events on portfolios
+
+### Technical Details
+
+**Stage 1 - Jump Diffusion:**
+- **Model**: Jump diffusion (Merton model)
+- **Method**: Random jumps added to normal price movements
+- **Use Case**: Simulating flash crashes and sudden shocks
+
+**Stage 2 - Extreme Value Distribution:**
+- **Models**: 
+  - **GEV (Generalized Extreme Value)**: Heavy-tailed distribution for extreme events
+  - **Pareto**: Power-law distribution for tail risk
+  - **Simple**: Threshold-based fallback (no scipy required)
+- **Method**: Statistical distributions generate realistic tail scenarios
+- **Use Case**: Modeling rare but possible extreme market conditions
+- **Dependencies**: scipy optional (manual implementation available)
+
+**Stage 3 - Quantile Regression:**
+- **Model**: Machine learning-based quantile prediction
+- **Method**: Uses technical indicators and market features to predict extreme quantiles
+- **Features**: Mean return, volatility, momentum, price position, drawdown, volatility trend
+- **Use Case**: Intelligent prediction of extreme scenarios based on current market state
+- **Dependencies**: scikit-learn optional (simple statistical fallback available)
+- **Training**: Can be trained on historical data for improved accuracy
+
+**General:**
+- **Integration**: Applied to both single-day data and historical series
+- **Reproducibility**: Uses deterministic seeds for consistent results
+- **Default**: Disabled by default (enable when needed)
+- **Compatibility**: Works without scipy (uses manual implementations)
+
 ## Project Structure
 
 ```
@@ -154,7 +434,8 @@ stock-trading-simulator/
 │
 ├── analysis/                # Performance analysis modules
 │   ├── __init__.py
-│   └── performance.py
+│   ├── performance.py        # Performance metrics
+│   └── spectral.py           # FFT-based spectral analysis
 │
 ├── data/                    # Data management modules
 │   ├── __init__.py
@@ -163,6 +444,15 @@ stock-trading-simulator/
 ├── trading/                 # Trading logic modules
 │   ├── __init__.py
 │   └── trade_manager.py
+│
+├── strategies/              # Algorithmic trading strategies
+│   ├── __init__.py
+│   ├── base_strategy.py     # Base class for all strategies
+│   ├── example_strategy.py  # Example strategies
+│   ├── backtest_engine.py  # Backtest engine
+│   └── tournament_engine.py # Tournament engine
+│
+├── run_tournament.py        # Command-line tournament runner
 │
 ├── utils/                   # Utility modules
 │   ├── __init__.py

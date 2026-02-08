@@ -119,6 +119,16 @@ class StockDataManager:
         self.stock_list = self._get_default_stock_list()
         self.use_mock_data = self._determine_mock_mode(use_mock_data)
         
+        # Initialize stress testing (stage 1: jump diffusion)
+        try:
+            from analysis.stress_test import StressTestConfig, JumpDiffusionModel, create_default_config
+            self.stress_config = create_default_config()
+            self.jump_model = JumpDiffusionModel(self.stress_config)
+        except ImportError:
+            # If stress test module not available, disable it
+            self.stress_config = None
+            self.jump_model = None
+        
     def _load_data(self):
         """Load stored data"""
         if os.path.exists(self.data_file):
@@ -559,6 +569,17 @@ class StockDataManager:
                         impact = float(ev.get("impact_pct", 0.0))
                         change_percent += impact
             
+            # Apply stress testing (jump diffusion) - Stage 1
+            if self.jump_model:
+                seed_jump = f"{code}-{date_str}-jump"
+                change_percent, jump_occurred = self.jump_model.apply_jump(change_percent, seed_jump)
+                
+                # Apply extreme value distribution - Stage 2
+                # Only apply if jump didn't occur (to avoid double-counting)
+                if not jump_occurred:
+                    seed_extreme = f"{code}-{date_str}-extreme"
+                    change_percent, extreme_occurred = self.jump_model.apply_extreme_value(change_percent, seed_extreme)
+            
             # Calculate close price based on previous day
             close_price = round(current_price * (1 + change_percent / 100), 2)
             close_price = max(close_price, 5.0)  # Minimum price
@@ -652,6 +673,19 @@ class StockDataManager:
                 if start <= date <= end:
                     impact = float(ev.get("impact_pct", 0.0))
                     change_percent += impact
+        
+        # Apply stress testing (jump diffusion) - Stage 1
+        if self.jump_model:
+            seed_jump = f"{code}-{date_str}-jump"
+            change_percent, jump_occurred = self.jump_model.apply_jump(change_percent, seed_jump)
+            
+            # Apply extreme value distribution - Stage 2
+            # Only apply if jump didn't occur (to avoid double-counting)
+            if not jump_occurred:
+                seed_extreme = f"{code}-{date_str}-extreme"
+                change_percent, extreme_occurred = self.jump_model.apply_extreme_value(change_percent, seed_extreme)
+            
+            change_percent = round(change_percent, 2)  # Round after stress testing
 
         # Calculate price based on reference price (previous day or base)
         price = round(reference_price * (1 + change_percent / 100), 2)
@@ -703,6 +737,70 @@ class StockDataManager:
             self._save_data()
         except Exception as e:
             print(f"Failed to clear cached prices for event on {code}: {e}")
+    
+    def set_stress_test_config(
+        self,
+        enabled: bool = None,
+        jump_probability: float = None,
+        jump_sizes = None,  # List[float]
+        jump_direction: str = None,
+        extreme_probability: float = None,
+        extreme_threshold: float = None,
+        extreme_distribution: str = None,
+        use_quantile_regression: bool = None,
+        quantile_level: float = None
+    ):
+        """Configure stress testing parameters.
+        
+        Args:
+            enabled: Enable/disable stress testing
+            jump_probability: Probability of jump event (0.0 to 1.0)
+            jump_sizes: List of jump sizes (as fractions, e.g., -0.20 for -20%)
+            jump_direction: "down", "up", or "both"
+            extreme_probability: Probability of extreme value event (0.0 to 1.0)
+            extreme_threshold: Threshold for extreme events (negative for crashes)
+            extreme_distribution: Distribution type ("gev", "pareto", or "simple")
+            use_quantile_regression: Enable quantile regression (Stage 3)
+            quantile_level: Quantile level for prediction (e.g., 0.01 for 1% tail)
+        """
+        if self.stress_config is None or self.jump_model is None:
+            # Try to initialize if not already done
+            try:
+                from analysis.stress_test import StressTestConfig, JumpDiffusionModel, create_default_config
+                self.stress_config = create_default_config()
+                self.jump_model = JumpDiffusionModel(self.stress_config)
+            except ImportError:
+                print("Warning: Stress test module not available")
+                return
+        
+        # Update configuration
+        if enabled is not None:
+            self.stress_config.enabled = enabled
+        if jump_probability is not None:
+            self.stress_config.jump_probability = max(0.0, min(1.0, jump_probability))
+        if jump_sizes is not None:
+            self.stress_config.jump_sizes = jump_sizes
+        if jump_direction is not None:
+            self.stress_config.jump_direction = jump_direction
+        if extreme_probability is not None:
+            self.stress_config.extreme_probability = max(0.0, min(1.0, extreme_probability))
+        if extreme_threshold is not None:
+            self.stress_config.extreme_threshold = extreme_threshold
+        if extreme_distribution is not None:
+            self.stress_config.extreme_distribution = extreme_distribution
+        if use_quantile_regression is not None:
+            self.stress_config.use_quantile_regression = use_quantile_regression
+        if quantile_level is not None:
+            self.stress_config.quantile_level = max(0.0, min(1.0, quantile_level))
+        
+        # Recreate model with new config
+        self.jump_model = JumpDiffusionModel(self.stress_config)
+    
+    def get_stress_test_config(self):
+        """Get current stress test configuration."""
+        if self.stress_config is None:
+            return None
+        return self.stress_config.to_dict()
 
 class TradeManager:
     def __init__(self, initial_cash=100000.0):
@@ -1663,6 +1761,66 @@ class StockTradeSimulator:
                 text="🤖",
                 command=self.generate_ai_analysis,
                 bg=self.success_color,
+                fg='white',
+                font=('Segoe UI', self.base_font_size + 2, 'bold'),
+                relief='flat',
+                cursor='hand2',
+                padx=6,
+                pady=3,
+                width=2
+            ).pack(side=tk.LEFT, padx=2)
+        
+        # Strategy Tournament button - Use ModernUI if available
+        if MODERN_UI_AVAILABLE and ModernUI:
+            tournament_btn = ModernUI.Button(
+                export_btn_frame,
+                text="⚔️",
+                command=self.open_strategy_tournament,
+                font=('Segoe UI', self.base_font_size + 2, 'bold'),
+                fg_color="#9333EA",  # Purple color for tournament
+                hover_color="#7C3AED",
+                text_color='white',
+                corner_radius=6,
+                width=35,
+                height=30
+            )
+            tournament_btn.pack(side=tk.LEFT, padx=2)
+        else:
+            tk.Button(
+                export_btn_frame,
+                text="⚔️",
+                command=self.open_strategy_tournament,
+                bg="#9333EA",
+                fg='white',
+                font=('Segoe UI', self.base_font_size + 2, 'bold'),
+                relief='flat',
+                cursor='hand2',
+                padx=6,
+                pady=3,
+                width=2
+            ).pack(side=tk.LEFT, padx=2)
+        
+        # Spectral Analysis button - Use ModernUI if available
+        if MODERN_UI_AVAILABLE and ModernUI:
+            spectral_btn = ModernUI.Button(
+                export_btn_frame,
+                text="📈",
+                command=self.open_spectral_analysis,
+                font=('Segoe UI', self.base_font_size + 2, 'bold'),
+                fg_color="#F59E0B",  # Amber color for spectral analysis
+                hover_color="#D97706",
+                text_color='white',
+                corner_radius=6,
+                width=35,
+                height=30
+            )
+            spectral_btn.pack(side=tk.LEFT, padx=2)
+        else:
+            tk.Button(
+                export_btn_frame,
+                text="📈",
+                command=self.open_spectral_analysis,
+                bg="#F59E0B",
                 fg='white',
                 font=('Segoe UI', self.base_font_size + 2, 'bold'),
                 relief='flat',
@@ -3064,7 +3222,7 @@ class StockTradeSimulator:
                 messagebox.showerror("Error", "Please enter valid numeric values.")
 
         btn_frame = tk.Frame(frame, bg=self.bg_color)
-        btn_frame.grid(row=4, column=0, columnspan=2, pady=(12, 0))
+        btn_frame.grid(row=10, column=0, columnspan=2, pady=(12, 0))
 
         tk.Button(
             btn_frame,
@@ -3077,6 +3235,19 @@ class StockTradeSimulator:
             borderwidth=0,
             cursor='hand2',
             padx=16,
+            pady=4
+        ).pack(side=tk.LEFT, padx=(0, 8))
+        
+        tk.Button(
+            btn_frame,
+            text="Stress Test Settings",
+            command=self.open_stress_test_settings,
+            bg="#F59E0B",
+            fg='white',
+            font=('Segoe UI', self.base_font_size, 'bold'),
+            relief='flat',
+            cursor='hand2',
+            padx=10,
             pady=4
         ).pack(side=tk.LEFT, padx=(0, 8))
 
@@ -4048,6 +4219,1072 @@ class StockTradeSimulator:
             self.export_analyzer.generate_ai_analysis()
         else:
             messagebox.showerror("Feature Unavailable", "AI analysis feature module not loaded. Please check if export_analysis.py file exists.")
+    
+    def open_stress_test_settings(self):
+        """Open stress test configuration dialog."""
+        try:
+            from analysis.stress_test import StressTestConfig
+            
+            # Get current config
+            current_config = self.data_manager.get_stress_test_config()
+            if current_config is None:
+                # Initialize if not available
+                self.data_manager.set_stress_test_config(enabled=False)
+                current_config = self.data_manager.get_stress_test_config()
+            
+            # Create settings window
+            settings_window = tk.Toplevel(self.root)
+            settings_window.title("压力测试设置 (Stress Test Settings)")
+            settings_window.geometry("550x750")
+            settings_window.transient(self.root)
+            settings_window.configure(bg=self.bg_color)
+            
+            # Header
+            header_frame = tk.Frame(settings_window, bg=self.header_bg, height=50)
+            header_frame.pack(fill=tk.X, padx=0, pady=0)
+            header_frame.pack_propagate(False)
+            
+            tk.Label(
+                header_frame,
+                text="⚡ 压力测试设置 - 跳跃扩散模型",
+                font=('Segoe UI', 12, 'bold'),
+                bg=self.header_bg,
+                fg=self.text_color
+            ).pack(pady=12)
+            
+            # Main frame
+            main_frame = tk.Frame(settings_window, bg=self.panel_bg, highlightbackground=self.border_color, highlightthickness=1)
+            main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+            
+            content_frame = tk.Frame(main_frame, bg=self.panel_bg)
+            content_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
+            
+            # Enable/Disable checkbox
+            enabled_var = tk.BooleanVar(value=current_config.get('enabled', False))
+            enabled_check = tk.Checkbutton(
+                content_frame,
+                text="启用压力测试 (Enable Stress Testing)",
+                variable=enabled_var,
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 10, 'bold'),
+                selectcolor=self.panel_bg
+            )
+            enabled_check.grid(row=0, column=0, columnspan=2, sticky='w', pady=(0, 15))
+            
+            # Jump probability
+            tk.Label(
+                content_frame,
+                text="跳跃概率 (Jump Probability):",
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 10, 'bold')
+            ).grid(row=1, column=0, sticky='w', pady=5)
+            
+            jump_prob_var = tk.StringVar(value=f"{current_config.get('jump_probability', 0.02):.4f}")
+            jump_prob_entry = tk.Entry(
+                content_frame,
+                textvariable=jump_prob_var,
+                width=15,
+                bg='#F5F5F5',
+                fg=self.text_color,
+                font=('Segoe UI', 10)
+            )
+            jump_prob_entry.grid(row=1, column=1, sticky='w', pady=5, padx=(10, 0))
+            
+            tk.Label(
+                content_frame,
+                text="(例如: 0.02 = 2% 概率触发跳跃)",
+                bg=self.panel_bg,
+                fg='#666666',
+                font=('Segoe UI', 8)
+            ).grid(row=2, column=0, columnspan=2, sticky='w', pady=(0, 10))
+            
+            # Jump sizes
+            tk.Label(
+                content_frame,
+                text="跳跃幅度 (Jump Sizes):",
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 10, 'bold')
+            ).grid(row=3, column=0, sticky='w', pady=5)
+            
+            jump_sizes_var = tk.StringVar(
+                value=', '.join([f"{x:.2f}" for x in current_config.get('jump_sizes', [-0.20, -0.15, -0.10])])
+            )
+            jump_sizes_entry = tk.Entry(
+                content_frame,
+                textvariable=jump_sizes_var,
+                width=20,
+                bg='#F5F5F5',
+                fg=self.text_color,
+                font=('Segoe UI', 10)
+            )
+            jump_sizes_entry.grid(row=3, column=1, sticky='w', pady=5, padx=(10, 0))
+            
+            tk.Label(
+                content_frame,
+                text="(例如: -0.20, -0.15, -0.10 表示 -20%, -15%, -10% 暴跌)",
+                bg=self.panel_bg,
+                fg='#666666',
+                font=('Segoe UI', 8)
+            ).grid(row=4, column=0, columnspan=2, sticky='w', pady=(0, 10))
+            
+            # Jump direction
+            tk.Label(
+                content_frame,
+                text="跳跃方向 (Jump Direction):",
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 10, 'bold')
+            ).grid(row=5, column=0, sticky='w', pady=5)
+            
+            direction_var = tk.StringVar(value=current_config.get('jump_direction', 'down'))
+            direction_frame = tk.Frame(content_frame, bg=self.panel_bg)
+            direction_frame.grid(row=5, column=1, sticky='w', pady=5, padx=(10, 0))
+            
+            tk.Radiobutton(
+                direction_frame,
+                text="下跌 (Down)",
+                variable=direction_var,
+                value='down',
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 9),
+                selectcolor=self.panel_bg
+            ).pack(side=tk.LEFT, padx=(0, 10))
+            
+            tk.Radiobutton(
+                direction_frame,
+                text="上涨 (Up)",
+                variable=direction_var,
+                value='up',
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 9),
+                selectcolor=self.panel_bg
+            ).pack(side=tk.LEFT, padx=(0, 10))
+            
+            tk.Radiobutton(
+                direction_frame,
+                text="双向 (Both)",
+                variable=direction_var,
+                value='both',
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 9),
+                selectcolor=self.panel_bg
+            ).pack(side=tk.LEFT)
+            
+            # Separator for extreme value distribution (Stage 2)
+            separator = tk.Frame(content_frame, bg='#CCCCCC', height=1)
+            separator.grid(row=6, column=0, columnspan=2, sticky='ew', pady=(20, 10))
+            
+            tk.Label(
+                content_frame,
+                text="极值分布 (Extreme Value Distribution) - Stage 2",
+                bg=self.panel_bg,
+                fg=self.accent_color,
+                font=('Segoe UI', 10, 'bold')
+            ).grid(row=7, column=0, columnspan=2, sticky='w', pady=(0, 10))
+            
+            # Extreme probability
+            tk.Label(
+                content_frame,
+                text="极值事件概率 (Extreme Probability):",
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 10, 'bold')
+            ).grid(row=8, column=0, sticky='w', pady=5)
+            
+            extreme_prob_var = tk.StringVar(value=f"{current_config.get('extreme_probability', 0.01):.4f}")
+            extreme_prob_entry = tk.Entry(
+                content_frame,
+                textvariable=extreme_prob_var,
+                width=15,
+                bg='#F5F5F5',
+                fg=self.text_color,
+                font=('Segoe UI', 10)
+            )
+            extreme_prob_entry.grid(row=8, column=1, sticky='w', pady=5, padx=(10, 0))
+            
+            tk.Label(
+                content_frame,
+                text="(例如: 0.01 = 1% 概率触发极值事件)",
+                bg=self.panel_bg,
+                fg='#666666',
+                font=('Segoe UI', 8)
+            ).grid(row=9, column=0, columnspan=2, sticky='w', pady=(0, 10))
+            
+            # Extreme distribution type
+            tk.Label(
+                content_frame,
+                text="分布类型 (Distribution Type):",
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 10, 'bold')
+            ).grid(row=10, column=0, sticky='w', pady=5)
+            
+            dist_type_var = tk.StringVar(value=current_config.get('extreme_distribution', 'gev'))
+            dist_frame = tk.Frame(content_frame, bg=self.panel_bg)
+            dist_frame.grid(row=10, column=1, sticky='w', pady=5, padx=(10, 0))
+            
+            tk.Radiobutton(
+                dist_frame,
+                text="GEV",
+                variable=dist_type_var,
+                value='gev',
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 9),
+                selectcolor=self.panel_bg
+            ).pack(side=tk.LEFT, padx=(0, 10))
+            
+            tk.Radiobutton(
+                dist_frame,
+                text="Pareto",
+                variable=dist_type_var,
+                value='pareto',
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 9),
+                selectcolor=self.panel_bg
+            ).pack(side=tk.LEFT, padx=(0, 10))
+            
+            tk.Radiobutton(
+                dist_frame,
+                text="Simple",
+                variable=dist_type_var,
+                value='simple',
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 9),
+                selectcolor=self.panel_bg
+            ).pack(side=tk.LEFT)
+            
+            tk.Label(
+                content_frame,
+                text="(GEV: 广义极值分布, Pareto: 帕累托分布, Simple: 简单阈值)",
+                bg=self.panel_bg,
+                fg='#666666',
+                font=('Segoe UI', 8)
+            ).grid(row=11, column=0, columnspan=2, sticky='w', pady=(0, 10))
+            
+            # Extreme threshold
+            tk.Label(
+                content_frame,
+                text="极值阈值 (Extreme Threshold):",
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 10, 'bold')
+            ).grid(row=12, column=0, sticky='w', pady=5)
+            
+            extreme_threshold_var = tk.StringVar(value=f"{current_config.get('extreme_threshold', -0.15):.3f}")
+            extreme_threshold_entry = tk.Entry(
+                content_frame,
+                textvariable=extreme_threshold_var,
+                width=15,
+                bg='#F5F5F5',
+                fg=self.text_color,
+                font=('Segoe UI', 10)
+            )
+            extreme_threshold_entry.grid(row=12, column=1, sticky='w', pady=5, padx=(10, 0))
+            
+            tk.Label(
+                content_frame,
+                text="(例如: -0.15 表示 -15% 的极值阈值)",
+                bg=self.panel_bg,
+                fg='#666666',
+                font=('Segoe UI', 8)
+            ).grid(row=13, column=0, columnspan=2, sticky='w', pady=(0, 15))
+            
+            # Separator for Quantile Regression (Stage 3)
+            separator2 = tk.Frame(content_frame, bg='#CCCCCC', height=1)
+            separator2.grid(row=14, column=0, columnspan=2, sticky='ew', pady=(10, 10))
+            
+            tk.Label(
+                content_frame,
+                text="分位数回归 (Quantile Regression) - Stage 3",
+                bg=self.panel_bg,
+                fg=self.accent_color,
+                font=('Segoe UI', 10, 'bold')
+            ).grid(row=15, column=0, columnspan=2, sticky='w', pady=(0, 10))
+            
+            # Use Quantile Regression checkbox
+            use_qr_var = tk.BooleanVar(value=current_config.get('use_quantile_regression', False))
+            use_qr_check = tk.Checkbutton(
+                content_frame,
+                text="启用分位数回归 (Enable Quantile Regression)",
+                variable=use_qr_var,
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 10, 'bold'),
+                selectcolor=self.panel_bg
+            )
+            use_qr_check.grid(row=16, column=0, columnspan=2, sticky='w', pady=(0, 10))
+            
+            # Quantile level
+            tk.Label(
+                content_frame,
+                text="分位数水平 (Quantile Level):",
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 10, 'bold')
+            ).grid(row=17, column=0, sticky='w', pady=5)
+            
+            quantile_level_var = tk.StringVar(value=f"{current_config.get('quantile_level', 0.01):.4f}")
+            quantile_level_entry = tk.Entry(
+                content_frame,
+                textvariable=quantile_level_var,
+                width=15,
+                bg='#F5F5F5',
+                fg=self.text_color,
+                font=('Segoe UI', 10)
+            )
+            quantile_level_entry.grid(row=17, column=1, sticky='w', pady=5, padx=(10, 0))
+            
+            tk.Label(
+                content_frame,
+                text="(例如: 0.01 = 1% 尾部风险, 0.05 = 5% 尾部风险)",
+                bg=self.panel_bg,
+                fg='#666666',
+                font=('Segoe UI', 8)
+            ).grid(row=18, column=0, columnspan=2, sticky='w', pady=(0, 10))
+            
+            # Info text
+            info_text = (
+                "压力测试包含三个阶段：\n"
+                "阶段1 (跳跃扩散): 随机添加大幅价格跳跃\n"
+                "阶段2 (极值分布): 使用统计分布生成尾部风险\n"
+                "阶段3 (分位数回归): 使用机器学习预测极端分位数\n\n"
+                "注意：启用后需要重新生成数据才能看到效果。\n"
+                "阶段3需要 scikit-learn (可选，有回退方法)。"
+            )
+            tk.Label(
+                content_frame,
+                text=info_text,
+                bg=self.panel_bg,
+                fg='#666666',
+                font=('Segoe UI', 9),
+                justify=tk.LEFT
+            ).grid(row=19, column=0, columnspan=2, sticky='w', pady=(15, 0))
+            
+            # Buttons
+            btn_frame = tk.Frame(main_frame, bg=self.panel_bg)
+            btn_frame.pack(fill=tk.X, padx=15, pady=15)
+            
+            def save_stress_settings():
+                try:
+                    enabled = enabled_var.get()
+                    jump_prob = float(jump_prob_var.get())
+                    
+                    # Parse jump sizes
+                    jump_sizes_str = jump_sizes_var.get().strip()
+                    jump_sizes = [float(x.strip()) for x in jump_sizes_str.split(',')]
+                    
+                    direction = direction_var.get()
+                    
+                    # Validate
+                    if jump_prob < 0 or jump_prob > 1:
+                        messagebox.showerror("错误", "跳跃概率必须在 0 到 1 之间")
+                        return
+                    
+                    if not jump_sizes:
+                        messagebox.showerror("错误", "至少需要指定一个跳跃幅度")
+                        return
+                    
+                    # Parse extreme value settings
+                    extreme_prob = float(extreme_prob_var.get())
+                    extreme_threshold = float(extreme_threshold_var.get())
+                    extreme_dist = dist_type_var.get()
+                    
+                    # Parse quantile regression settings
+                    use_qr = use_qr_var.get()
+                    quantile_level = float(quantile_level_var.get())
+                    
+                    # Validate extreme settings
+                    if extreme_prob < 0 or extreme_prob > 1:
+                        messagebox.showerror("错误", "极值概率必须在 0 到 1 之间")
+                        return
+                    
+                    # Validate quantile level
+                    if quantile_level < 0 or quantile_level > 1:
+                        messagebox.showerror("错误", "分位数水平必须在 0 到 1 之间")
+                        return
+                    
+                    # Apply settings
+                    self.data_manager.set_stress_test_config(
+                        enabled=enabled,
+                        jump_probability=jump_prob,
+                        jump_sizes=jump_sizes,
+                        jump_direction=direction,
+                        extreme_probability=extreme_prob,
+                        extreme_threshold=extreme_threshold,
+                        extreme_distribution=extreme_dist,
+                        use_quantile_regression=use_qr,
+                        quantile_level=quantile_level
+                    )
+                    
+                    messagebox.showinfo("成功", "压力测试设置已保存！\n\n注意：需要重新加载股票数据才能看到效果。")
+                    settings_window.destroy()
+                except ValueError as e:
+                    messagebox.showerror("错误", f"请输入有效的数值：\n{str(e)}")
+                except Exception as e:
+                    messagebox.showerror("错误", f"保存设置失败：\n{str(e)}")
+            
+            tk.Button(
+                btn_frame,
+                text="保存 (Save)",
+                command=save_stress_settings,
+                bg=self.accent_color,
+                fg='white',
+                font=('Segoe UI', 10, 'bold'),
+                relief='flat',
+                cursor='hand2',
+                padx=20,
+                pady=8
+            ).pack(side=tk.LEFT, padx=(0, 10))
+            
+            tk.Button(
+                btn_frame,
+                text="取消 (Cancel)",
+                command=settings_window.destroy,
+                bg='#6B7280',
+                fg='white',
+                font=('Segoe UI', 10),
+                relief='flat',
+                cursor='hand2',
+                padx=20,
+                pady=8
+            ).pack(side=tk.LEFT)
+            
+        except ImportError as e:
+            messagebox.showerror("模块未找到", f"压力测试模块未找到：\n{str(e)}\n\n请确保 analysis/stress_test.py 文件存在。")
+        except Exception as e:
+            messagebox.showerror("错误", f"打开压力测试设置失败：\n{str(e)}")
+    
+    def open_spectral_analysis(self):
+        """Open spectral analysis window for current stock"""
+        try:
+            from analysis.spectral import analyze_stock_spectrum, format_period_description
+            
+            # Check if a stock is selected
+            selected_indices = self.stock_listbox.curselection()
+            if not selected_indices:
+                messagebox.showwarning("No Stock Selected", "请先选择一个股票进行分析。")
+                return
+            
+            # Get selected stock code
+            selected_index = selected_indices[0]
+            stock_code = self.stock_listbox.get(selected_index).split(' - ')[0]
+            
+            # Get stock name
+            stock_name = self.stocks.get(stock_code, {}).get('name', stock_code)
+            
+            # Create spectral analysis window
+            spectral_window = tk.Toplevel(self.root)
+            spectral_window.title(f"频谱分析 - {stock_code} ({stock_name})")
+            spectral_window.geometry("1000x700")
+            spectral_window.transient(self.root)
+            spectral_window.configure(bg=self.bg_color)
+            
+            # Header
+            header_frame = tk.Frame(spectral_window, bg=self.header_bg, height=60)
+            header_frame.pack(fill=tk.X, padx=0, pady=0)
+            header_frame.pack_propagate(False)
+            
+            tk.Label(
+                header_frame,
+                text=f"📈 频谱分析 - {stock_code} ({stock_name})",
+                font=('Segoe UI', 14, 'bold'),
+                bg=self.header_bg,
+                fg=self.text_color
+            ).pack(pady=15)
+            
+            # Control panel
+            control_frame = tk.Frame(spectral_window, bg=self.panel_bg, highlightbackground=self.border_color, highlightthickness=1)
+            control_frame.pack(fill=tk.X, padx=10, pady=10)
+            
+            # Analysis button
+            analyze_btn_frame = tk.Frame(control_frame, bg=self.panel_bg)
+            analyze_btn_frame.pack(fill=tk.X, padx=10, pady=10)
+            
+            def run_analysis():
+                try:
+                    # Get historical data (use longer window for better FFT analysis)
+                    hist_data = self.data_manager.get_stock_history(
+                        stock_code, 
+                        self.current_date, 
+                        window_days=365  # Use 1 year of data for better frequency resolution
+                    )
+                    
+                    if hist_data is None or len(hist_data) < 10:
+                        messagebox.showerror("数据不足", f"无法获取足够的股票数据进行分析。\n需要至少10天的数据，当前数据量：{len(hist_data) if hist_data is not None else 0}")
+                        return
+                    
+                    # Show loading
+                    results_text.config(state=tk.NORMAL)
+                    results_text.delete(1.0, tk.END)
+                    results_text.insert(tk.END, "正在分析...\n")
+                    results_text.insert(tk.END, f"数据量: {len(hist_data)} 天\n")
+                    results_text.config(state=tk.DISABLED)
+                    analyze_btn.config(state=tk.DISABLED)
+                    
+                    # Run analysis in thread to avoid blocking UI
+                    def analyze_in_thread():
+                        try:
+                            # Perform spectral analysis
+                            result = analyze_stock_spectrum(
+                                hist_data,
+                                price_column='close',
+                                min_period_days=2.0,
+                                max_period_days=365.0,
+                                top_n=5
+                            )
+                            
+                            # Update UI in main thread
+                            self.root.after(0, lambda r=result: display_results(r))
+                        except Exception as e:
+                            error_msg = str(e)
+                            self.root.after(0, lambda msg=error_msg: show_error(msg))
+                    
+                    def display_results(result):
+                        try:
+                            # Clear previous chart
+                            for widget in chart_frame.winfo_children():
+                                widget.destroy()
+                            
+                            # Display dominant cycles
+                            results_text.config(state=tk.NORMAL)
+                            results_text.delete(1.0, tk.END)
+                            
+                            results_text.insert(tk.END, f"📊 频谱分析结果 - {stock_code}\n", "header")
+                            results_text.insert(tk.END, "=" * 60 + "\n\n")
+                            
+                            if result['dominant_cycles']:
+                                results_text.insert(tk.END, "🎯 主要交易周期:\n\n", "subheader")
+                                for i, (period, freq, power) in enumerate(result['dominant_cycles'], 1):
+                                    period_desc = format_period_description(period)
+                                    power_pct = (power / result['total_power'] * 100) if result['total_power'] > 0 else 0
+                                    results_text.insert(tk.END, f"{i}. {period_desc} ({period:.2f}天)\n")
+                                    results_text.insert(tk.END, f"   频率: {freq:.6f} 周期/天\n")
+                                    results_text.insert(tk.END, f"   功率占比: {power_pct:.2f}%\n\n")
+                            else:
+                                results_text.insert(tk.END, "⚠️ 未检测到明显的周期性模式\n\n")
+                            
+                            results_text.insert(tk.END, f"总功率: {result['total_power']:.2f}\n")
+                            if result['dominant_period']:
+                                results_text.insert(tk.END, f"主导周期: {format_period_description(result['dominant_period'])}\n")
+                            
+                            results_text.config(state=tk.DISABLED)
+                            
+                            # Create spectrum chart
+                            if MATPLOTLIB_AVAILABLE and len(result['frequencies']) > 0:
+                                fig = Figure(figsize=(10, 6), dpi=100)
+                                ax = fig.add_subplot(111)
+                                
+                                # Convert frequencies to periods for x-axis
+                                non_zero_freq = result['frequencies'] > 0
+                                periods = np.zeros_like(result['frequencies'])
+                                periods[non_zero_freq] = 1.0 / result['frequencies'][non_zero_freq]
+                                
+                                # Filter to reasonable range
+                                valid_range = (periods >= 2) & (periods <= 365)
+                                periods_display = periods[valid_range]
+                                power_display = result['power_spectrum'][valid_range]
+                                
+                                # Plot power spectrum
+                                ax.plot(periods_display, power_display, 'b-', linewidth=1.5, label='功率谱')
+                                
+                                # Mark dominant cycles
+                                for period, freq, power in result['dominant_cycles']:
+                                    if 2 <= period <= 365:
+                                        # Find closest point in spectrum
+                                        idx = np.argmin(np.abs(periods_display - period))
+                                        ax.plot(periods_display[idx], power_display[idx], 'ro', markersize=10, label='主要周期' if period == result['dominant_cycles'][0][0] else '')
+                                        ax.annotate(
+                                            format_period_description(period),
+                                            xy=(periods_display[idx], power_display[idx]),
+                                            xytext=(10, 10),
+                                            textcoords='offset points',
+                                            fontsize=9,
+                                            bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', alpha=0.7),
+                                            arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0')
+                                        )
+                                
+                                ax.set_xlabel('周期 (天)', fontsize=11)
+                                ax.set_ylabel('功率', fontsize=11)
+                                ax.set_title(f'{stock_code} 价格频谱分析', fontsize=13, fontweight='bold')
+                                ax.grid(True, alpha=0.3)
+                                ax.legend()
+                                
+                                # Set x-axis to show periods in days
+                                ax.set_xlim(2, 365)
+                                
+                                canvas = FigureCanvasTkAgg(fig, chart_frame)
+                                canvas.draw()
+                                canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+                            else:
+                                tk.Label(
+                                    chart_frame,
+                                    text="需要 matplotlib 来显示频谱图",
+                                    bg=self.panel_bg,
+                                    fg=self.text_color,
+                                    font=('Segoe UI', 10)
+                                ).pack(pady=20)
+                            
+                            analyze_btn.config(state=tk.NORMAL)
+                        except Exception as e:
+                            show_error(str(e))
+                            analyze_btn.config(state=tk.NORMAL)
+                    
+                    def show_error(error_msg):
+                        results_text.config(state=tk.NORMAL)
+                        results_text.delete(1.0, tk.END)
+                        results_text.insert(tk.END, f"❌ 分析失败:\n{error_msg}\n", "error")
+                        results_text.config(state=tk.DISABLED)
+                        analyze_btn.config(state=tk.NORMAL)
+                    
+                    # Start analysis thread
+                    analysis_thread = threading.Thread(target=analyze_in_thread, daemon=True)
+                    analysis_thread.start()
+                    
+                except Exception as e:
+                    messagebox.showerror("错误", f"频谱分析失败:\n{str(e)}")
+            
+            analyze_btn = tk.Button(
+                analyze_btn_frame,
+                text="🔍 开始分析",
+                command=run_analysis,
+                bg=self.accent_color,
+                fg='white',
+                font=('Segoe UI', 11, 'bold'),
+                relief='flat',
+                cursor='hand2',
+                padx=20,
+                pady=8
+            )
+            analyze_btn.pack(side=tk.LEFT, padx=5)
+            
+            tk.Label(
+                analyze_btn_frame,
+                text="使用FFT分析价格序列，识别主要交易周期",
+                bg=self.panel_bg,
+                fg='#666666',
+                font=('Segoe UI', 9)
+            ).pack(side=tk.LEFT, padx=10)
+            
+            # Results area
+            results_frame = tk.Frame(spectral_window, bg=self.bg_color)
+            results_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+            
+            # Left: Text results
+            left_frame = tk.Frame(results_frame, bg=self.panel_bg, highlightbackground=self.border_color, highlightthickness=1)
+            left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
+            
+            tk.Label(
+                left_frame,
+                text="分析结果",
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 11, 'bold')
+            ).pack(pady=5)
+            
+            results_text = tk.Text(
+                left_frame,
+                wrap=tk.WORD,
+                font=('Consolas', 10),
+                bg='#F5F5F5',
+                fg=self.text_color,
+                padx=10,
+                pady=10,
+                state=tk.DISABLED
+            )
+            results_text.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+            
+            # Configure text tags for formatting
+            results_text.tag_config("header", font=('Segoe UI', 12, 'bold'), foreground=self.accent_color)
+            results_text.tag_config("subheader", font=('Segoe UI', 10, 'bold'), foreground='#333333')
+            results_text.tag_config("error", foreground=self.danger_color)
+            
+            # Right: Chart
+            right_frame = tk.Frame(results_frame, bg=self.panel_bg, highlightbackground=self.border_color, highlightthickness=1)
+            right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=(5, 0))
+            
+            tk.Label(
+                right_frame,
+                text="频谱图",
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 11, 'bold')
+            ).pack(pady=5)
+            
+            chart_frame = tk.Frame(right_frame, bg=self.panel_bg)
+            chart_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+            
+            # Initial message
+            results_text.config(state=tk.NORMAL)
+            results_text.insert(tk.END, "点击「开始分析」按钮进行频谱分析\n\n")
+            results_text.insert(tk.END, "分析将使用最近365天的价格数据\n")
+            results_text.insert(tk.END, "识别主要交易周期（如30天周期、7天周期等）\n")
+            results_text.config(state=tk.DISABLED)
+            
+        except ImportError as e:
+            messagebox.showerror("模块未找到", f"频谱分析模块未找到:\n{str(e)}\n\n请确保 analysis/spectral.py 文件存在。")
+        except Exception as e:
+            messagebox.showerror("错误", f"打开频谱分析窗口失败:\n{str(e)}")
+    
+    def open_strategy_tournament(self):
+        """Open strategy tournament window"""
+        try:
+            from strategies.tournament_engine import TournamentEngine
+            import datetime
+            import threading
+            
+            # Create tournament window
+            tournament_window = tk.Toplevel(self.root)
+            tournament_window.title("The Quant Arena: Strategy Tournament")
+            tournament_window.geometry("900x700")
+            tournament_window.transient(self.root)
+            tournament_window.configure(bg=self.bg_color)
+            
+            # Header
+            header_frame = tk.Frame(tournament_window, bg=self.header_bg, height=60)
+            header_frame.pack(fill=tk.X, padx=0, pady=0)
+            header_frame.pack_propagate(False)
+            
+            tk.Label(
+                header_frame,
+                text="⚔️ The Quant Arena: Algorithmic Trading Tournament",
+                font=('Segoe UI', 14, 'bold'),
+                bg=self.header_bg,
+                fg=self.text_color
+            ).pack(pady=15)
+            
+            # Control panel
+            control_frame = tk.Frame(tournament_window, bg=self.panel_bg, highlightbackground=self.border_color, highlightthickness=1)
+            control_frame.pack(fill=tk.X, padx=10, pady=10)
+            
+            # Date selection
+            date_frame = tk.Frame(control_frame, bg=self.panel_bg)
+            date_frame.pack(fill=tk.X, padx=10, pady=10)
+            
+            tk.Label(date_frame, text="Start Date:", bg=self.panel_bg, fg=self.text_color, font=('Segoe UI', 10)).pack(side=tk.LEFT, padx=5)
+            start_date_entry = DateEntry(date_frame, width=12, background='darkblue', foreground='white', borderwidth=2, year=2024, month=1, day=1)
+            start_date_entry.pack(side=tk.LEFT, padx=5)
+            
+            tk.Label(date_frame, text="End Date:", bg=self.panel_bg, fg=self.text_color, font=('Segoe UI', 10)).pack(side=tk.LEFT, padx=5)
+            end_date_entry = DateEntry(date_frame, width=12, background='darkblue', foreground='white', borderwidth=2)
+            end_date_entry.pack(side=tk.LEFT, padx=5)
+            
+            # Use mock data checkbox
+            use_mock_var = tk.BooleanVar(value=self.use_mock_data)
+            mock_checkbox = tk.Checkbutton(
+                date_frame,
+                text="Use Mock Data",
+                variable=use_mock_var,
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 10)
+            )
+            mock_checkbox.pack(side=tk.LEFT, padx=10)
+            
+            # Strategy file selection
+            strategy_frame = tk.Frame(control_frame, bg=self.panel_bg)
+            strategy_frame.pack(fill=tk.X, padx=10, pady=5)
+            
+            tk.Label(
+                strategy_frame,
+                text="Strategy Files:",
+                bg=self.panel_bg,
+                fg=self.text_color,
+                font=('Segoe UI', 10, 'bold')
+            ).pack(side=tk.LEFT, padx=5)
+            
+            # Listbox for selected strategy files
+            strategy_list_frame = tk.Frame(strategy_frame, bg=self.panel_bg)
+            strategy_list_frame.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+            
+            strategy_listbox = tk.Listbox(
+                strategy_list_frame,
+                height=3,
+                font=('Consolas', 9),
+                bg='#F5F5F5',
+                fg=self.text_color,
+                selectmode=tk.EXTENDED
+            )
+            strategy_listbox.pack(side=tk.LEFT, fill=tk.X, expand=True)
+            
+            strategy_scrollbar = tk.Scrollbar(strategy_list_frame, orient=tk.VERTICAL, command=strategy_listbox.yview)
+            strategy_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+            strategy_listbox.config(yscrollcommand=strategy_scrollbar.set)
+            
+            # Load default strategies from strategies directory
+            # Only show files that actually contain strategy classes
+            def load_default_strategies():
+                strategies_dir = "strategies"
+                if os.path.exists(strategies_dir):
+                    try:
+                        from strategies.tournament_engine import TournamentEngine
+                        temp_engine = TournamentEngine(strategies_dir=strategies_dir)
+                        # Get all strategy files that contain actual strategies
+                        all_files = temp_engine._discover_strategy_files()
+                        for file_path in all_files:
+                            # Check if file actually contains strategy classes
+                            strategy_classes = temp_engine._load_strategy_from_file(file_path)
+                            if strategy_classes and len(strategy_classes) > 0:
+                                strategy_listbox.insert(tk.END, file_path)
+                    except Exception as e:
+                        # Fallback: just show example_strategy.py
+                        example_file = os.path.join(strategies_dir, "example_strategy.py")
+                        if os.path.exists(example_file):
+                            strategy_listbox.insert(tk.END, example_file)
+            
+            load_default_strategies()
+            
+            # Buttons for strategy management
+            strategy_btn_frame = tk.Frame(strategy_frame, bg=self.panel_bg)
+            strategy_btn_frame.pack(side=tk.LEFT, padx=5)
+            
+            def import_strategy_file():
+                """Import a strategy file from external location"""
+                file_path = filedialog.askopenfilename(
+                    title="Select Strategy File",
+                    filetypes=[("Python files", "*.py"), ("All files", "*.*")]
+                )
+                if file_path:
+                    # Copy to strategies directory
+                    import shutil
+                    filename = os.path.basename(file_path)
+                    dest_path = os.path.join("strategies", filename)
+                    try:
+                        shutil.copy2(file_path, dest_path)
+                        strategy_listbox.insert(tk.END, dest_path)
+                        messagebox.showinfo("Success", f"Strategy file imported: {filename}")
+                    except Exception as e:
+                        messagebox.showerror("Error", f"Failed to import file: {e}")
+            
+            def remove_strategy():
+                """Remove selected strategy files from list"""
+                selected = strategy_listbox.curselection()
+                if selected:
+                    # Remove in reverse order to maintain indices
+                    for index in reversed(selected):
+                        strategy_listbox.delete(index)
+                else:
+                    messagebox.showinfo("Info", "Please select strategy files to remove")
+            
+            import_btn = tk.Button(
+                strategy_btn_frame,
+                text="📁 Import",
+                command=import_strategy_file,
+                bg=self.accent_color,
+                fg='white',
+                font=('Segoe UI', 9),
+                relief='flat',
+                cursor='hand2',
+                padx=10,
+                pady=3
+            )
+            import_btn.pack(side=tk.TOP, pady=2)
+            
+            remove_btn = tk.Button(
+                strategy_btn_frame,
+                text="🗑️ Remove",
+                command=remove_strategy,
+                bg=self.danger_color,
+                fg='white',
+                font=('Segoe UI', 9),
+                relief='flat',
+                cursor='hand2',
+                padx=10,
+                pady=3
+            )
+            remove_btn.pack(side=tk.TOP, pady=2)
+            
+            tk.Label(
+                strategy_frame,
+                text="(Leave empty to use all strategies in strategies/ directory)",
+                bg=self.panel_bg,
+                fg='#666666',
+                font=('Segoe UI', 8)
+            ).pack(side=tk.BOTTOM, pady=2)
+            
+            # Run button
+            def run_tournament():
+                try:
+                    start_date = start_date_entry.get_date()
+                    end_date = end_date_entry.get_date()
+                    use_mock = use_mock_var.get()
+                    
+                    if start_date >= end_date:
+                        messagebox.showerror("Error", "Start date must be before end date")
+                        return
+                    
+                    # Clear results completely
+                    results_text.config(state=tk.NORMAL)
+                    results_text.delete(1.0, tk.END)
+                    results_text.insert(tk.END, "Running tournament...\n")
+                    results_text.insert(tk.END, f"Date range: {start_date} to {end_date}\n")
+                    results_text.insert(tk.END, f"Use Mock Data: {use_mock}\n\n")
+                    results_text.config(state=tk.DISABLED)
+                    run_btn.config(state=tk.DISABLED)
+                    
+                    def run_in_thread():
+                        try:
+                            # Get selected strategy files
+                            selected_files = []
+                            for i in range(strategy_listbox.size()):
+                                file_path = strategy_listbox.get(i)
+                                # Only include files that actually exist
+                                if os.path.exists(file_path):
+                                    selected_files.append(file_path)
+                            
+                            # Log which files will be used
+                            log_msg = f"Loading strategies from {len(selected_files)} file(s)...\n"
+                            if selected_files:
+                                for f in selected_files:
+                                    log_msg += f"  - {os.path.basename(f)}\n"
+                            else:
+                                log_msg += "  (Auto-discovering all strategies in strategies/ directory)\n"
+                            
+                            tournament_window.after(0, lambda msg=log_msg: update_status(msg))
+                            
+                            # Use selected files if any, otherwise auto-discover
+                            # IMPORTANT: If listbox has files but they're invalid, we still pass them
+                            # The tournament engine will filter out files without strategy classes
+                            strategy_files = selected_files if selected_files else None
+                            
+                            engine = TournamentEngine(
+                                strategies_dir="strategies",
+                                initial_cash=100000.0,
+                                fee_rate=0.0001,
+                                min_fee=1.0,
+                                slippage_per_share=0.0,
+                                use_mock_data=use_mock
+                            )
+                            
+                            # Run tournament - this will create fresh backtest engines for each strategy
+                            results_df = engine.run_tournament(
+                                start_date=start_date,
+                                end_date=end_date,
+                                stock_codes=None,
+                                strategy_files=strategy_files
+                            )
+                            
+                            # Update UI in main thread
+                            tournament_window.after(0, lambda df=results_df: display_results(df))
+                        except Exception as e:
+                            import traceback
+                            error_msg = f"{str(e)}\n\n{traceback.format_exc()}"
+                            tournament_window.after(0, lambda msg=error_msg: show_error(msg))
+                    
+                    def update_status(msg):
+                        results_text.config(state=tk.NORMAL)
+                        results_text.insert(tk.END, msg)
+                        results_text.config(state=tk.DISABLED)
+                    
+                    threading.Thread(target=run_in_thread, daemon=True).start()
+                    
+                except Exception as e:
+                    messagebox.showerror("Error", f"Failed to run tournament: {e}")
+                    run_btn.config(state=tk.NORMAL)
+            
+            def display_results(results_df):
+                results_text.config(state=tk.NORMAL)
+                # Clear and show fresh results
+                results_text.delete(1.0, tk.END)
+                
+                if len(results_df) == 0:
+                    results_text.insert(tk.END, "No results generated.\n")
+                    results_text.insert(tk.END, "Please check that selected files contain valid strategy classes.\n")
+                else:
+                    results_text.insert(tk.END, "Tournament Results:\n")
+                    results_text.insert(tk.END, "=" * 80 + "\n\n")
+                    results_text.insert(tk.END, results_df.to_string(index=True))
+                    results_text.insert(tk.END, "\n\n" + "=" * 80 + "\n")
+                    results_text.insert(tk.END, f"\nTotal Strategies: {len(results_df)}\n")
+                    results_text.insert(tk.END, f"Period: {start_date_entry.get_date()} to {end_date_entry.get_date()}\n")
+                    results_text.insert(tk.END, f"Data Source: {'Mock Data' if use_mock_var.get() else 'Real Data'}\n")
+                    
+                    # Show which strategy files were used
+                    selected_count = strategy_listbox.size()
+                    if selected_count > 0:
+                        results_text.insert(tk.END, f"\nStrategy Files Used: {selected_count}\n")
+                    else:
+                        results_text.insert(tk.END, "\nStrategy Files Used: Auto-discovered all\n")
+                
+                results_text.config(state=tk.DISABLED)
+                run_btn.config(state=tk.NORMAL)
+            
+            def show_error(error_msg):
+                results_text.config(state=tk.NORMAL)
+                results_text.delete(1.0, tk.END)
+                results_text.insert(tk.END, f"Error: {error_msg}\n")
+                results_text.config(state=tk.DISABLED)
+                run_btn.config(state=tk.NORMAL)
+                messagebox.showerror("Tournament Error", error_msg)
+            
+            run_btn = tk.Button(
+                control_frame,
+                text="Run Tournament",
+                command=run_tournament,
+                bg=self.accent_color,
+                fg='white',
+                font=('Segoe UI', 11, 'bold'),
+                relief='flat',
+                cursor='hand2',
+                padx=20,
+                pady=8
+            )
+            run_btn.pack(pady=10)
+            
+            # Results area
+            results_frame = tk.Frame(tournament_window, bg=self.panel_bg, highlightbackground=self.border_color, highlightthickness=1)
+            results_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0, 10))
+            
+            tk.Label(
+                results_frame,
+                text="Results",
+                font=('Segoe UI', 11, 'bold'),
+                bg=self.panel_bg,
+                fg=self.text_color
+            ).pack(anchor='w', padx=10, pady=5)
+            
+            # Text widget with scrollbar
+            text_frame = tk.Frame(results_frame, bg=self.panel_bg)
+            text_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0, 10))
+            
+            scrollbar = tk.Scrollbar(text_frame)
+            scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+            
+            results_text = tk.Text(
+                text_frame,
+                wrap=tk.NONE,
+                font=('Consolas', 9),
+                bg='#1E1E1E',
+                fg='#D4D4D4',
+                yscrollcommand=scrollbar.set,
+                state=tk.DISABLED
+            )
+            results_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+            scrollbar.config(command=results_text.yview)
+            
+            results_text.insert(tk.END, "Welcome to The Quant Arena!\n\n")
+            results_text.insert(tk.END, "Select a date range and click 'Run Tournament' to compare strategies.\n")
+            results_text.insert(tk.END, "Strategies will be ranked by Sharpe Ratio.\n\n")
+            results_text.insert(tk.END, "Available strategies:\n")
+            results_text.insert(tk.END, "- BuyAndHoldStrategy\n")
+            results_text.insert(tk.END, "- MovingAverageStrategy\n")
+            results_text.insert(tk.END, "- MomentumStrategy\n")
+            
+        except ImportError as e:
+            messagebox.showerror(
+                "Feature Unavailable",
+                f"Strategy tournament feature not available.\n\nError: {e}\n\nPlease ensure strategies module is properly installed."
+            )
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to open tournament window: {e}")
     
     def _calculate_score(self, stats):
         """Simple score calculation"""
