@@ -13,7 +13,15 @@ try:
     from path_utils import get_user_data_file
     PATH_UTILS_AVAILABLE = True
 except Exception:
-    PATH_UTILS_AVAILABLE = False
+    try:
+        # Try relative import if path_utils is in parent directory
+        import sys
+        import os
+        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from path_utils import get_user_data_file
+        PATH_UTILS_AVAILABLE = True
+    except Exception:
+        PATH_UTILS_AVAILABLE = False
 
 # Support multiple AI providers
 GEMINI_AVAILABLE = False

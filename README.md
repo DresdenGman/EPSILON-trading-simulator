@@ -432,10 +432,12 @@ stock-trading-simulator/
 ├── requirements.txt         # Python dependencies
 ├── README.md                # This file
 │
-├── analysis/                # Performance analysis modules
+├── analysis/                # Analysis modules
 │   ├── __init__.py
 │   ├── performance.py        # Performance metrics
-│   └── spectral.py           # FFT-based spectral analysis
+│   ├── spectral.py           # FFT-based spectral analysis
+│   ├── stress_test.py        # Stress testing (all 3 stages)
+│   └── export_analysis.py   # Export and AI analysis
 │
 ├── data/                    # Data management modules
 │   ├── __init__.py
@@ -454,9 +456,13 @@ stock-trading-simulator/
 │
 ├── run_tournament.py        # Command-line tournament runner
 │
+├── tests/                   # Test modules
+│   ├── __init__.py
+│   └── test_strategies.py   # Strategy system tests
+│
 ├── utils/                   # Utility modules
 │   ├── __init__.py
-│   ├── config.py
+│   ├── config.py            # Configuration and refactor helpers
 │   └── logger.py
 │
 ├── website/                 # Next.js website (see website/README.md)

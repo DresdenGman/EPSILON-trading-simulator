@@ -44,7 +44,7 @@ import numpy as np
 import csv
 from tkinter import filedialog
 try:
-    from export_analysis import ExportAnalyzer
+    from analysis.export_analysis import ExportAnalyzer
     EXPORT_ANALYSIS_AVAILABLE = True
 except Exception:
     ExportAnalyzer = None
