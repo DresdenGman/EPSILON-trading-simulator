@@ -3,8 +3,6 @@
 import React, { useState } from "react";
 import { api, StockPrice } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
-import { GlassCard, GlassCardHeader, GlassCardContent } from "@/components/ui/glass-card";
-import { RippleButton } from "@/components/ui/ripple-button";
 
 interface TradingPanelProps {
   stock: StockPrice | null;
@@ -23,11 +21,12 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
 
   if (!stock) {
     return (
-      <GlassCard>
-        <GlassCardContent>
-          <div className="text-[#64748B] text-center py-8">Select a stock to trade</div>
-        </GlassCardContent>
-      </GlassCard>
+      <div className="surface-card p-6 flex items-center justify-center min-h-[300px]">
+        <div className="text-center text-muted">
+          <div className="text-3xl mb-3">📊</div>
+          <p className="text-sm">Select a stock to trade</p>
+        </div>
+      </div>
     );
   }
 
@@ -69,139 +68,132 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
   };
 
   return (
-    <GlassCard highlight scan>
-      <GlassCardHeader>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center text-white font-bold text-sm">
-            {stock.code.slice(0, 2)}
-          </div>
-          <div>
-            <h3 className="text-white font-semibold">{stock.code}</h3>
-            <div
-              className={`text-xs font-medium ${
-                stock.change_percent >= 0 ? "text-[#00D09C]" : "text-[#F0616D]"
-              }`}
-            >
-              {stock.change_percent >= 0 ? "+" : ""}
-              {stock.change_percent.toFixed(2)}%
-            </div>
+    <div className="surface-card p-5 space-y-4 h-full">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-text-primary font-bold text-lg">{stock.code}</h3>
+          <div className={`text-xs font-medium mt-0.5 ${stock.change_percent >= 0 ? "text-accent" : "text-danger"}`}>
+            {stock.change_percent >= 0 ? "+" : ""}{stock.change_percent.toFixed(2)}%
           </div>
         </div>
-        <span className="text-xl font-bold text-white font-mono tabular-nums">
-          ${currentPrice.toFixed(2)}
-        </span>
-      </GlassCardHeader>
-
-      <GlassCardContent className="space-y-4">
-        {/* Side toggle */}
-        <div className="flex rounded-lg overflow-hidden border border-white/[0.06] bg-white/[0.02]">
-          <button
-            onClick={() => setSide("buy")}
-            className={`flex-1 py-2 text-sm font-semibold transition-all duration-200 ${
-              side === "buy"
-                ? "bg-[#00D09C] text-black shadow-lg shadow-[#00D09C]/20"
-                : "text-[#64748B] hover:text-white"
-            }`}
-          >
-            Buy
-          </button>
-          <button
-            onClick={() => setSide("sell")}
-            className={`flex-1 py-2 text-sm font-semibold transition-all duration-200 ${
-              side === "sell"
-                ? "bg-[#F0616D] text-white shadow-lg shadow-[#F0616D]/20"
-                : "text-[#64748B] hover:text-white"
-            }`}
-          >
-            Sell
-          </button>
+        <div className="text-right">
+          <div className="text-2xl font-bold text-text-primary font-mono">${currentPrice.toFixed(2)}</div>
+          <div className="text-2xs text-muted uppercase tracking-wide">Last Price</div>
         </div>
+      </div>
 
-        {/* Order type */}
-        <div>
-          <label className="text-[11px] uppercase tracking-wider text-[#64748B] block mb-1.5">
-            Order Type
-          </label>
-          <select
-            value={orderType}
-            onChange={(e) => setOrderType(e.target.value)}
-            className="w-full bg-white/[0.03] text-white rounded-lg px-3 py-2 text-sm border border-white/[0.06] focus:border-[#00D09C] outline-none transition-colors"
-          >
-            <option value="market">Market</option>
-            <option value="limit">Limit</option>
-            <option value="stop_loss">Stop Loss</option>
-            <option value="take_profit">Take Profit</option>
-          </select>
-        </div>
+      {/* Side toggle */}
+      <div className="flex rounded-lg overflow-hidden border border-white/10 p-0.5 bg-white/[0.02]">
+        <button
+          onClick={() => setSide("buy")}
+          className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-250 ${
+            side === "buy"
+              ? "bg-accent text-black shadow-glow-accent-sm"
+              : "text-secondary hover:text-text-primary"
+          }`}
+        >
+          Buy
+        </button>
+        <button
+          onClick={() => setSide("sell")}
+          className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-250 ${
+            side === "sell"
+              ? "bg-danger text-white"
+              : "text-secondary hover:text-text-primary"
+          }`}
+        >
+          Sell
+        </button>
+      </div>
 
-        {/* Shares */}
+      {/* Order type */}
+      <div>
+        <label className="text-2xs text-muted uppercase tracking-wide mb-1.5 block">Order Type</label>
+        <select
+          value={orderType}
+          onChange={(e) => setOrderType(e.target.value)}
+          className="w-full bg-white/[0.03] text-text-primary rounded-lg px-3 py-2 text-sm border border-white/5 focus:border-accent/30 focus:ring-1 focus:ring-accent/10 outline-none transition-all appearance-none cursor-pointer"
+        >
+          <option value="market">Market</option>
+          <option value="limit">Limit</option>
+          <option value="stop_loss">Stop Loss</option>
+          <option value="take_profit">Take Profit</option>
+        </select>
+      </div>
+
+      {/* Shares */}
+      <div>
+        <label className="text-2xs text-muted uppercase tracking-wide mb-1.5 block">Shares</label>
+        <input
+          type="number"
+          min={1}
+          value={shares}
+          onChange={(e) => setShares(Math.max(1, parseInt(e.target.value) || 1))}
+          className="w-full bg-white/[0.03] text-text-primary rounded-lg px-3 py-2 text-sm border border-white/5 focus:border-accent/30 focus:ring-1 focus:ring-accent/10 outline-none transition-all font-mono"
+        />
+      </div>
+
+      {/* Limit / Trigger price */}
+      {orderType !== "market" && (
         <div>
-          <label className="text-[11px] uppercase tracking-wider text-[#64748B] block mb-1.5">
-            Shares
+          <label className="text-2xs text-muted uppercase tracking-wide mb-1.5 block">
+            {orderType === "stop_loss" || orderType === "take_profit" ? "Trigger Price" : "Limit Price"}
           </label>
           <input
             type="number"
-            min={1}
-            value={shares}
-            onChange={(e) => setShares(Math.max(1, parseInt(e.target.value) || 1))}
-            className="w-full bg-white/[0.03] text-white rounded-lg px-3 py-2 text-sm border border-white/[0.06] focus:border-[#00D09C] outline-none transition-colors"
+            step="0.01"
+            value={orderType === "stop_loss" || orderType === "take_profit" ? triggerPrice : limitPrice}
+            onChange={(e) => {
+              if (orderType === "stop_loss" || orderType === "take_profit") setTriggerPrice(e.target.value);
+              else setLimitPrice(e.target.value);
+            }}
+            placeholder={currentPrice.toFixed(2)}
+            className="w-full bg-white/[0.03] text-text-primary rounded-lg px-3 py-2 text-sm border border-white/5 focus:border-accent/30 focus:ring-1 focus:ring-accent/10 outline-none transition-all font-mono"
           />
         </div>
+      )}
 
-        {/* Limit / Trigger price */}
-        {orderType !== "market" && (
-          <div>
-            <label className="text-[11px] uppercase tracking-wider text-[#64748B] block mb-1.5">
-              {orderType === "stop_loss" || orderType === "take_profit" ? "Trigger Price" : "Limit Price"}
-            </label>
-            <input
-              type="number"
-              step="0.01"
-              value={orderType === "stop_loss" || orderType === "take_profit" ? triggerPrice : limitPrice}
-              onChange={(e) => {
-                if (orderType === "stop_loss" || orderType === "take_profit") {
-                  setTriggerPrice(e.target.value);
-                } else {
-                  setLimitPrice(e.target.value);
-                }
-              }}
-              placeholder={currentPrice.toFixed(2)}
-              className="w-full bg-white/[0.03] text-white rounded-lg px-3 py-2 text-sm border border-white/[0.06] focus:border-[#00D09C] outline-none transition-colors"
-            />
-          </div>
-        )}
+      {/* Estimated total */}
+      <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-white/[0.02]">
+        <span className="text-2xs text-muted uppercase tracking-wide">Estimated</span>
+        <span className="text-text-primary font-mono font-semibold">${estimatedTotal.toLocaleString()}</span>
+      </div>
 
-        {/* Estimated */}
-        <div className="text-sm text-[#64748B] flex justify-between">
-          <span>Estimated Total</span>
-          <span className="text-white font-mono tabular-nums font-medium">
-            ${estimatedTotal.toLocaleString()}
+      {/* Execute button */}
+      <button
+        onClick={handleTrade}
+        disabled={loading || !isAuthenticated}
+        className={`w-full py-3 rounded-lg font-semibold text-sm transition-all duration-250 ${
+          side === "buy"
+            ? "bg-accent hover:bg-accent-light text-black shadow-glow-accent-sm hover:shadow-glow-accent"
+            : "bg-danger hover:bg-danger-light text-white"
+        } disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none active:scale-[0.98]`}
+      >
+        {loading ? (
+          <span className="flex items-center justify-center gap-2">
+            <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            Processing
           </span>
-        </div>
-
-        {/* Execute */}
-        <RippleButton
-          variant={side === "buy" ? "primary" : "danger"}
-          glow
-          className="w-full py-3 text-sm"
-          onClick={handleTrade}
-          disabled={loading || !isAuthenticated}
-        >
-          {loading ? "Processing..." : `${side === "buy" ? "Buy" : "Sell"} ${stock.code}`}
-        </RippleButton>
-
-        {message && (
-          <div
-            className={`text-xs p-2.5 rounded-lg ${
-              message.toLowerCase().includes("bought") || message.toLowerCase().includes("sold") || message.toLowerCase().includes("placed")
-                ? "bg-[#00D09C]/10 text-[#00D09C] border border-[#00D09C]/20"
-                : "bg-[#F0616D]/10 text-[#F0616D] border border-[#F0616D]/20"
-            }`}
-          >
-            {message}
-          </div>
+        ) : (
+          `${side === "buy" ? "Buy" : "Sell"} ${stock.code}`
         )}
-      </GlassCardContent>
-    </GlassCard>
+      </button>
+
+      {message && (
+        <div className={`text-xs p-3 rounded-lg font-medium ${
+          message.includes("Success") || message.includes("Bought") || message.includes("Sold")
+            ? "bg-accent/10 text-accent border border-accent/20"
+            : "bg-danger/10 text-danger border border-danger/20"
+        }`}>
+          {message}
+        </div>
+      )}
+
+      {!isAuthenticated && (
+        <p className="text-2xs text-muted text-center">
+          <a href="/auth/login" className="text-accent hover:underline">Login</a> to trade
+        </p>
+      )}
+    </div>
   );
 }

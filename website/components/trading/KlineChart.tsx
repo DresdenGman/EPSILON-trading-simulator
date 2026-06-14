@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { createChart, ColorType, CandlestickSeries } from "lightweight-charts";
+import { createChart, CandlestickSeries } from "lightweight-charts";
 
 interface KlineChartProps {
   data: {
@@ -25,8 +25,8 @@ export default function KlineChart({ data, loading }: KlineChartProps) {
     const container = chartRef.current;
     const chart = createChart(container, {
       layout: {
-        background: { color: "#0A0F1A" },
-        textColor: "#8892A4",
+        background: { color: "#0B0D14" },
+        textColor: "#8B95A8",
       },
       grid: {
         vertLines: { color: "rgba(255,255,255,0.04)" },
@@ -34,13 +34,25 @@ export default function KlineChart({ data, loading }: KlineChartProps) {
       },
       crosshair: {
         mode: 1,
+        vertLine: {
+          color: "rgba(255,255,255,0.08)",
+          style: 2,
+          labelBackgroundColor: "#19202E",
+        },
+        horzLine: {
+          color: "rgba(255,255,255,0.08)",
+          style: 2,
+          labelBackgroundColor: "#19202E",
+        },
       },
       rightPriceScale: {
-        borderColor: "rgba(255,255,255,0.08)",
+        borderColor: "rgba(255,255,255,0.06)",
+        scaleMargins: { top: 0.1, bottom: 0.1 },
       },
       timeScale: {
-        borderColor: "rgba(255,255,255,0.08)",
+        borderColor: "rgba(255,255,255,0.06)",
         timeVisible: true,
+        secondsVisible: false,
       },
       width: container.clientWidth,
       height: 400,
@@ -69,7 +81,9 @@ export default function KlineChart({ data, loading }: KlineChartProps) {
     chartInstance.current = chart;
 
     const handleResize = () => {
-      chart.applyOptions({ width: container.clientWidth });
+      if (container.clientWidth > 0) {
+        chart.applyOptions({ width: container.clientWidth });
+      }
     };
     window.addEventListener("resize", handleResize);
 
@@ -79,23 +93,30 @@ export default function KlineChart({ data, loading }: KlineChartProps) {
     };
   }, [data]);
 
+  const chartBg = "surface-card";
+
   if (loading) {
     return (
-      <div className="w-full h-[400px] bg-[#0A0F1A] rounded-xl border border-[#1E293B] flex items-center justify-center">
-        <div className="text-[#64748B] animate-pulse">Loading chart...</div>
+      <div className={`${chartBg} w-full h-[400px] flex items-center justify-center`}>
+        <div className="text-center w-full px-8">
+          <div className="skeleton h-[360px] w-full rounded-lg" />
+        </div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="w-full h-[400px] bg-[#0A0F1A] rounded-xl border border-[#1E293B] flex items-center justify-center">
-        <div className="text-[#64748B]">Select a stock to view chart</div>
+      <div className={`${chartBg} w-full h-[400px] flex items-center justify-center`}>
+        <div className="text-center text-muted">
+          <div className="text-3xl mb-3">📈</div>
+          <p className="text-sm">Select a stock to view chart</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div ref={chartRef} className="w-full rounded-xl overflow-hidden border border-[#1E293B]" />
+    <div ref={chartRef} className="w-full rounded-xl overflow-hidden border border-white/5 shadow-surface-md" />
   );
 }
