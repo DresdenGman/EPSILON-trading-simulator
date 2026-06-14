@@ -1,0 +1,17 @@
+[build]
+# Railway build configuration for EPSILON FastAPI backend
+# Uses Nixpacks to detect Python + pip
+
+[deploy]
+# Health check path
+healthcheckPath = "/api/health"
+# Restart policy
+restartPolicy = "always"
+
+[service]
+# Service name
+name = "epsilon-api"
+
+[env]
+# Python environment
+PYTHON_VERSION = "3.13"

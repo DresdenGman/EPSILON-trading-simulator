@@ -10,5 +10,16 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "app/api/ai/chat/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/auth/[...nextauth]/route.ts": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://epsilon-api.railway.app"
+  }
 }

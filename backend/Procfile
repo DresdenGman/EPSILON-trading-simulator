@@ -1,0 +1,5 @@
+# Railway deployment — runtime config
+# https://docs.railway.com/reference/runtime
+
+# Backend
+web: cd backend && /app/backend/venv/bin/uvicorn backend.main:app --host 0.0.0.0 --port $PORT
