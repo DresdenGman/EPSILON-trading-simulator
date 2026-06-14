@@ -3,11 +3,32 @@ pandas>=1.3.0
 numpy>=1.20.0
 tkcalendar>=1.6.0
 
-# Visualization (optional but recommended)
+# Visualization
 matplotlib>=3.3.0
 mplfinance>=0.12.0
 
-# Real market data (optional)
-# Uncomment the line below if you want real market data support
-# akshare>=1.0.0
+# Modern UI (required)
+customtkinter>=5.2.0
 
+# Database
+sqlalchemy>=1.4.0,<3.0
+
+# Data validation
+pydantic>=2.0.0,<3.0
+
+# HTTP requests
+requests>=2.25.0
+
+# User data directory handling
+appdirs>=1.4.0
+
+# Web API (FastAPI backend)
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+python-multipart>=0.0.6
+psycopg2-binary>=2.9.0
+
+# Real market data (optional)
+# akshare>=1.0.0

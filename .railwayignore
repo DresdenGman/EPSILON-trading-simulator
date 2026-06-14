@@ -1,0 +1,31 @@
+# Exclude large non-backend directories
+website/
+new-website/
+dist/
+build/
+screenshots/
+docs/
+education/
+epsilon-assets/
+ui-ux-pro-max-skill-2.5.0/
+
+# Exclude node_modules and Python venv
+node_modules/
+venv/
+backend/venv/
+
+# Exclude Next.js build
+.next/
+.vercel/
+
+# Exclude database files
+*.db
+*.db-shm
+*.db-wal
+
+# Exclude spec and packaging
+*.spec
+
+# Exclude test files
+test_*.py
+tests/
