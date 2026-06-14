@@ -5,14 +5,14 @@
 @layer base {
   html {
     @apply antialiased;
-    background: #ffffff;
+    background: #050508;
     scroll-behavior: smooth;
   }
 
   body {
     @apply min-h-screen;
-    background: #ffffff;
-    color: #111827;
+    background: #050508;
+    color: #E8ECF1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -20,54 +20,129 @@
   * {
     @apply border-border;
   }
+}
 
-  /* Smooth scroll for anchor links */
-  a[href^="#"] {
-    scroll-behavior: smooth;
+@layer components {
+  /* Glass surface */
+  .glass {
+    @apply bg-surface backdrop-blur-md border border-white/5;
+  }
+
+  .glass-hover {
+    @apply glass transition-all duration-300 hover:bg-surface-hover hover:border-white/10 hover:shadow-card-hover;
+  }
+
+  .glass-raised {
+    @apply bg-surface-raised backdrop-blur-lg border border-white/8 shadow-card;
+  }
+
+  /* Glass card */
+  .glass-card {
+    @apply rounded-xl bg-surface backdrop-blur-xl border border-white/5 p-6
+           transition-all duration-300 ease-out-expo
+           hover:bg-surface-hover hover:border-white/10 hover:shadow-glow hover:-translate-y-0.5;
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent to-accent-light;
+  }
+
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-epsilon-gold via-epsilon-goldHover to-epsilon-gold;
+  }
+
+  /* Section container */
+  .section-container {
+    @apply relative mx-auto max-w-7xl px-6 lg:px-8;
+  }
+
+  /* Grid background */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  /* Animated grid */
+  .bg-grid-animated {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 70%);
+  }
+
+  /* Gradient orbs for hero */
+  .hero-orb {
+    @apply absolute rounded-full blur-3xl opacity-20 animate-float;
+  }
+
+  /* Reveal text (for scroll animations) */
+  .reveal-text {
+    opacity: 0;
   }
 }
 
 @layer utilities {
+  /* Epsilon shell */
   .epsilon-shell {
     @apply mx-auto flex w-full max-w-6xl flex-col px-6 pb-12 pt-6;
   }
 
-  /* 极细网格背景 - 哑光质感 */
+  /* Fine grid background */
   .epsilon-grid-background {
-    background-image: linear-gradient(to right, rgba(26, 26, 26, 0.15) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(26, 26, 26, 0.15) 1px, transparent 1px);
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
     background-size: 80px 80px;
-    opacity: 0.15;
   }
 
-  /* 哑光鎏金光晕 - 内敛不扩散 */
+  /* Gold glow */
   .epsilon-gold-glow {
-    box-shadow: inset 0 0 8px rgba(184, 149, 79, 0.2), 0 0 12px rgba(184, 149, 79, 0.15);
+    box-shadow: inset 0 0 8px rgba(184, 149, 79, 0.15), 0 0 12px rgba(184, 149, 79, 0.1);
   }
 
   .epsilon-gold-glow-hover {
-    box-shadow: inset 0 0 10px rgba(212, 178, 109, 0.25), 0 0 15px rgba(212, 178, 109, 0.2);
+    box-shadow: inset 0 0 10px rgba(212, 178, 109, 0.2), 0 0 15px rgba(212, 178, 109, 0.15);
   }
 
-  /* 极淡菱形细网格 - 金融科技精密感 */
-  .epsilon-mesh {
-    background-image: 
-      linear-gradient(45deg, rgba(31, 31, 31, 0.1) 25%, transparent 25%),
-      linear-gradient(-45deg, rgba(31, 31, 31, 0.1) 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, rgba(31, 31, 31, 0.1) 75%),
-      linear-gradient(-45deg, transparent 75%, rgba(31, 31, 31, 0.1) 75%);
-    background-size: 20px 20px;
-    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-    opacity: 0.1;
+  /* Border beam */
+  .border-beam {
+    @apply relative overflow-hidden;
   }
 
-  /* 凹陷式内阴影 - 金融终端质感 */
-  .epsilon-inset-shadow {
-    box-shadow: inset 0 1px 1px rgba(21, 21, 21, 0.8);
+  .border-beam::before {
+    content: '';
+    @apply absolute inset-0 rounded-inherit;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0,208,156,0.2) 50%,
+      transparent 100%
+    );
+    animation: beam 3s ease-in-out infinite;
   }
 
-  .epsilon-inset-shadow-gold {
-    box-shadow: inset 0 1px 1px rgba(184, 149, 79, 0.3);
+  @keyframes beam {
+    0%, 100% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+  }
+
+  /* Hover lift */
+  .hover-lift {
+    @apply transition-all duration-300 ease-out-expo;
+  }
+
+  .hover-lift:hover {
+    @apply -translate-y-1 shadow-lg;
+  }
+
+  /* Mask gradients */
+  .mask-fade-bottom {
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
   }
 }
-

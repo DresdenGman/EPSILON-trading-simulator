@@ -1,0 +1,7 @@
+export { default as HeroSection } from './HeroSection'
+export { default as PortfolioSection } from './PortfolioSection'
+export { default as AboutSection } from './AboutSection'
+export { default as PurposeSection } from './PurposeSection'
+export { default as ContentSection } from './ContentSection'
+export { default as DownloadSection } from './DownloadSection'
+export { default as ContactSection } from './ContactSection'

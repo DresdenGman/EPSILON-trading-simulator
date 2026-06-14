@@ -1,0 +1,31 @@
+.container {
+  min-height: 100vh;
+  background: #050508;
+  color: #E8ECF1;
+}
+
+.footer {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+  background: #050508;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  color: white;
+}
+
+.footerContent {
+  text-align: center;
+}
+
+.copyright {
+  color: rgba(255,255,255,0.3);
+  font-size: 0.875rem;
+}
+
+.poweredBy {
+  color: rgba(255,255,255,0.15);
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}

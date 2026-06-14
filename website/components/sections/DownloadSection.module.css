@@ -1,0 +1,202 @@
+.sectionGradient {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 1.5rem;
+  background: #050508;
+  overflow: hidden;
+}
+
+.sectionGradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 40% 30% at 20% 80%, rgba(0,208,156,0.03) 0%, transparent 50%),
+    radial-gradient(ellipse 30% 40% at 80% 20%, rgba(197,160,89,0.03) 0%, transparent 50%);
+  z-index: 0;
+}
+
+.sectionWhite {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 1.5rem;
+  background: #050508;
+  overflow: hidden;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+}
+
+.backgroundImage {
+  object-fit: cover;
+  filter: brightness(0.3) saturate(0.2);
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  max-width: 56rem;
+}
+
+.contentCenter {
+  text-align: center;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  color: #E8ECF1;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 3rem;
+  }
+}
+
+.titleCenter {
+  text-align: center;
+}
+
+.featuresGrid {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .featuresGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.featureTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #E8ECF1;
+}
+
+.featureDesc {
+  color: rgba(255,255,255,0.45);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+
+.interfaceGrid {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .interfaceGrid {
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+  }
+}
+
+.interfaceImage {
+  position: relative;
+  width: 100%;
+  height: 16rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+@media (min-width: 768px) {
+  .interfaceImage {
+    height: 24rem;
+  }
+}
+
+.screenshot {
+  object-fit: contain;
+  background: #050508;
+}
+
+.downloadButton {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #00D09C, #00A87C);
+  color: #050508;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-size: 0.9375rem;
+}
+
+.downloadButton:hover {
+  background: linear-gradient(135deg, #1FE6B2, #00D09C);
+  box-shadow: 0 0 24px rgba(0,208,156,0.2);
+  transform: translateY(-1px);
+}
+
+.videoWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 48rem;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.platformsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.platformCard {
+  padding: 1.25rem 1.5rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  color: inherit;
+}
+
+.platformCard:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+
+.emoji {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.platformName {
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  font-size: 0.9375rem;
+}
+
+.platformStatus {
+  font-size: 0.8125rem;
+  color: rgba(255,255,255,0.3);
+  margin-top: 0.25rem;
+}

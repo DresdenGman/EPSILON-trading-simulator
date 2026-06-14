@@ -1,0 +1,54 @@
+.section {
+  position: relative;
+  background: #050508;
+}
+
+.gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10rem;
+  background: linear-gradient(to bottom, #050508, rgba(5,5,8,0));
+  z-index: 10;
+  pointer-events: none;
+}
+
+.stickyContainer {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flow {
+  display: flex;
+  height: 75vh;
+  align-items: center;
+}
+
+.imageItem {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 75vh;
+}
+
+.imageWrapper {
+  position: relative;
+  height: 75vh;
+  width: auto;
+  max-width: 75vw;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.image {
+  object-fit: contain;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255,255,255,0.06);
+}
