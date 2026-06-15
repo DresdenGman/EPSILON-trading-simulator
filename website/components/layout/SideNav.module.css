@@ -1,6 +1,6 @@
 .sideNav {
   position: fixed;
-  right: 1.5rem;
+  right: 2rem;
   top: 50%;
   transform: translateY(-50%);
   z-index: 50;
@@ -18,17 +18,15 @@
   flex-direction: column;
   gap: 0.75rem;
   position: relative;
-  align-items: flex-end;
 }
 
 .progressBar {
   position: absolute;
   right: 0;
-  top: 0.25rem;
-  bottom: 0.25rem;
-  width: 1px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 1px;
 }
 
 .progressFill {
@@ -37,31 +35,29 @@
   left: 0;
   width: 100%;
   background: #00D09C;
-  box-shadow: 0 0 6px rgba(0, 208, 156, 0.5);
-  border-radius: 1px;
   transition: height 0.3s ease;
 }
 
 .navItem {
   background: none;
   border: none;
-  padding: 0.25rem 1.25rem 0.25rem 0;
+  padding: 0;
+  padding-right: 1.5rem;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.25);
+  color: #586376;
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: right;
-  letter-spacing: 0.05em;
+  width: fit-content;
 }
 
 .navItem:hover {
-  color: rgba(255, 255, 255, 0.6);
+  color: #EDF0F5;
 }
 
 .navItem[data-active='true'] {
   color: #00D09C;
-  font-weight: 600;
-  text-shadow: 0 0 12px rgba(0, 208, 156, 0.3);
+  font-weight: 700;
 }

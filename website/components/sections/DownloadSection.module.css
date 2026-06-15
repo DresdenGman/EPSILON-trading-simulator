@@ -5,18 +5,8 @@
   align-items: center;
   justify-content: center;
   padding: 6rem 1.5rem;
-  background: #050508;
+  background: linear-gradient(to bottom, #0B0D14, #07080B);
   overflow: hidden;
-}
-
-.sectionGradient::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 40% 30% at 20% 80%, rgba(0,208,156,0.03) 0%, transparent 50%),
-    radial-gradient(ellipse 30% 40% at 80% 20%, rgba(197,160,89,0.03) 0%, transparent 50%);
-  z-index: 0;
 }
 
 .sectionWhite {
@@ -26,19 +16,18 @@
   align-items: center;
   justify-content: center;
   padding: 6rem 1.5rem;
-  background: #050508;
+  background: linear-gradient(to bottom, #07080B, #0B0D14);
   overflow: hidden;
 }
 
 .background {
   position: absolute;
   inset: 0;
-  opacity: 0.04;
+  opacity: 0.1;
 }
 
 .backgroundImage {
   object-fit: cover;
-  filter: brightness(0.3) saturate(0.2);
 }
 
 .content {
@@ -52,16 +41,15 @@
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: 700;
   margin-bottom: 3rem;
-  color: #E8ECF1;
-  letter-spacing: -0.02em;
+  color: #EDF0F5;
 }
 
 @media (min-width: 768px) {
   .title {
-    font-size: 3rem;
+    font-size: 3.75rem;
   }
 }
 
@@ -71,6 +59,7 @@
 
 .featuresGrid {
   display: grid;
+  md: grid-cols-2;
   gap: 2rem;
   margin-bottom: 3rem;
 }
@@ -82,16 +71,14 @@
 }
 
 .featureTitle {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: 0.75rem;
-  color: #E8ECF1;
+  margin-bottom: 1rem;
+  color: #EDF0F5;
 }
 
 .featureDesc {
-  color: rgba(255,255,255,0.45);
-  font-size: 0.9375rem;
-  line-height: 1.65;
+  color: #8B95A8;
 }
 
 .interfaceGrid {
@@ -110,9 +97,9 @@
   position: relative;
   width: 100%;
   height: 16rem;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 @media (min-width: 768px) {
@@ -123,25 +110,20 @@
 
 .screenshot {
   object-fit: contain;
-  background: #050508;
+  background: #0B0D14;
 }
 
 .downloadButton {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #00D09C, #00A87C);
-  color: #050508;
-  font-weight: 600;
+  background: #00D09C;
+  color: white;
   border-radius: 0.5rem;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  font-size: 0.9375rem;
+  transition: background-color 0.2s;
 }
 
 .downloadButton:hover {
-  background: linear-gradient(135deg, #1FE6B2, #00D09C);
-  box-shadow: 0 0 24px rgba(0,208,156,0.2);
-  transform: translateY(-1px);
+  background: #1AE8B4;
 }
 
 .videoWrapper {
@@ -149,10 +131,10 @@
   width: 100%;
   max-width: 48rem;
   margin: 0 auto;
-  aspect-ratio: 16 / 9;
-  border-radius: 0.75rem;
+  aspect-video: 16 / 9;
+  border-radius: 0.5rem;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .video {
@@ -168,35 +150,30 @@
 }
 
 .platformCard {
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 1.5rem;
   background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
+  border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.2s;
   text-align: center;
-  color: inherit;
 }
 
 .platformCard:hover {
   background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.1);
-  transform: translateY(-2px);
 }
 
 .emoji {
-  font-size: 1.75rem;
+  font-size: 1.875rem;
   margin-bottom: 0.5rem;
 }
 
 .platformName {
   font-weight: 600;
-  color: rgba(255,255,255,0.8);
-  font-size: 0.9375rem;
+  color: #EDF0F5;
 }
 
 .platformStatus {
-  font-size: 0.8125rem;
-  color: rgba(255,255,255,0.3);
-  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #586376;
 }

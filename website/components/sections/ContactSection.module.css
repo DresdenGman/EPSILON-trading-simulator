@@ -5,19 +5,18 @@
   align-items: center;
   justify-content: center;
   padding: 6rem 1.5rem;
-  background: #050508;
+  background: linear-gradient(to bottom, #07080B, #07080B, #0B0D14);
   overflow: hidden;
 }
 
 .background {
   position: absolute;
   inset: 0;
-  opacity: 0.04;
+  opacity: 0.1;
 }
 
 .backgroundImage {
   object-fit: cover;
-  filter: brightness(0.3) saturate(0.2);
 }
 
 .content {
@@ -31,49 +30,40 @@
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: 700;
   margin-bottom: 2rem;
-  color: #E8ECF1;
-  letter-spacing: -0.02em;
+  color: #EDF0F5;
 }
 
 @media (min-width: 768px) {
   .title {
-    font-size: 3rem;
+    font-size: 3.75rem;
   }
 }
 
 .text {
-  font-size: 1rem;
-  color: rgba(255,255,255,0.45);
-  line-height: 1.7;
+  font-size: 1.125rem;
+  color: #8B95A8;
+  line-height: 1.625;
   margin-bottom: 1rem;
 }
 
 @media (min-width: 768px) {
   .text {
-    font-size: 1.125rem;
+    font-size: 1.25rem;
   }
 }
 
 .contactInfo {
   margin-top: 2rem;
-  padding: 2rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 0.75rem;
-  display: inline-block;
-  text-align: left;
 }
 
 .info {
-  color: rgba(255,255,255,0.45);
+  color: #8B95A8;
   margin-bottom: 0.5rem;
-  font-size: 1rem;
 }
 
 .info strong {
-  color: rgba(255,255,255,0.7);
-  margin-right: 0.25rem;
+  color: #EDF0F5;
 }

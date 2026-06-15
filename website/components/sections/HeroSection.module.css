@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #050508;
+  background: #07080B;
   transition: opacity 0.5s ease;
 }
 
@@ -14,15 +14,6 @@
   inset: 0;
   z-index: 0;
   overflow: hidden;
-}
-
-.backgroundLayer::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 60% 50% at 50% 40%, rgba(0,208,156,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 80% 30% at 30% 70%, rgba(197,160,89,0.04) 0%, transparent 50%);
 }
 
 .backgroundStart,
@@ -50,20 +41,11 @@
   height: 100%;
   width: 100vw;
   flex-shrink: 0;
-  opacity: 0.06;
-}
-
-.imageWrapper::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, #050508 0%, transparent 40%, transparent 60%, #050508 100%);
-  z-index: 1;
+  opacity: 0.15;
 }
 
 .image {
   object-fit: cover;
-  filter: saturate(0.3) brightness(0.4);
 }
 
 .content {
@@ -75,23 +57,22 @@
 }
 
 .title {
-  font-size: 3.5rem;
+  font-size: 3.75rem;
   font-weight: 700;
-  line-height: 1.08;
+  line-height: 1.1;
   margin-bottom: 2rem;
-  color: #E8ECF1;
-  letter-spacing: -0.02em;
+  color: #EDF0F5;
 }
 
 @media (min-width: 768px) {
   .title {
-    font-size: 4.5rem;
+    font-size: 4.875rem;
   }
 }
 
 @media (min-width: 1024px) {
   .title {
-    font-size: 5.5rem;
+    font-size: 6rem;
   }
 }
 
@@ -100,23 +81,19 @@
 }
 
 .textBlue {
-  background: linear-gradient(135deg, #00D09C 0%, #1FE6B2 50%, #00A87C 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #00D09C;
 }
 
 .subtitle {
-  font-size: 1.125rem;
-  color: rgba(255,255,255,0.45);
+  font-size: 1.25rem;
+  color: #8B95A8;
   max-width: 42rem;
   margin: 0 auto;
-  line-height: 1.7;
-  font-weight: 400;
+  line-height: 1.625;
 }
 
 @media (min-width: 768px) {
   .subtitle {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
   }
 }

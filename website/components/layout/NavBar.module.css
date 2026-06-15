@@ -4,9 +4,10 @@
   left: 0;
   right: 0;
   z-index: 50;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(4px);
-  border-bottom: 1px solid rgba(209, 213, 219, 0.5);
+  background: rgba(7, 8, 11, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .container {
@@ -32,7 +33,7 @@
   border-radius: 0.375rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #374151;
+  color: #8B95A8;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -40,14 +41,14 @@
 }
 
 .navLink:hover {
-  background: #f3f4f6;
-  color: #111827;
+  background: rgba(255, 255, 255, 0.05);
+  color: #EDF0F5;
 }
 
 .logo {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #111827;
+  color: #EDF0F5;
   display: none;
 }
 

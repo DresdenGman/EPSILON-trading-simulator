@@ -1,6 +1,6 @@
 .section {
   position: relative;
-  background: #050508;
+  background: #07080B;
 }
 
 .gradient {
@@ -9,7 +9,7 @@
   left: 0;
   right: 0;
   height: 10rem;
-  background: linear-gradient(to bottom, #050508, rgba(5,5,8,0));
+  background: linear-gradient(to bottom, #07080B, rgba(7, 8, 11, 0));
   z-index: 10;
   pointer-events: none;
 }
@@ -49,6 +49,5 @@
 
 .image {
   object-fit: contain;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 0.5rem;
 }

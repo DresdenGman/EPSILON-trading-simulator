@@ -5,16 +5,16 @@
   align-items: center;
   justify-content: center;
   padding: 6rem 1.5rem;
-  background: white;
+  background: #07080B;
   overflow: hidden;
 }
 
 .from-white\.via-white\.to-gray-50 {
-  background: linear-gradient(to bottom, white, white, rgb(249, 250, 251));
+  background: linear-gradient(to bottom, #07080B, #07080B, #0B0D14);
 }
 
 .from-gray-50\.to-white {
-  background: linear-gradient(to bottom, rgb(249, 250, 251), white);
+  background: linear-gradient(to bottom, #0B0D14, #07080B);
 }
 
 .background {
@@ -37,7 +37,7 @@
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 3rem;
-  color: #111827;
+  color: #EDF0F5;
 }
 
 @media (min-width: 768px) {
@@ -51,7 +51,7 @@
   flex-direction: column;
   gap: 2rem;
   font-size: 1.125rem;
-  color: #4b5563;
+  color: #8B95A8;
   line-height: 1.625;
 }
 
