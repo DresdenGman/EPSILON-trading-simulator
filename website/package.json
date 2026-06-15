@@ -29,6 +29,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "daisyui": "^4.12.24",
+    "framer-motion": "^12.40.0",
     "gsap": "^3.14.2",
     "jose": "^6.2.3",
     "lightweight-charts": "^5.2.0",
@@ -43,6 +44,7 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
+    "use-sound": "^5.0.0",
     "vaul": "^1.1.2",
     "zod": "^4.4.3"
   },

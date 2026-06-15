@@ -11,6 +11,7 @@ import PortfolioTable from "@/components/trading/PortfolioTable";
 import OrderList from "@/components/trading/OrderList";
 import TradeHistory from "@/components/trading/TradeHistory";
 import EquityChart from "@/components/trading/EquityChart";
+import Particles from "@/components/effects/Particles";
 import Link from "next/link";
 
 const AUTO_REFRESH_MS = 30000;
@@ -142,6 +143,9 @@ export default function DashboardPage() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 relative overflow-hidden">
+        {/* Canvas particles background */}
+        <Particles quantity={30} color="100,255,218" staticMode={false} />
+
         {/* Floating blobs */}
         <div className="absolute -z-10 opacity-15">
           <div className="w-96 h-96 rounded-full bg-primary blur-3xl animate-blob absolute -top-32 -left-32" style={{ animationDelay: '0s' }} />

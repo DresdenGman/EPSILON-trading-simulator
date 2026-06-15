@@ -2,6 +2,7 @@
 
 import React from "react";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import ThemeToggle from "@/components/layout/ThemeToggle";
 import Link from "next/link";
 
 function DashboardInner({ children }: { children: React.ReactNode }) {
@@ -23,7 +24,8 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
           <Link href="/dashboard/backtest" className="btn btn-ghost btn-sm">Analysis</Link>
           <Link href="/dashboard/ai" className="btn btn-ghost btn-sm">AI Advisor</Link>
         </div>
-        <div className="navbar-end">
+        <div className="navbar-end gap-1">
+          <ThemeToggle />
           {!isAuthenticated ? (
             <div className="flex items-center gap-2">
               <Link href="/auth/login" className="btn btn-ghost btn-sm">Login</Link>
