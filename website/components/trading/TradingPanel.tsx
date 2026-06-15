@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { api, StockPrice } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import MotionCard from "@/components/effects/MotionCard";
 
 interface TradingPanelProps {
   stock: StockPrice | null;
@@ -75,7 +76,8 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
   };
 
   return (
-    <div className="card bg-base-200 shadow-sm p-5 space-y-4 h-full">
+    <MotionCard className="card bg-base-200 shadow-sm h-full" glowColor="100,255,218">
+      <div className="p-3 space-y-2.5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -112,7 +114,7 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
 
       {/* Order type */}
       <div>
-        <label className="text-xs text-base-content/40 uppercase tracking-wide mb-1.5 block">Order Type</label>
+        <label className="text-2xs text-base-content/40 uppercase tracking-wide mb-0.5 block">Order Type</label>
         <select
           value={orderType}
           onChange={(e) => setOrderType(e.target.value)}
@@ -127,7 +129,7 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
 
       {/* Shares */}
       <div>
-        <label className="text-xs text-base-content/40 uppercase tracking-wide mb-1.5 block">Shares</label>
+        <label className="text-2xs text-base-content/40 uppercase tracking-wide mb-0.5 block">Shares</label>
         <input
           type="number" min={1} value={shares}
           onChange={(e) => setShares(Math.max(1, parseInt(e.target.value) || 1))}
@@ -155,16 +157,16 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
       )}
 
       {/* Estimated total */}
-      <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-base-300/30">
-        <span className="text-xs text-base-content/40 uppercase tracking-wide">Estimated</span>
-        <span className="text-base-content font-mono font-semibold">${estimatedTotal.toLocaleString()}</span>
+      <div className="flex justify-between items-center py-1.5 px-2.5 rounded bg-base-300/30">
+        <span className="text-2xs text-base-content/40 uppercase tracking-wide">Estimated</span>
+        <span className="text-base-content font-mono font-semibold text-xs">${estimatedTotal.toLocaleString()}</span>
       </div>
 
       {/* Execute */}
       <button
         onClick={handleTrade}
         disabled={loading || !isAuthenticated}
-        className={`w-full py-3 rounded font-semibold text-sm transition-all duration-250 ${
+        className={`w-full py-2.5 rounded font-semibold text-xs transition-all duration-250 ${
           side === "buy"
             ? "btn-offset-buy"
             : "btn-offset-sell"
@@ -179,6 +181,7 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
           <a href="/auth/login" className="link link-success">Login</a> to trade
         </p>
       )}
-    </div>
+      </div>
+    </MotionCard>
   );
 }

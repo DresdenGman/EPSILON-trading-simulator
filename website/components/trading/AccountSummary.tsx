@@ -31,11 +31,11 @@ export default function AccountSummary({ data, loading }: AccountSummaryProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+    <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5">
       {cards.map((card, i) => (
-        <div key={card.label} className={`stat card-neumorph p-4 stagger-item stagger-${i+1}`}>
-          <div className="stat-title text-xs">{card.label}</div>
-          <div className={`stat-value text-lg font-mono ${
+        <div key={card.label} className={`card card-neumorph px-3 py-2 stagger-item stagger-${i+1}`} style={{ minWidth: 0 }}>
+          <div className="text-2xs text-base-content/40 uppercase tracking-wide truncate">{card.label}</div>
+          <div className={`text-sm font-mono font-bold truncate ${
             card.isPositive ? "text-success" : card.isNegative ? "text-error" : "text-base-content"
           }`}>{card.value}</div>
         </div>

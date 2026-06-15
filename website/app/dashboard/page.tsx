@@ -203,62 +203,71 @@ export default function DashboardPage() {
     );
   }
 
-  // Authenticated dashboard
+  // Authenticated dashboard — optimized for 16:10 single-view
   return (
-    <div className="space-y-5">
+    <div className="space-y-2 h-[calc(100vh-5rem)] flex flex-col">
       {/* Header bar */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-bold text-text-primary">Dashboard</h1>
+      <div className="flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3">
+          <h1 className="text-sm font-bold text-base-content uppercase tracking-wide">Dashboard</h1>
           {lastUpdated && (
-            <p className="text-2xs text-muted mt-0.5">
-              Updated {lastUpdated.toLocaleTimeString()} · Auto-refresh every 30s
-            </p>
+            <span className="text-2xs text-base-content/30">
+              Updated {lastUpdated.toLocaleTimeString()} · Auto 30s
+            </span>
           )}
         </div>
         <button
           onClick={() => { fetchStocks(); fetchPortfolioData(); }}
-          className="px-3 py-1.5 text-2xs text-muted hover:text-text-primary border border-white/5 hover:border-white/10 rounded-lg transition-all"
+          className="btn btn-ghost btn-xs text-base-content/40"
         >
-          Refresh
+          ↻ Refresh
         </button>
       </div>
 
       {/* Trade flash overlay */}
       {tradeFlash && (
         <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center">
-          <div className={`text-6xl font-bold animate-fade-in ${
-            tradeFlash === "buy" ? "text-accent" : "text-danger"
-          }`} style={{ animationDuration: "0.8s" }}>
+          <div className={`text-6xl font-bold animate-fade-in ${tradeFlash === "buy" ? "text-primary" : "text-error"}`} style={{ animationDuration: "0.8s" }}>
             {tradeFlash === "buy" ? "BOUGHT" : "SOLD"}
           </div>
         </div>
       )}
 
-      <AccountSummary data={performance} loading={loading} />
+      {/* Account Summary — compact */}
+      <div className="shrink-0">
+        <AccountSummary data={performance} loading={loading} />
+      </div>
 
-      <div className="divider-glow" />
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <div className="lg:col-span-2">
+      {/* Main trading area — fills remaining height */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 flex-1 min-h-0">
+        {/* Left: Stock Picker */}
+        <div className="lg:col-span-2 flex flex-col min-h-0">
           <StockPicker stocks={stocks} selectedCode={selectedCode} onSelect={handleStockSelect} loading={loading} />
         </div>
-        <div className="lg:col-span-7">
+
+        {/* Center: K-line Chart */}
+        <div className="lg:col-span-7 flex flex-col min-h-0">
           <KlineChartComponent data={klineData} loading={loading} />
         </div>
-        <div className="lg:col-span-3">
+
+        {/* Right: Trading Panel */}
+        <div className="lg:col-span-3 flex flex-col min-h-0">
           <TradingPanel stock={selectedStock} onTradeExecuted={handleTradeExecuted} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <PortfolioTable positions={positions} loading={loading} />
-        <OrderList orders={orders} loading={loading} onUpdate={fetchPortfolioData} />
+      {/* Bottom row: Portfolio + Orders + History — 3 equal columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 shrink-0" style={{ maxHeight: "30vh" }}>
+        <div className="min-h-0 overflow-hidden">
+          <PortfolioTable positions={positions} loading={loading} />
+        </div>
+        <div className="min-h-0 overflow-hidden">
+            <EquityChart data={equityData} loading={loading} />
+        </div>
+        <div className="min-h-0 overflow-hidden">
+          <TradeHistory trades={trades} loading={loading} />
+        </div>
       </div>
-
-      <EquityChart data={equityData} loading={loading} />
-
-      <TradeHistory trades={trades} loading={loading} />
     </div>
   );
 }

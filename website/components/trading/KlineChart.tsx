@@ -55,15 +55,15 @@ export default function KlineChart({ data, loading }: KlineChartProps) {
         secondsVisible: false,
       },
       width: container.clientWidth,
-      height: 400,
+      height: Math.max(280, container.clientHeight || 300),
     });
 
     const candleSeries = chart.addSeries(CandlestickSeries, {
-      upColor: "#00D09C",
+      upColor: "#64FFDA",
       downColor: "#F0616D",
-      borderUpColor: "#00D09C",
+      borderUpColor: "#64FFDA",
       borderDownColor: "#F0616D",
-      wickUpColor: "#00D09C",
+      wickUpColor: "#64FFDA",
       wickDownColor: "#F0616D",
     });
 
@@ -97,18 +97,16 @@ export default function KlineChart({ data, loading }: KlineChartProps) {
 
   if (loading) {
     return (
-      <div className={`${chartBg} w-full h-[400px] flex items-center justify-center`}>
-        <div className="text-center w-full px-8">
-          <div className="skeleton h-[360px] w-full rounded-lg" />
-        </div>
+      <div className="surface-card w-full h-full flex items-center justify-center min-h-[280px]">
+        <div className="skeleton h-full w-full rounded-lg" />
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className={`${chartBg} w-full h-[400px] flex items-center justify-center`}>
-        <div className="text-center text-muted">
+      <div className="surface-card w-full h-full flex items-center justify-center min-h-[280px]">
+        <div className="text-center text-base-content/40">
           <div className="text-3xl mb-3">📈</div>
           <p className="text-sm">Select a stock to view chart</p>
         </div>
@@ -117,6 +115,6 @@ export default function KlineChart({ data, loading }: KlineChartProps) {
   }
 
   return (
-    <div ref={chartRef} className="w-full rounded-xl overflow-hidden border border-white/5 shadow-surface-md" />
+    <div ref={chartRef} className="w-full h-full rounded-xl overflow-hidden border border-base-300 shadow-sm min-h-[280px]" />
   );
 }

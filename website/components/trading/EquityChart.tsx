@@ -45,14 +45,15 @@ export default function EquityChart({ data, initialCapital, loading }: EquityCha
   const base = initialCapital || chartData[0]?.equity || 100000;
 
   return (
-    <div className="surface-card w-full h-[320px] p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-text-primary text-sm font-semibold">Equity Curve</h3>
-        <span className="text-2xs text-muted font-mono">
-          Initial: ${base.toLocaleString()}
+    <div className="surface-card w-full h-full p-3 flex flex-col min-h-[200px]">
+      <div className="flex items-center justify-between mb-1 shrink-0">
+        <h3 className="text-base-content text-sm font-semibold">Equity Curve</h3>
+        <span className="text-2xs text-base-content/40 font-mono">
+          ${base.toLocaleString()}
         </span>
       </div>
-      <ResponsiveContainer width="100%" height="85%">
+      <div className="flex-1 min-h-0">
+      <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData}>
           <defs>
             <linearGradient id="equityGradient" x1="0" y1="0" x2="0" y2="1">
@@ -104,6 +105,7 @@ export default function EquityChart({ data, initialCapital, loading }: EquityCha
           />
         </LineChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 }
