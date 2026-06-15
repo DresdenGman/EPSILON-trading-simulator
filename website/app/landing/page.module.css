@@ -1,0 +1,28 @@
+.container {
+  min-height: 100vh;
+  background: #07080B;
+  color: #EDF0F5;
+}
+
+.footer {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+  background: #0B0D14;
+  color: #EDF0F5;
+}
+
+.footerContent {
+  text-align: center;
+}
+
+.copyright {
+  color: #586376;
+}
+
+.poweredBy {
+  color: #3E4858;
+  margin-top: 0.5rem;
+}
