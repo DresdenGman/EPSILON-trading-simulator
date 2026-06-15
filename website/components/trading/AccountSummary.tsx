@@ -33,7 +33,7 @@ export default function AccountSummary({ data, loading }: AccountSummaryProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
       {cards.map((card, i) => (
-        <div key={card.label} className="stat bg-base-200 rounded-box shadow-sm p-4 animate-fade-in-up" style={{ animationDelay: `${i * 60}ms` }}>
+        <div key={card.label} className={`stat card-neumorph p-4 stagger-item stagger-${i+1}`}>
           <div className="stat-title text-xs">{card.label}</div>
           <div className={`stat-value text-lg font-mono ${
             card.isPositive ? "text-success" : card.isNegative ? "text-error" : "text-base-content"

@@ -43,30 +43,33 @@ module.exports = {
       {
         'epsilon': {
           'color-scheme': 'dark',
-          'base-100': '#0B0E14',
-          'base-200': '#111620',
-          'base-300': '#19202E',
-          'base-content': '#D8DEE9',
-          'primary': '#00D09C',
-          'primary-content': '#07080B',
-          'secondary': '#5E81AC',
-          'secondary-content': '#D8DEE9',
-          'accent': '#C5A059',
-          'accent-content': '#07080B',
-          'neutral': '#2E3440',
-          'neutral-content': '#D8DEE9',
-          'info': '#81A1C1',
-          'info-content': '#07080B',
-          'success': '#A3BE8C',
-          'success-content': '#07080B',
-          'warning': '#EBCB8B',
-          'warning-content': '#07080B',
-          'error': '#BF616A',
-          'error-content': '#07080B',
+          // Brittany Chiang navy palette — professional trading aesthetic
+          'base-100': '#0A192F',   /* dark navy background */
+          'base-200': '#112240',   /* navy card surface */
+          'base-300': '#233554',   /* hover/raised surface */
+          'base-content': '#CCD6F6', /* primary text — light slate */
+          'primary': '#64FFDA',    /* mint accent — buy/CTA */
+          'primary-content': '#0A192F',
+          'secondary': '#57CBFF',  /* sky blue */
+          'secondary-content': '#0A192F',
+          'accent': '#F57DFF',     /* pink accent */
+          'accent-content': '#0A192F',
+          'neutral': '#233554',
+          'neutral-content': '#8892B0', /* slate text */
+          'info': '#57CBFF',
+          'info-content': '#0A192F',
+          'success': '#64FFDA',    /* mint green = profit */
+          'success-content': '#0A192F',
+          'warning': '#FFD700',
+          'warning-content': '#0A192F',
+          'error': '#F0616D',      /* red = loss */
+          'error-content': '#FFFFFF',
           '--rounded-box': '0.75rem',
           '--rounded-btn': '0.5rem',
           '--rounded-badge': '0.375rem',
           '--tab-radius': '0.5rem',
+          '--border': '1px',
+          '--depth': '1',
         },
       },
     ],

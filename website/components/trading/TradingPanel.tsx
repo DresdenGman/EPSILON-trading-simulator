@@ -164,9 +164,13 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
       <button
         onClick={handleTrade}
         disabled={loading || !isAuthenticated}
-        className={`btn btn-sm w-full font-semibold ${side === "buy" ? "btn-success" : "btn-error"} ${loading ? "btn-disabled" : ""}`}
+        className={`w-full py-3 rounded font-semibold text-sm transition-all duration-250 ${
+          side === "buy"
+            ? "btn-offset-buy"
+            : "btn-offset-sell"
+        } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
       >
-        {loading ? <span className="loading loading-spinner loading-xs" /> : null}
+        {loading ? <span className="loading loading-spinner loading-xs mr-2" /> : null}
         {loading ? "Processing" : `${side === "buy" ? "Buy" : "Sell"} ${stock.code}`}
       </button>
 

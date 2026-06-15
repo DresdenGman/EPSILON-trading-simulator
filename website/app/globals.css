@@ -10,56 +10,152 @@
     color-scheme: dark;
   }
 
-  ::selection {
-    background: rgba(0, 208, 156, 0.2);
-    color: #D8DEE9;
-  }
+  ::selection { background: rgba(0, 208, 156, 0.2); color: #D8DEE9; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-primary/50; }
 
-  /* Accessible focus ring */
-  :focus-visible {
-    @apply outline-2 outline-offset-2 outline-primary/50;
-  }
-
-  /* Scrollbar */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
-  /* Respect reduced motion */
   @media (prefers-reduced-motion: reduce) {
     *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 }
 
 @layer components {
-  /* Legacy surface card — delegates to daisyUI card where possible */
   .surface-card {
     @apply card bg-base-200 border border-base-300 shadow-sm;
   }
 }
 
 @layer utilities {
+  /* ─── Text Effects ─── */
   .text-gradient-accent {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, #00D09C, #5E81AC);
+    background-image: linear-gradient(135deg, #64FFDA, #57CBFF);
+  }
+  .text-edge-outline {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
   }
 
-  /* Grid background pattern */
+  /* ─── Background Patterns ─── */
   .bg-grid-subtle {
     background-image:
-      linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+      linear-gradient(to right, rgba(100,255,218,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(100,255,218,0.03) 1px, transparent 1px);
     background-size: 80px 80px;
   }
 
-  /* Noise texture */
-  .bg-noise {
-    position: relative;
+  /* ─── Offset Shadow (Brittany Chiang style) ─── */
+  .btn-offset-buy {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    padding: 1.25rem 1.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #64FFDA;
+    transition: all 250ms;
+    color: #64FFDA;
+    background: transparent;
   }
-  .bg-noise::before {
-    content: '';
-    @apply absolute inset-0 pointer-events-none opacity-[0.015];
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  .btn-offset-buy:hover {
+    transform: translate(-5px, -5px);
+    box-shadow: 4px 4px 0 0 #64FFDA;
+  }
+  .btn-offset-sell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    padding: 1.25rem 1.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #F0616D;
+    transition: all 250ms;
+    color: #F0616D;
+    background: transparent;
+  }
+  .btn-offset-sell:hover {
+    transform: translate(-5px, -5px);
+    box-shadow: 4px 4px 0 0 #F0616D;
+  }
+  .btn-offset-primary {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    padding: 1.25rem 1.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #64FFDA;
+    transition: all 250ms;
+    color: #64FFDA;
+    background: transparent;
+  }
+  .btn-offset-primary:hover {
+    transform: translate(-5px, -5px);
+    box-shadow: 4px 4px 0 0 #64FFDA;
+  }
+
+  /* ─── Neumorphic Dark Panel Card ─── */
+  .card-neumorph {
+    background: linear-gradient(145deg, #141E30, #0F172A);
+    box-shadow:
+      6px 6px 12px rgba(0, 0, 0, 0.4),
+      -2px -2px 8px rgba(100, 255, 218, 0.02),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+  .card-neumorph:hover {
+    box-shadow:
+      8px 8px 16px rgba(0, 0, 0, 0.5),
+      -4px -4px 12px rgba(100, 255, 218, 0.04),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.03);
+    transform: translateY(-2px);
+  }
+
+  /* ─── Glowing Gradient Divider ─── */
+  .divider-glow {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(100, 255, 218, 0.3), transparent);
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  /* ─── Staggered Entrance Animation ─── */
+  @keyframes stagger-entrance {
+    0%   { opacity: 0; transform: translateY(32px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .stagger-item {
+    opacity: 0;
+    animation: stagger-entrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .stagger-1 { animation-delay: 0.05s; }
+  .stagger-2 { animation-delay: 0.15s; }
+  .stagger-3 { animation-delay: 0.25s; }
+  .stagger-4 { animation-delay: 0.35s; }
+  .stagger-5 { animation-delay: 0.45s; }
+  .stagger-6 { animation-delay: 0.55s; }
+
+  /* ─── Floating Blob ─── */
+  @keyframes blob {
+    0%   { transform: translate(0px, 0px) scale(1); }
+    33%  { transform: translate(30px, -50px) scale(1.1); }
+    66%  { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+  }
+  .animate-blob {
+    animation: blob 10s infinite;
+  }
+
+  /* ─── Drifting Gradient Background ─── */
+  @keyframes bg-drift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .animate-bg-drift {
+    background: linear-gradient(-45deg, #0A192F, #112240, #233554, #0A192F);
+    background-size: 400% 400%;
+    animation: bg-drift 15s ease infinite;
   }
 }
