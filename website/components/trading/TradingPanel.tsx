@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { api, StockPrice } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 
 interface TradingPanelProps {
   stock: StockPrice | null;
-  onTradeExecuted: () => void;
+  onTradeExecuted: (side?: "buy" | "sell") => void;
 }
 
 export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelProps) {
@@ -18,6 +18,18 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
   const [triggerPrice, setTriggerPrice] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+
+  // Keyboard shortcut: Enter to execute trade
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !loading && stock && isAuthenticated) {
+        e.preventDefault();
+        handleTrade();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [loading, stock, isAuthenticated, shares, side, orderType, limitPrice, triggerPrice]);
 
   if (!stock) {
     return (
@@ -45,7 +57,7 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
         const fn = side === "buy" ? api.buy : api.sell;
         const result = await fn({ stock_code: stock.code, shares, price: currentPrice });
         setMessage(result.message);
-        onTradeExecuted();
+        onTradeExecuted(side);
       } else {
         const price = limitPrice ? parseFloat(limitPrice) : undefined;
         const trigger = triggerPrice ? parseFloat(triggerPrice) : undefined;
