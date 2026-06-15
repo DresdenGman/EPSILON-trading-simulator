@@ -28,9 +28,11 @@
     "ai": "^6.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "daisyui": "^4.12.24",
     "gsap": "^3.14.2",
     "jose": "^6.2.3",
     "lightweight-charts": "^5.2.0",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^1.18.0",
     "next": "^14.2.35",
     "next-auth": "5.0.0-beta.25",
@@ -38,8 +40,10 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.79.0",
     "recharts": "^2.12.5",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
+    "vaul": "^1.1.2",
     "zod": "^4.4.3"
   },
   "devDependencies": {

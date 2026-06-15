@@ -24,10 +24,7 @@ export default function AccountSummary({ data, loading }: AccountSummaryProps) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="surface-card p-4 animate-shimmer" style={{ animationDelay: `${i * 80}ms` }}>
-            <div className="skeleton h-3 w-16 mb-2.5" />
-            <div className="skeleton h-6 w-24" />
-          </div>
+          <div key={i} className="skeleton h-20 w-full rounded-box" style={{ animationDelay: `${i * 80}ms` }} />
         ))}
       </div>
     );
@@ -36,10 +33,10 @@ export default function AccountSummary({ data, loading }: AccountSummaryProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
       {cards.map((card, i) => (
-        <div key={card.label} className="surface-card p-4 animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
-          <div className="text-secondary text-2xs uppercase tracking-wide mb-1.5">{card.label}</div>
-          <div className={`text-lg font-bold font-mono tracking-tight ${
-            card.isPositive ? "text-accent" : card.isNegative ? "text-danger" : "text-text-primary"
+        <div key={card.label} className="stat bg-base-200 rounded-box shadow-sm p-4 animate-fade-in-up" style={{ animationDelay: `${i * 60}ms` }}>
+          <div className="stat-title text-xs">{card.label}</div>
+          <div className={`stat-value text-lg font-mono ${
+            card.isPositive ? "text-success" : card.isNegative ? "text-error" : "text-base-content"
           }`}>{card.value}</div>
         </div>
       ))}
