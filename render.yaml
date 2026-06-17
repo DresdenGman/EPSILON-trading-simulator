@@ -1,0 +1,58 @@
+# EPSILON Trading Simulator — Render Blueprint
+# Deploys both backend (FastAPI) and frontend (Next.js) + PostgreSQL
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  # ─── Backend API (FastAPI) ───────────────────────────────────────
+  - type: web
+    name: epsilon-api
+    runtime: python
+    region: singapore                    # 新加坡节点，国内访问快
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: epsilon-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: PYTHON_VERSION
+        value: "3.13.0"
+
+  # ─── Frontend (Next.js) ─────────────────────────────────────────
+  - type: web
+    name: epsilon-web
+    runtime: node
+    region: singapore
+    plan: free
+    buildCommand: cd website && npm install && npx prisma generate && npm run build
+    startCommand: cd website && npm start
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: epsilon-db
+          property: connectionString
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: NEXTAUTH_URL
+        value: "https://epsilon-web.onrender.com"
+      - key: NEXT_PUBLIC_API_URL
+        value: "https://epsilon-api.onrender.com"
+      - key: DEEPSEEK_API_KEY
+        sync: false                   # 需要手动在 Render Dashboard 设置
+      - key: TAVILY_API_KEY
+        sync: false
+
+# ─── PostgreSQL ────────────────────────────────────────────────────
+databases:
+  - name: epsilon-db
+    region: singapore
+    plan: free
+    databaseName: epsilon
