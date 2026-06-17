@@ -18,7 +18,14 @@ export default function AccountSummary({ data, loading }: AccountSummaryProps) {
         { label: "Profit Factor", value: data.profit_factor === 999.99 ? "∞" : data.profit_factor.toFixed(2), accent: false },
         { label: "Max Drawdown", value: `${data.max_drawdown.toFixed(2)}%`, isNegative: true },
       ]
-    : [];
+    : [
+        { label: "Portfolio Value", value: "$100,000", accent: false },
+        { label: "Cash", value: "$100,000", accent: false },
+        { label: "Total Return", value: "0.00%", accent: false },
+        { label: "Win Rate", value: "—", accent: false },
+        { label: "Profit Factor", value: "—", accent: false },
+        { label: "Max Drawdown", value: "0.00%", isNegative: true },
+      ];
 
   if (loading) {
     return (

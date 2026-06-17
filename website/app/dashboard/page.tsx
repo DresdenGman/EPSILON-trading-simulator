@@ -173,14 +173,14 @@ export default function DashboardPage() {
       </div>
 
       {/* Main trading area — fills remaining height */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-1.5 flex-1 min-h-0">
         {/* Left: Stock Picker */}
-        <div className="lg:col-span-2 flex flex-col min-h-0">
+        <div className="lg:col-span-3 flex flex-col min-h-0">
           <StockPicker stocks={stocks} selectedCode={selectedCode} onSelect={handleStockSelect} loading={loading} />
         </div>
 
         {/* Center: K-line Chart */}
-        <div className="lg:col-span-7 flex flex-col min-h-0">
+        <div className="lg:col-span-6 flex flex-col min-h-0">
           <KlineChartComponent data={klineData} loading={loading} />
         </div>
 
@@ -190,8 +190,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Bottom row: Portfolio + Orders + History — 3 equal columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 shrink-0" style={{ maxHeight: "30vh" }}>
+      {/* Bottom row: Portfolio + Equity + History — 3 equal columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-1.5 shrink-0" style={{ maxHeight: "24vh" }}>
         <div className="min-h-0 overflow-hidden">
           <PortfolioTable positions={positions} loading={loading} />
         </div>
