@@ -20,41 +20,38 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// Demo user — always authenticated, no database needed
+const DEMO_USER: User = {
+  id: 0,
+  email: "demo@epsilon.local",
+  username: "Demo",
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  // Always authenticated with demo user
+  const [user] = useState<User | null>(DEMO_USER);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("epsilon_token");
-    if (token) {
-      api.getMe()
-        .then((data) => setUser(data))
-        .catch(() => localStorage.removeItem("epsilon_token"))
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
+    // Short delay to simulate loading, then ready
+    const t = setTimeout(() => setLoading(false), 300);
+    return () => clearTimeout(t);
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const data = await api.login({ email, password });
-    localStorage.setItem("epsilon_token", data.access_token);
-    const me = await api.getMe();
-    setUser(me);
+  const login = useCallback(async (_email: string, _password: string) => {
+    // No-op: demo mode, always authenticated
   }, []);
 
-  const register = useCallback(async (email: string, username: string, password: string) => {
-    await api.register({ email, username, password });
-    await login(email, password);
-  }, [login]);
+  const register = useCallback(async (_email: string, _username: string, _password: string) => {
+    // No-op: demo mode
+  }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("epsilon_token");
-    setUser(null);
+    // No-op: demo mode
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, isAuthenticated: true }}>
       {children}
     </AuthContext.Provider>
   );

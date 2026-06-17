@@ -28,8 +28,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
           <ThemeToggle />
           {!isAuthenticated ? (
             <div className="flex items-center gap-2">
-              <Link href="/auth/login" className="btn btn-ghost btn-sm">Login</Link>
-              <Link href="/auth/register" className="btn btn-primary btn-sm">Register</Link>
+              <span className="badge badge-ghost badge-sm text-base-content/50">Demo Mode</span>
             </div>
           ) : (
             <div className="dropdown dropdown-end">
