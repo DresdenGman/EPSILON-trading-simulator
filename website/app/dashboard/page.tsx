@@ -30,30 +30,30 @@ export default function DashboardPage() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [tradeFlash, setTradeFlash] = useState<"buy" | "sell" | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const autoSelected = useRef(false);
 
   const fetchStocks = useCallback(async () => {
     try {
       const data = await api.getStockPrices();
       setStocks(data);
-      if (data.length > 0 && !selectedCode) {
+      if (data.length > 0 && !autoSelected.current) {
+        autoSelected.current = true;
         setSelectedCode(data[0].code);
         setSelectedStock(data[0]);
       }
     } catch (e) {
       console.error("Failed to fetch stocks:", e);
     }
-  }, [selectedCode]);
+  }, []);
 
   const fetchKline = useCallback(async (code: string) => {
     try {
       const data = await api.getKline(code, 90);
       setKlineData(data);
-      const stock = stocks.find((s) => s.code === code) || null;
-      setSelectedStock(stock);
     } catch (e) {
       console.error("Failed to fetch kline:", e);
     }
-  }, [stocks]);
+  }, []);
 
   const fetchPortfolioData = useCallback(async () => {
     if (!isAuthenticated) return;
