@@ -11,6 +11,8 @@ import PortfolioTable from "@/components/trading/PortfolioTable";
 import OrderList from "@/components/trading/OrderList";
 import TradeHistory from "@/components/trading/TradeHistory";
 import EquityChart from "@/components/trading/EquityChart";
+import Particles from "@/components/effects/Particles";
+import Link from "next/link";
 
 const AUTO_REFRESH_MS = 30000;
 
@@ -30,30 +32,30 @@ export default function DashboardPage() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [tradeFlash, setTradeFlash] = useState<"buy" | "sell" | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const autoSelected = useRef(false);
 
   const fetchStocks = useCallback(async () => {
     try {
       const data = await api.getStockPrices();
       setStocks(data);
-      if (data.length > 0 && !autoSelected.current) {
-        autoSelected.current = true;
+      if (data.length > 0 && !selectedCode) {
         setSelectedCode(data[0].code);
         setSelectedStock(data[0]);
       }
     } catch (e) {
       console.error("Failed to fetch stocks:", e);
     }
-  }, []);
+  }, [selectedCode]);
 
   const fetchKline = useCallback(async (code: string) => {
     try {
       const data = await api.getKline(code, 90);
       setKlineData(data);
+      const stock = stocks.find((s) => s.code === code) || null;
+      setSelectedStock(stock);
     } catch (e) {
       console.error("Failed to fetch kline:", e);
     }
-  }, []);
+  }, [stocks]);
 
   const fetchPortfolioData = useCallback(async () => {
     if (!isAuthenticated) return;
@@ -137,7 +139,71 @@ export default function DashboardPage() {
     fetchPortfolioData();
   };
 
-  // Dashboard — demo mode, always shown
+  // Welcome screen (not authenticated)
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 relative overflow-hidden">
+        {/* Canvas particles background */}
+        <Particles quantity={30} color="100,255,218" staticMode={false} />
+
+        {/* Floating blobs */}
+        <div className="absolute -z-10 opacity-15">
+          <div className="w-96 h-96 rounded-full bg-primary blur-3xl animate-blob absolute -top-32 -left-32" style={{ animationDelay: '0s' }} />
+          <div className="w-72 h-72 rounded-full bg-secondary blur-3xl animate-blob absolute top-20 right-0" style={{ animationDelay: '3s' }} />
+          <div className="w-80 h-80 rounded-full bg-accent blur-3xl animate-blob absolute -bottom-20 left-1/4" style={{ animationDelay: '6s' }} />
+        </div>
+
+        <div className="max-w-3xl text-center space-y-8">
+          {/* Hero with edge-outline title */}
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-medium mb-4">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+              </span>
+              Live Market Data
+            </div>
+            <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+              Trade Smarter.<br />
+              <span className="text-gradient-accent text-edge-outline">Analyze Deeper.</span>
+            </h1>
+            <p className="text-base-content/60 text-lg max-w-xl mx-auto leading-relaxed">
+              EPSILON is an institutional-grade trading simulator. Practice with real-time data, advanced analytics, and AI-powered strategy insights — risk-free.
+            </p>
+          </div>
+
+          {/* Feature cards — neumorphic */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+            {[
+              { icon: "📊", title: "Live Trading", desc: "15 US stocks with real-time price simulation" },
+              { icon: "🤖", title: "AI Advisor", desc: "DeepSeek-powered strategy analysis and insights" },
+              { icon: "📈", title: "Backtesting", desc: "Test strategies on historical data with metrics" },
+            ].map((f, i) => (
+              <div key={f.title} className={`card-neumorph p-5 text-left stagger-item stagger-${i+1}`}>
+                <div className="text-2xl mb-3">{f.icon}</div>
+                <h3 className="text-base-content font-semibold text-sm mb-1">{f.title}</h3>
+                <p className="text-base-content/50 text-xs leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA — offset shadow buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 stagger-item stagger-6">
+            <Link href="/auth/register" className="btn-offset-primary px-8 py-3 !text-sm !font-semibold no-underline">
+              Start Trading Free
+            </Link>
+            <Link href="/auth/login" className="text-base-content/60 hover:text-base-content transition-colors text-sm font-medium">
+              Sign In →
+            </Link>
+          </div>
+
+          <p className="text-base-content/30 text-xs">No real money. No risk. Pure education.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Authenticated dashboard — optimized for 16:10 single-view
   return (
     <div className="space-y-2 h-[calc(100vh-5rem)] flex flex-col">
       {/* Header bar */}
@@ -173,14 +239,14 @@ export default function DashboardPage() {
       </div>
 
       {/* Main trading area — fills remaining height */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-1.5 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 flex-1 min-h-0">
         {/* Left: Stock Picker */}
-        <div className="lg:col-span-3 flex flex-col min-h-0">
+        <div className="lg:col-span-2 flex flex-col min-h-0">
           <StockPicker stocks={stocks} selectedCode={selectedCode} onSelect={handleStockSelect} loading={loading} />
         </div>
 
         {/* Center: K-line Chart */}
-        <div className="lg:col-span-6 flex flex-col min-h-0">
+        <div className="lg:col-span-7 flex flex-col min-h-0">
           <KlineChartComponent data={klineData} loading={loading} />
         </div>
 
@@ -190,8 +256,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Bottom row: Portfolio + Equity + History — 3 equal columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-1.5 shrink-0" style={{ maxHeight: "24vh" }}>
+      {/* Bottom row: Portfolio + Orders + History — 3 equal columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 shrink-0" style={{ maxHeight: "30vh" }}>
         <div className="min-h-0 overflow-hidden">
           <PortfolioTable positions={positions} loading={loading} />
         </div>
