@@ -6,10 +6,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import AIChatDialog from "./AIChatDialog";
 import { ResearchProvider, UNKNOWN_BACKTEST_PROVENANCE } from "@/components/research/ResearchContext";
 
-vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ isAuthenticated: true }) }));
+const { mockAuthState } = vi.hoisted(() => ({ mockAuthState: { isAuthenticated: true, isGuest: false } }));
+vi.mock("@/hooks/useAuth", () => ({ useAuth: () => mockAuthState }));
 
 describe("AIChatDialog", () => {
   beforeEach(() => {
+    mockAuthState.isAuthenticated = true;
+    mockAuthState.isGuest = false;
     window.sessionStorage.clear();
     Element.prototype.scrollIntoView = vi.fn();
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
@@ -28,7 +31,7 @@ describe("AIChatDialog", () => {
 
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.change(screen.getByPlaceholderText("Ask about your strategy..."), { target: { value: "What would falsify this view?" } });
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    fireEvent.click(screen.getByRole("button", { name: "Send research question" }));
 
     await vi.waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
     const request = (fetch as ReturnType<typeof vi.fn>).mock.calls[0][1];
@@ -43,7 +46,7 @@ describe("AIChatDialog", () => {
     render(React.createElement(ResearchProvider, null, React.createElement(AIChatDialog)));
 
     fireEvent.change(screen.getByPlaceholderText("Ask about your strategy..."), { target: { value: "Challenge this result." } });
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    fireEvent.click(screen.getByRole("button", { name: "Send research question" }));
 
     expect(await screen.findByText("Critic unavailable / no conclusion generated")).toBeTruthy();
     expect(screen.getByText(/returned no analysis/i)).toBeTruthy();
@@ -59,7 +62,7 @@ describe("AIChatDialog", () => {
     render(React.createElement(ResearchProvider, null, React.createElement(AIChatDialog)));
 
     fireEvent.change(screen.getByPlaceholderText("Ask about your strategy..."), { target: { value: "Challenge this result." } });
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    fireEvent.click(screen.getByRole("button", { name: "Send research question" }));
 
     expect(await screen.findByText(/Research critic is not configured/i)).toBeTruthy();
     expect(screen.getByText("Critic unavailable / no conclusion generated")).toBeTruthy();
@@ -92,7 +95,7 @@ describe("AIChatDialog", () => {
     render(<ResearchProvider><AIChatDialog /></ResearchProvider>);
     await screen.findByText("Previous result · Needs retest");
     fireEvent.change(screen.getByPlaceholderText("Ask about your strategy..."), { target: { value: "Challenge the refined claim." } });
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    fireEvent.click(screen.getByRole("button", { name: "Send research question" }));
 
     await vi.waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
     const request = (fetch as ReturnType<typeof vi.fn>).mock.calls[0][1];
@@ -101,5 +104,15 @@ describe("AIChatDialog", () => {
       hypothesis: "Momentum fails in high-volatility regimes.",
       test: null,
     });
+  });
+
+  it("removes live-model and web-evidence affordances from the guest critic", () => {
+    mockAuthState.isGuest = true;
+    render(<ResearchProvider><AIChatDialog /></ResearchProvider>);
+
+    expect(screen.getAllByText(/local heuristic · no live ai\/web/i).length).toBeGreaterThan(0);
+    expect(screen.queryByRole("checkbox")).toBeNull();
+    expect(screen.queryByText(/model assisted/i)).toBeNull();
+    expect(screen.queryByText(/web evidence on/i)).toBeNull();
   });
 });

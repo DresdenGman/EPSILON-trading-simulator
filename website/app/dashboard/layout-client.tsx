@@ -3,7 +3,7 @@
 import React from "react";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import ThemeToggle from "@/components/layout/ThemeToggle";
-import { ResearchProvider } from "@/components/research/ResearchContext";
+import { ResearchProvider, useResearchExperiment } from "@/components/research/ResearchContext";
 import ActiveExperimentBar from "@/components/research/ActiveExperimentBar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,7 +16,16 @@ const productNav = [
 
 function DashboardInner({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, loading, isGuest, logout } = useAuth();
+  const { resetExperiment } = useResearchExperiment();
   const pathname = usePathname();
+  const [guestSessionRevision, setGuestSessionRevision] = React.useState(0);
+  const resetGuestWorkspace = () => {
+    const confirmed = window.confirm("Reset this guest session? This clears the simulated portfolio, trades, orders, hypothesis, and test artifact stored in this browser tab.");
+    if (!confirmed) return;
+    logout();
+    resetExperiment();
+    setGuestSessionRevision((current) => current + 1);
+  };
   const protectedContent = loading ? (
     <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-label="Checking session">
       <div className="surface-card px-5 py-4 text-sm text-base-content/55">Checking your session…</div>
@@ -58,7 +67,8 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
           ) : isGuest ? (
             <button
               type="button"
-              onClick={logout}
+              onClick={resetGuestWorkspace}
+              aria-label="Reset guest session data"
               title="Reset the data stored in this browser tab"
               className="rounded-full border border-primary/25 bg-primary/5 px-3 py-1.5 font-mono text-2xs uppercase tracking-[0.12em] text-primary/80 transition-colors hover:bg-primary/10"
             >
@@ -83,7 +93,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
 
       <main className="max-w-7xl mx-auto px-5 py-6 relative">
         <div className="fixed inset-0 opacity-[0.02] pointer-events-none bg-grid-subtle" />
-        <div className="relative z-10">{protectedContent}</div>
+        <div key={guestSessionRevision} className="relative z-10">{protectedContent}</div>
       </main>
     </div>
   );

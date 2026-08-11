@@ -4,7 +4,7 @@
 
 I first built EPSILON as a trading simulator. I have since reworked it into a decision lab focused less on producing an answer than on testing how much that answer deserves to be trusted.
 
-EPSILON is a research environment for turning market ideas into explicit, testable claims. It combines simulated market observation, strategy testing, evidence provenance, and AI-assisted critique in one repeatable decision cycle:
+EPSILON is a research environment for turning market ideas into explicit, testable claims. It combines simulated market observation, strategy testing, evidence provenance, and structured critique in one repeatable decision cycle:
 
 `Observe → Frame a hypothesis → Test → Interrogate → Refine → Retest`
 
@@ -33,7 +33,7 @@ Run a backtest or inspect the structure of a series. Submitted inputs, computed 
 
 ### 3. Interrogate — Challenge
 
-Ask a research critic to identify assumptions, regime risk, parameter sensitivity, alternative explanations, and missing evidence. The AI is not an advisor and does not receive stale test artifacts.
+Ask a research critic to identify assumptions, regime risk, parameter sensitivity, alternative explanations, and missing evidence. Public guest sessions use a clearly labeled local heuristic with no live AI or web retrieval; configured deployments may use the server-side model integration. Neither mode is an advisor, and neither receives stale test artifacts.
 
 ### 4. Refine and retest
 

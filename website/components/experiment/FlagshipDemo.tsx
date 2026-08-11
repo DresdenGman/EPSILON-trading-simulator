@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { api, BacktestResult } from "@/lib/api";
 import { diagnoseExperiment, ExperimentDiagnosis } from "@/lib/experiment";
+import { GUEST_MODE } from "@/lib/guest-mode";
 import DemoProgress from "./DemoProgress";
 import ReplicationCheck from "./ReplicationCheck";
 
@@ -166,7 +167,7 @@ export default function FlagshipDemo() {
           <span className={`font-mono text-2xs ${state === "failed" ? "text-error" : "text-base-content/45"}`}>{statusText}</span>
         </div>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-base-content/60">Same strategy, universe, capital, date window, fees, and model. Only execution slippage changes.</p>
-        <div className="mt-3 border-l-2 border-primary/30 pl-3 font-mono text-2xs uppercase tracking-[0.12em] text-base-content/45">Data: controlled synthetic path · Model: CSP-v1 · Weekdays only · Synthetic ≠ historical market validation</div>
+        <div className="mt-3 border-l-2 border-primary/30 pl-3 font-mono text-2xs uppercase tracking-[0.12em] text-base-content/45">Data: controlled synthetic path · Model: {GUEST_MODE ? "browser-local windowed model" : "CSP-v1"} · Synthetic ≠ historical market validation</div>
 
         <div className="mt-6 grid gap-3 md:grid-cols-2">
           <div className="rounded-box border border-base-300/70 p-4 font-mono text-xs"><div className="text-base-content/40">BASELINE · $0.010/share</div><div className="mt-2 text-base-content/55">{baseline ? "COMPLETE" : state === "running" ? "RUNNING…" : "WAITING"}</div></div>

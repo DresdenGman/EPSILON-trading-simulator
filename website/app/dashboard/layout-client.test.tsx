@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 
 import React from "react";
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import DashboardClientLayout from "./layout-client";
 
 const authState = vi.hoisted(() => ({
@@ -30,7 +30,18 @@ function renderLayout() {
 }
 
 describe("DashboardClientLayout", () => {
-  afterEach(() => cleanup());
+  beforeEach(() => {
+    authState.loading = true;
+    authState.isAuthenticated = false;
+    authState.isGuest = false;
+    authState.user = null;
+    authState.logout.mockClear();
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+  });
 
   it("does not mount protected content while the session is being checked", () => {
     authState.loading = true;
@@ -78,5 +89,21 @@ describe("DashboardClientLayout", () => {
 
     expect(screen.getByText("Protected workspace")).toBeTruthy();
     expect(screen.queryByText("Sign in to access your workspace")).toBeNull();
+  });
+
+  it("requires confirmation before clearing a guest session", () => {
+    authState.loading = false;
+    authState.isAuthenticated = true;
+    authState.isGuest = true;
+    const confirm = vi.spyOn(window, "confirm").mockReturnValueOnce(false).mockReturnValueOnce(true);
+    renderLayout();
+
+    const reset = screen.getByRole("button", { name: "Reset guest session data" });
+    fireEvent.click(reset);
+    expect(authState.logout).not.toHaveBeenCalled();
+
+    fireEvent.click(reset);
+    expect(authState.logout).toHaveBeenCalledTimes(1);
+    expect(confirm).toHaveBeenCalledTimes(2);
   });
 });

@@ -55,4 +55,39 @@ describe("guestRequest", () => {
     expect(baseline.trades).toHaveLength(4);
     expect(perturbed.performance.total_return).toBeLessThan(baseline.performance.total_return);
   });
+
+  it("uses the pre-specified date window as a real deterministic input", async () => {
+    const request = {
+      strategy: "momentum",
+      stock_codes: ["AAPL", "MSFT", "NVDA"],
+      initial_cash: 100_000,
+      slippage_per_share: 0.01,
+    };
+    const primary = await guestRequest<BacktestResult>("/api/backtest", {
+      method: "POST",
+      body: JSON.stringify({ ...request, start_date: "2026-04-01", end_date: "2026-07-01" }),
+    });
+    const primaryRepeat = await guestRequest<BacktestResult>("/api/backtest", {
+      method: "POST",
+      body: JSON.stringify({ ...request, start_date: "2026-04-01", end_date: "2026-07-01" }),
+    });
+    const replication = await guestRequest<BacktestResult>("/api/backtest", {
+      method: "POST",
+      body: JSON.stringify({ ...request, start_date: "2026-01-01", end_date: "2026-03-31" }),
+    });
+    const reversalBaseline = await guestRequest<BacktestResult>("/api/backtest", {
+      method: "POST",
+      body: JSON.stringify({ ...request, start_date: "2026-04-01", end_date: "2026-04-28" }),
+    });
+    const reversalPerturbed = await guestRequest<BacktestResult>("/api/backtest", {
+      method: "POST",
+      body: JSON.stringify({ ...request, start_date: "2026-04-01", end_date: "2026-04-28", slippage_per_share: 0.02 }),
+    });
+
+    expect(primary).toEqual(primaryRepeat);
+    expect(replication.performance.total_return).not.toBe(primary.performance.total_return);
+    expect(replication.equity_curve).not.toEqual(primary.equity_curve);
+    expect(reversalBaseline.performance.total_return).toBeGreaterThan(0);
+    expect(reversalPerturbed.performance.total_return).toBeLessThan(0);
+  });
 });

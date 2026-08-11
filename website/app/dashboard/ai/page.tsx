@@ -25,7 +25,7 @@ export default function AIPage() {
         </div>
         <div className="mt-5 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/10 pt-4 font-mono text-[10px] uppercase tracking-[0.16em] text-[#64748B]">
           <span>Role <strong className="ml-2 font-medium text-[#E2E8F0]">Interrogate reasoning</strong></span>
-          <span>Service <strong className="ml-2 font-medium text-[#E2E8F0]">Guest-ready research critic</strong></span>
+          <span>Guest service <strong className="ml-2 font-medium text-[#E2E8F0]">Local heuristic · no live AI/web</strong></span>
           <span>Use <strong className="ml-2 font-medium text-[#E2E8F0]">Challenge before trust</strong></span>
         </div>
       </div>

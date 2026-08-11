@@ -76,6 +76,15 @@ function marketPrice(code: string) {
   return MARKET.find((stock) => stock.code === code)?.price;
 }
 
+function deterministicUnit(value: string) {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return ((hash >>> 0) % 2001) / 1000 - 1;
+}
+
 function portfolio(state: GuestState): PortfolioPosition[] {
   return Object.entries(state.positions)
     .filter(([, position]) => position.shares > 0)
@@ -160,8 +169,12 @@ function createBacktest(request: BacktestRequest): BacktestResult {
     momentum: "Momentum (2%)",
   };
   const strategyEdge = request.strategy === "buy_and_hold" ? 5.4 : request.strategy === "moving_average" ? 3.2 : 1.15;
+  const windowKey = [request.start_date, request.end_date, request.strategy, ...symbols].join("|");
+  const regimeShift = deterministicUnit(windowKey) * 1.4;
+  const pathAmplitude = 0.35 + Math.abs(deterministicUnit(`${windowKey}|path`)) * 0.65;
+  const pathPhase = deterministicUnit(`${windowKey}|phase`) * Math.PI;
   const friction = (request.slippage_per_share ?? 0.01) * 19 + (request.fee_rate ?? 0.0001) * 100;
-  const totalReturn = Number((strategyEdge - friction).toFixed(2));
+  const totalReturn = Number((strategyEdge + regimeShift - friction).toFixed(2));
   const trades = symbols.slice(0, 3).flatMap((code, index) => {
     const price = marketPrice(code) ?? 100;
     const shares = 8 + index * 4;
@@ -175,7 +188,7 @@ function createBacktest(request: BacktestRequest): BacktestResult {
     const date = new Date(`${request.start_date}T00:00:00Z`);
     date.setUTCDate(date.getUTCDate() + index * 7);
     const progress = index / (points - 1);
-    const path = totalReturn * progress + Math.sin(index / 2.3) * 0.45;
+    const path = totalReturn * progress + Math.sin(index / 2.3 + pathPhase) * pathAmplitude;
     return { date: date.toISOString().slice(0, 10), equity: Number((cash * (1 + path / 100)).toFixed(2)) };
   });
 

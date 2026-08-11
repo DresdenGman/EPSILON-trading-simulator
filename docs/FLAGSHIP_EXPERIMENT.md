@@ -18,14 +18,14 @@ Does the sign of a momentum strategy's total return remain unchanged after a sma
 | Baseline slippage | `$0.01/share` |
 | Perturbed slippage | `$0.02/share` |
 | ε | `+$0.01/share` |
-| Market model | `CSP-v1` controlled synthetic path |
-| Calendar | Weekdays only; US holidays are simplified |
+| Market model | Backend: `CSP-v1`; public guest: browser-local windowed controlled synthetic model |
+| Calendar | Fixed date windows; backend CSP-v1 uses weekdays with simplified US holidays |
 
 ## Primary protocol
 
 `2026-04-01 → 2026-07-01`
 
-Two real `/api/backtest` calls use identical configuration. Only `slippage_per_share` changes.
+Two requests through the active backtest adapter use identical configuration. Only `slippage_per_share` changes. In the public guest deployment, the adapter runs locally in the browser and uses the fixed date window as a deterministic model input; a configured backend uses `/api/backtest`.
 
 Signals generated with information through day `t` execute on the next available trading day (`t+1`). The backtest uses an isolated, non-persistent experiment account.
 
@@ -54,4 +54,4 @@ For the current observed pattern, a valid replication that changes the return di
 
 ## Scope and limits
 
-This experiment does not establish historical market validity, statistical significance, profitability, general robustness, or predictive performance. CSP-v1 is an intentionally simple deterministic instrument for studying experimental sensitivity. A future historical-data snapshot could use the same protocol, but that is not part of this experiment.
+This experiment does not establish historical market validity, statistical significance, profitability, general robustness, or predictive performance. Both synthetic adapters are intentionally simple deterministic instruments for studying experimental sensitivity. A future historical-data snapshot could use the same protocol, but that is not part of this experiment.

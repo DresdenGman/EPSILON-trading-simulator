@@ -24,11 +24,13 @@ export default function ThemeToggle() {
 
   return (
     <button
+      type="button"
       onClick={toggle}
       className="btn btn-ghost btn-sm text-lg"
       title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+      aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
     >
-      {ICONS[theme]}
+      <span aria-hidden="true">{ICONS[theme]}</span>
     </button>
   );
 }

@@ -51,14 +51,14 @@ export const UNKNOWN_BACKTEST_PROVENANCE: ResearchTestArtifact["provenance"] = {
 export const GUEST_BACKTEST_PROVENANCE: ResearchTestArtifact["provenance"] = {
   resultOrigin: "guest-simulation",
   dataMode: "controlled-synthetic",
-  dataSource: "Deterministic browser-generated market path",
+  dataSource: "Window-aware deterministic browser-generated path",
   dataProvider: "EPSILON guest engine",
   samplingInterval: "Synthetic daily observations",
   dataAsOf: null,
   feeRate: null,
   minimumFee: null,
   slippagePerShare: null,
-  fillModel: "Deterministic demonstration model",
+  fillModel: "Browser-local windowed demonstration model",
   benchmark: null,
 };
 
@@ -76,6 +76,7 @@ type ResearchContextValue = {
   setSubject: (symbol: string | null) => void;
   setHypothesis: (hypothesis: string) => void;
   recordBacktest: (artifact: ResearchTestInput) => void;
+  resetExperiment: () => void;
 };
 
 const EMPTY_EXPERIMENT: ResearchExperiment = {
@@ -165,6 +166,10 @@ export function ResearchProvider({ children }: { children: React.ReactNode }) {
       return { ...current, symbol, test, updatedAt: new Date().toISOString() };
     });
   }, []);
+  const resetExperiment = React.useCallback(() => {
+    window.sessionStorage.removeItem(STORAGE_KEY);
+    setExperiment(EMPTY_EXPERIMENT);
+  }, []);
 
   const testState: ResearchTestState = !experiment.test
     ? "empty"
@@ -179,7 +184,8 @@ export function ResearchProvider({ children }: { children: React.ReactNode }) {
     setSubject,
     setHypothesis,
     recordBacktest,
-  }), [experiment, hydrated, recordBacktest, setHypothesis, setSubject, testState]);
+    resetExperiment,
+  }), [experiment, hydrated, recordBacktest, resetExperiment, setHypothesis, setSubject, testState]);
 
   return <ResearchContext.Provider value={value}>{children}</ResearchContext.Provider>;
 }

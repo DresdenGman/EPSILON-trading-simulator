@@ -53,7 +53,7 @@ export default function AIChatDialog() {
           "",
           "Challenge the conclusion by separating the claim, the assumptions built into the synthetic path, and the evidence that would reverse your decision. A stable next test changes one assumption only—such as execution friction, sample window, or universe—while preserving the falsification rule.",
           "",
-          "This response is generated locally for the public guest experience. It is not live AI analysis, market evidence, or financial advice.",
+          "This response is generated locally for the public guest experience. It is not live AI analysis, web research, market evidence, or financial advice.",
         ].join("\n");
         setMessages((prev) => [...prev, { role: "assistant", content: response, kind: "response" }]);
         return;
@@ -141,7 +141,7 @@ export default function AIChatDialog() {
       <aside className="border-b border-white/10 p-5 lg:border-b-0 lg:border-r lg:p-6" aria-label="Research frame">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#00D09C]">01 / Frame</p>
         <h2 className="mt-2 text-lg font-semibold text-white">Set the question.</h2>
-        <p className="mt-2 text-sm leading-6 text-[#94A3B8]">This workspace interrogates the active experiment. It only receives the research context and completed service-response artifact shown below.</p>
+        <p className="mt-2 text-sm leading-6 text-[#94A3B8]">This workspace interrogates the active experiment. It only receives the research context and {isGuest ? "session-local guest artifact" : "completed service-response artifact"} shown below.</p>
         <div className="mt-5 border-y border-white/10 py-4 text-xs leading-5 text-[#94A3B8]">
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#E2E8F0]">Active experiment</p>
           <p className="mt-2">Subject: <span className="text-white">{experiment.symbol ?? "Not selected"}</span></p>
@@ -156,16 +156,23 @@ export default function AIChatDialog() {
           {testState === "stale" ? "Refine & retest →" : "Open Strategy Lab →"}
         </Link>
         <div className="mt-6 border-y border-white/10 py-4">
-          <label className="flex cursor-pointer items-start gap-3">
-            <input
-              type="checkbox"
-              checked={searchEnabled}
-              onChange={(event) => setSearchEnabled(event.target.checked)}
-              disabled={loading}
-              className="mt-0.5 h-4 w-4 accent-[#00D09C] disabled:opacity-50"
-            />
-            <span><span className="block font-mono text-[10px] uppercase tracking-[0.16em] text-[#E2E8F0]">Web evidence {searchEnabled ? "on" : "off"}</span><span className="mt-1 block text-xs leading-5 text-[#64748B]">When enabled, the service may retrieve web results for your latest question.</span></span>
-          </label>
+          {isGuest ? (
+            <div aria-label="Guest critic capability">
+              <span className="block font-mono text-[10px] uppercase tracking-[0.16em] text-[#E2E8F0]">Local heuristic · no live AI/web</span>
+              <span className="mt-1 block text-xs leading-5 text-[#64748B]">The public sandbox generates a fixed local critique and performs no web retrieval.</span>
+            </div>
+          ) : (
+            <label className="flex cursor-pointer items-start gap-3">
+              <input
+                type="checkbox"
+                checked={searchEnabled}
+                onChange={(event) => setSearchEnabled(event.target.checked)}
+                disabled={loading}
+                className="mt-0.5 h-4 w-4 accent-[#00D09C] disabled:opacity-50"
+              />
+              <span><span className="block font-mono text-[10px] uppercase tracking-[0.16em] text-[#E2E8F0]">Web evidence {searchEnabled ? "on" : "off"}</span><span className="mt-1 block text-xs leading-5 text-[#64748B]">When enabled, the service may retrieve web results for your latest question.</span></span>
+            </label>
+          )}
         </div>
         <div className="mt-6 space-y-3 text-sm leading-6 text-[#94A3B8]">
           <p>What assumption is carrying this conclusion?</p>
@@ -177,7 +184,7 @@ export default function AIChatDialog() {
       <section className="flex min-h-[540px] flex-col" aria-label="Research conversation">
       <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 lg:px-6">
         <div><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#00D09C]">02 / Interrogate</p><h3 className="mt-1 text-sm font-semibold text-white">Research transcript</h3></div>
-        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#64748B]">{searchEnabled ? "Web evidence on" : "Model assisted"}</span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#64748B]">{isGuest ? "Local heuristic · no live AI/web" : searchEnabled ? "Web evidence on" : "Model assisted"}</span>
       </div>
 
       <div className="flex-1 overflow-y-auto p-5 space-y-5 lg:p-6">
@@ -226,6 +233,7 @@ export default function AIChatDialog() {
         <div className="flex gap-2">
           <input
             type="text"
+            aria-label="Research question"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -240,6 +248,7 @@ export default function AIChatDialog() {
           {loading ? (
             <button
               onClick={handleStop}
+              aria-label="Stop response"
               className="bg-[#F0616D] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#FB7185]"
             >
               Stop
@@ -247,6 +256,7 @@ export default function AIChatDialog() {
           ) : (
             <button
               onClick={handleSend}
+              aria-label="Send research question"
               disabled={!input.trim()}
               className="bg-[#00D09C] px-4 py-3 text-sm font-semibold text-black transition-colors hover:bg-[#37E8B8] disabled:opacity-40"
             >
