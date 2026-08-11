@@ -11,6 +11,24 @@ interface Message {
   kind?: "response" | "error";
 }
 
+const promptStarters = [
+  {
+    label: "Challenge the assumption",
+    detail: "Find the premise carrying the conclusion.",
+    prompt: "Which assumption is carrying this conclusion, and how would you test whether it is false?",
+  },
+  {
+    label: "Define falsifying evidence",
+    detail: "Name the result that should reverse the decision.",
+    prompt: "What specific evidence would falsify this hypothesis or force me to revise it?",
+  },
+  {
+    label: "Design the next test",
+    detail: "Change one variable and preserve the decision rule.",
+    prompt: "Propose the next atomic test: change one assumption, preserve the decision rule, and explain what I should compare.",
+  },
+];
+
 export default function AIChatDialog() {
   const { isAuthenticated, isGuest } = useAuth();
   const { experiment, testState } = useResearchExperiment();
@@ -181,17 +199,35 @@ export default function AIChatDialog() {
         </div>
       </aside>
 
-      <section className="flex min-h-[540px] flex-col" aria-label="Research conversation">
+      <section className="flex min-h-[500px] flex-col" aria-label="Research conversation">
       <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 lg:px-6">
         <div><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#00D09C]">02 / Interrogate</p><h3 className="mt-1 text-sm font-semibold text-white">Research transcript</h3></div>
         <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#64748B]">{isGuest ? "Local heuristic · no live AI/web" : searchEnabled ? "Web evidence on" : "Model assisted"}</span>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 space-y-5 lg:p-6">
+      <div className={`flex-1 overflow-y-auto p-5 lg:p-6 ${messages.length === 0 ? "flex" : "space-y-5"}`}>
         {messages.length === 0 && (
-          <div className="max-w-xl border-l border-[#00D09C] pl-4 pt-1">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#00D09C]">Ready for a research question</p>
-            <p className="mt-3 text-sm leading-6 text-[#94A3B8]">{activeTest ? "The active backtest artifact is attached to this conversation. Ask EPSILON to find the assumptions, sample risks, and evidence gaps that could break it." : testState === "stale" ? "The previous result no longer matches the current subject or hypothesis. Retest before asking EPSILON to treat a result as current evidence." : "Start from a hypothesis or complete a backtest first. EPSILON will only assess the research context shown in this workspace."}</p>
+          <div className="my-auto w-full">
+            <div className="max-w-2xl">
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#00D09C]">Ready / Begin with doubt</p>
+              <h4 className="mt-3 max-w-xl text-xl font-semibold tracking-tight text-white sm:text-2xl">Do not ask for a prediction. Ask what could make the model wrong.</h4>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-[#94A3B8]">{activeTest ? "The active backtest artifact is attached. Choose a line of inquiry or write your own question to expose assumptions, sample risks, and evidence gaps." : testState === "stale" ? "The previous result no longer matches the current subject or hypothesis. You can frame the critique now, but retest before treating the result as current evidence." : "Record a hypothesis or complete a backtest to attach stronger evidence. You can still begin by defining what would falsify the claim."}</p>
+            </div>
+            <div className="mt-7 grid gap-px overflow-hidden border border-white/10 bg-white/10 sm:grid-cols-3" aria-label="Suggested research questions">
+              {promptStarters.map((starter, index) => (
+                <button
+                  key={starter.label}
+                  type="button"
+                  onClick={() => setInput(starter.prompt)}
+                  className="group bg-[#0B1628] p-4 text-left transition-colors hover:bg-[#111F34] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#00D09C]"
+                >
+                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#00D09C]">0{index + 1}</span>
+                  <span className="mt-3 block text-sm font-semibold text-white group-hover:text-[#A7F3D0]">{starter.label}</span>
+                  <span className="mt-2 block text-xs leading-5 text-[#64748B]">{starter.detail}</span>
+                </button>
+              ))}
+            </div>
+            <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.14em] text-[#475569]">Select a prompt to edit it below · nothing is sent automatically</p>
           </div>
         )}
         {messages.map((msg, i) => (

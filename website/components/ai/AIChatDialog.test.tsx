@@ -115,4 +115,13 @@ describe("AIChatDialog", () => {
     expect(screen.queryByText(/model assisted/i)).toBeNull();
     expect(screen.queryByText(/web evidence on/i)).toBeNull();
   });
+
+  it("loads a suggested critique into the composer without sending it", () => {
+    render(<ResearchProvider><AIChatDialog /></ResearchProvider>);
+
+    fireEvent.click(screen.getByRole("button", { name: /Define falsifying evidence/i }));
+
+    expect((screen.getByLabelText("Research question") as HTMLInputElement).value).toBe("What specific evidence would falsify this hypothesis or force me to revise it?");
+    expect(fetch).not.toHaveBeenCalled();
+  });
 });

@@ -9,8 +9,8 @@ describe("DownloadPage", () => {
   it("does not present unpublished installers as working downloads", () => {
     const { container } = render(React.createElement(DownloadPage));
 
-    expect(screen.getByText(/Packaged installers are not currently published for v1.0.0/i)).toBeTruthy();
-    expect(screen.getAllByText(/Not published/i).length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText(/No verified macOS, Windows, or Linux installer is published/i)).toBeTruthy();
+    expect(screen.getAllByText(/Not published/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.queryByRole("button", { name: /installer/i })).toBeNull();
     expect(container.querySelectorAll('a[href="#"]')).toHaveLength(0);
     expect(screen.getByText(/cd EPSILON-trading-simulator/)).toBeTruthy();
