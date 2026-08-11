@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { api, StockPrice } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
-import MotionCard from "@/components/effects/MotionCard";
 
 interface TradingPanelProps {
   stock: StockPrice | null;
@@ -73,17 +72,6 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
     }
   }, [isAuthenticated, limitPrice, loading, onTradeExecuted, orderType, orderTypeLabel, requiresTrigger, shares, side, stock, targetLabel, triggerPrice]);
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && !loading) {
-        e.preventDefault();
-        void handleTrade();
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [handleTrade, loading]);
-
   if (!stock) {
     return (
       <div className="card bg-base-200 shadow-sm min-h-[300px] flex items-center justify-center">
@@ -96,7 +84,7 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
   }
 
   return (
-    <MotionCard className="card h-full border border-base-300/90 bg-base-200/65 shadow-[0_14px_36px_rgba(0,0,0,0.1)]" glowColor="100,255,218">
+    <div className="card h-full border border-base-300/90 bg-base-200/65 shadow-[0_12px_32px_rgba(0,0,0,0.08)]">
       <div className="space-y-3 p-4">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -116,6 +104,7 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
       {/* Buy/Sell toggle */}
       <div className="flex overflow-hidden rounded-lg border border-base-300 p-1 bg-base-100/40">
         <button
+          type="button"
           onClick={() => setSide("buy")}
           className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
             side === "buy" ? "bg-primary/15 text-primary" : "text-base-content/50 hover:text-base-content"
@@ -124,6 +113,7 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
           Buy
         </button>
         <button
+          type="button"
           onClick={() => setSide("sell")}
           className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
             side === "sell" ? "bg-error/15 text-error" : "text-base-content/50 hover:text-base-content"
@@ -188,13 +178,14 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
 
       {/* Execute */}
       <button
+        type="button"
         onClick={handleTrade}
         disabled={loading || !isAuthenticated}
-        className={`w-full py-2.5 rounded font-semibold text-xs transition-all duration-250 ${
+        className={`w-full rounded-md border py-2.5 text-xs font-semibold transition-colors ${
           side === "buy"
-            ? "btn-offset-buy"
-            : "btn-offset-sell"
-        } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+            ? "border-primary bg-primary text-primary-content hover:bg-primary/90"
+            : "border-error/70 bg-error/10 text-error hover:bg-error/15"
+        } ${loading ? "cursor-not-allowed opacity-50" : ""}`}
       >
         {loading ? <span className="loading loading-spinner loading-xs mr-2" /> : null}
         {loading
@@ -213,6 +204,6 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
         </p>
       )}
       </div>
-    </MotionCard>
+    </div>
   );
 }

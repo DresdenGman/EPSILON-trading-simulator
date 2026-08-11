@@ -17,10 +17,10 @@ export default function StockPicker({ stocks, selectedCode, onSelect, loading, s
       <div className="card-body p-0">
         <div className="flex items-start justify-between gap-3 border-b border-base-300 px-4 py-3.5">
           <div>
-            <p className="product-kicker">01 / Observe</p>
+            <p className="product-kicker">Instrument selection</p>
             <h3 className="mt-1 text-sm font-semibold text-base-content">Market universe</h3>
           </div>
-          {selectedCode && <span className="rounded-full border border-primary/20 bg-primary/5 px-2 py-1 font-mono text-2xs text-primary">{selectedCode}</span>}
+          <span className="font-mono text-2xs uppercase tracking-[0.1em] text-base-content/35">{stocks.length} instruments</span>
         </div>
         <div className="overflow-y-auto max-h-[360px]">
           {loading ? (
@@ -58,8 +58,11 @@ export default function StockPicker({ stocks, selectedCode, onSelect, loading, s
                   }`}
                 >
                   <span className="min-w-0">
-                    <span className="block text-xs font-semibold">{stock.code}</span>
-                    <span className="block max-w-[90px] truncate text-xs text-base-content/40">{stock.name}</span>
+                    <span className="flex items-center gap-1.5 text-xs font-semibold">
+                      {stock.code}
+                      {selectedCode === stock.code && <span className="h-1 w-1 rounded-full bg-primary" aria-hidden="true" />}
+                    </span>
+                    <span className="block max-w-[90px] truncate text-2xs text-base-content/40">{stock.name}</span>
                   </span>
                   <span className="text-right font-mono text-xs">${stock.price.toFixed(2)}</span>
                   <span className={`text-right font-mono text-xs font-medium ${stock.change_percent >= 0 ? "text-success" : "text-error"}`}>

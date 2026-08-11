@@ -18,6 +18,7 @@ import ExperimentConclusion from "@/components/experiment/ExperimentConclusion";
 import { diagnoseExperiment } from "@/lib/experiment";
 import { useResearchExperiment } from "@/components/research/ResearchContext";
 import Link from "next/link";
+import { ArrowRight, ExternalLink, RefreshCw } from "lucide-react";
 
 const AUTO_REFRESH_MS = 30000;
 type ResourceState = "idle" | "loading" | "ready" | "empty" | "error";
@@ -59,7 +60,6 @@ export default function DashboardPage() {
   const [ordersState, setOrdersState] = useState<ResourceState>("idle");
   const [tradesState, setTradesState] = useState<ResourceState>("idle");
   const [equityState, setEquityState] = useState<ResourceState>("idle");
-  const [tradeFlash, setTradeFlash] = useState<"buy" | "sell" | null>(null);
   const [sensitivityStatus, setSensitivityStatus] = useState<"pending" | "running" | "validated" | "inconclusive" | "failed">("pending");
   const [sensitivityBaseline, setSensitivityBaseline] = useState<SensitivityRun | null>(null);
   const [sensitivityPerturbed, setSensitivityPerturbed] = useState<SensitivityRun | null>(null);
@@ -219,11 +219,7 @@ export default function DashboardPage() {
     if (selectedCode) setSubject(selectedCode);
   }, [selectedCode, setSubject]);
 
-  const handleTradeExecuted = async (side?: "buy" | "sell"): Promise<ReconciliationState> => {
-    if (side) {
-      setTradeFlash(side);
-      setTimeout(() => setTradeFlash(null), 1000);
-    }
+  const handleTradeExecuted = async (): Promise<ReconciliationState> => {
     const reconciled = await fetchPortfolioData();
     return reconciled ? "reconciled" : "stale";
   };
@@ -325,45 +321,53 @@ export default function DashboardPage() {
   // Authenticated dashboard — a decision workspace: observe → act → review → challenge
   return (
     <div className="space-y-3 min-h-[calc(100vh-5rem)] flex flex-col">
-      <section aria-labelledby="research-thesis" className="overflow-hidden rounded-2xl border border-base-300/90 bg-base-200/55 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
+      <section aria-labelledby="research-thesis" className="overflow-hidden rounded-xl border border-base-300/90 bg-base-200/55 shadow-[0_14px_44px_rgba(0,0,0,0.12)]">
         <div className="grid lg:grid-cols-[minmax(0,1fr)_18rem]">
-          <div className="p-5 sm:p-6">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="product-kicker">Research thesis / {selectedCode ?? "market"}</span>
+          <div className="p-4 sm:p-5">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span className="product-kicker">Decision workspace / {selectedCode ?? "market"}</span>
               <span className={`rounded-full border px-2 py-1 font-mono text-2xs uppercase tracking-[0.12em] ${testState === "current" ? "border-primary/30 bg-primary/5 text-primary" : testState === "stale" ? "border-warning/30 bg-warning/5 text-warning" : "border-base-300 text-base-content/45"}`}>
                 {evidenceLabel}
               </span>
+              {selectedStock && (
+                <span className="ml-auto font-mono text-xs text-base-content/55">
+                  ${selectedStock.price.toFixed(2)}
+                  <span className={`ml-2 ${selectedStock.change_percent >= 0 ? "text-primary/80" : "text-error/80"}`}>
+                    {selectedStock.change_percent >= 0 ? "+" : ""}{selectedStock.change_percent.toFixed(2)}%
+                  </span>
+                </span>
+              )}
             </div>
-            <h1 id="research-thesis" className="mt-3 max-w-4xl text-2xl font-semibold leading-tight tracking-[-0.025em] text-base-content sm:text-3xl">
-              What claim are you testing—and what evidence would make you reject it?
+            <h1 id="research-thesis" className="mt-3 text-xl font-semibold tracking-[-0.02em] text-base-content sm:text-2xl">
+              {selectedCode ?? "Market"} research workspace
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-base-content/50">
-              Observe the market, state the claim, define failure before seeing the result, then test it in a controlled simulation.
+            <p className="mt-1 max-w-3xl text-xs leading-5 text-base-content/45">
+              Record the claim and rejection rule before running evidence. Results remain provisional until challenged.
             </p>
 
-            <div className="mt-5 grid gap-3 md:grid-cols-2">
-              <label className="group block rounded-xl border border-base-300/80 bg-base-100/55 p-3 transition-colors focus-within:border-primary/60">
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <label className="group block rounded-lg border border-base-300/80 bg-base-100/45 p-3 transition-colors focus-within:border-primary/60">
                 <span className="metric-label">Hypothesis</span>
-                <span className="mt-1 block text-xs text-base-content/40">What do you believe is happening in {selectedCode ?? "this market"}?</span>
+                <span className="mt-1 block text-2xs leading-4 text-base-content/40">Claim to be evaluated for {selectedCode ?? "this market"}</span>
                 <textarea
                   id="research-hypothesis"
                   value={experiment.hypothesis}
                   onChange={(event) => setHypothesis(event.target.value)}
                   rows={2}
                   placeholder="Recent momentum persists after realistic execution costs."
-                  className="mt-2 w-full resize-none bg-transparent text-sm leading-6 text-base-content outline-none placeholder:text-base-content/25"
+                  className="mt-2 w-full resize-none bg-transparent text-sm leading-5 text-base-content outline-none placeholder:text-base-content/25"
                 />
               </label>
-              <label className="group block rounded-xl border border-base-300/80 bg-base-100/55 p-3 transition-colors focus-within:border-warning/60">
+              <label className="group block rounded-lg border border-base-300/80 bg-base-100/45 p-3 transition-colors focus-within:border-warning/60">
                 <span className="font-mono text-2xs uppercase tracking-[0.14em] text-warning/80">Falsified if</span>
-                <span className="mt-1 block text-xs text-base-content/40">Define the evidence that would force a change of mind.</span>
+                <span className="mt-1 block text-2xs leading-4 text-base-content/40">Pre-committed rejection condition</span>
                 <textarea
                   id="research-falsification"
                   value={experiment.falsification}
                   onChange={(event) => setFalsification(event.target.value)}
                   rows={2}
                   placeholder="The edge disappears out of sample or reverses under higher costs."
-                  className="mt-2 w-full resize-none bg-transparent text-sm leading-6 text-base-content outline-none placeholder:text-base-content/25"
+                  className="mt-2 w-full resize-none bg-transparent text-sm leading-5 text-base-content outline-none placeholder:text-base-content/25"
                 />
               </label>
             </div>
@@ -382,14 +386,14 @@ export default function DashboardPage() {
               </p>
             </div>
             <div className="mt-6 space-y-2">
-              <Link href={selectedCode ? `/dashboard/backtest?symbols=${encodeURIComponent(selectedCode)}` : "/dashboard/backtest"} className="flex w-full items-center justify-between rounded-lg bg-primary px-3 py-2.5 text-xs font-semibold text-primary-content transition-transform hover:-translate-y-0.5">
-                <span>Run controlled test</span><span aria-hidden="true">→</span>
+              <Link href={selectedCode ? `/dashboard/backtest?symbols=${encodeURIComponent(selectedCode)}` : "/dashboard/backtest"} className="flex w-full items-center justify-between rounded-md bg-primary px-3 py-2.5 text-xs font-semibold text-primary-content transition-colors hover:bg-primary/90">
+                <span>Run controlled test</span><ArrowRight aria-hidden="true" size={14} strokeWidth={1.8} />
               </Link>
-              <Link href="/dashboard/ai" className="flex w-full items-center justify-between rounded-lg border border-base-300 bg-base-200/70 px-3 py-2.5 text-xs font-semibold text-base-content/70 transition-colors hover:border-primary/40 hover:text-primary">
-                <span>Challenge this thesis</span><span aria-hidden="true">↗</span>
+              <Link href="/dashboard/ai" className="flex w-full items-center justify-between rounded-md border border-base-300 bg-base-200/70 px-3 py-2.5 text-xs font-semibold text-base-content/70 transition-colors hover:border-primary/40 hover:text-primary">
+                <span>Challenge this thesis</span><ExternalLink aria-hidden="true" size={13} strokeWidth={1.8} />
               </Link>
-              <button onClick={() => { fetchStocks(); fetchPortfolioData(); }} className="w-full py-1.5 text-center font-mono text-2xs uppercase tracking-[0.12em] text-base-content/35 hover:text-base-content/60">
-                Refresh evidence
+              <button onClick={() => { fetchStocks(); fetchPortfolioData(); }} className="flex w-full items-center justify-center gap-2 py-1.5 text-center font-mono text-2xs uppercase tracking-[0.12em] text-base-content/35 hover:text-base-content/60">
+                <RefreshCw aria-hidden="true" size={11} strokeWidth={1.8} /> Refresh evidence
               </button>
             </div>
           </aside>
@@ -408,15 +412,6 @@ export default function DashboardPage() {
           </div>
         ))}
       </section>
-
-      {/* Trade flash overlay */}
-      {tradeFlash && (
-        <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center">
-          <div className={`text-6xl font-bold animate-fade-in ${tradeFlash === "buy" ? "text-primary" : "text-error"}`} style={{ animationDuration: "0.8s" }}>
-            {tradeFlash === "buy" ? "BOUGHT" : "SOLD"}
-          </div>
-        </div>
-      )}
 
       {/* Layer 1: decision context */}
       <section aria-labelledby="decision-context" className="shrink-0">
@@ -437,12 +432,12 @@ export default function DashboardPage() {
         </div>
         <div className="grid grid-cols-1 gap-2 lg:flex-1 lg:min-h-0 lg:grid-cols-12">
           {/* Left: Stock Picker */}
-          <div className="lg:col-span-2 flex flex-col min-h-0">
+          <div className="lg:col-span-3 flex flex-col min-h-0">
           <StockPicker stocks={stocks} selectedCode={selectedCode} onSelect={handleStockSelect} loading={loading || marketState === "loading"} state={marketState} />
           </div>
 
           {/* Center: K-line Chart */}
-          <div className="lg:col-span-7 flex flex-col min-h-0">
+          <div className="lg:col-span-6 flex flex-col min-h-0">
             <div className="relative flex min-h-0 flex-1 flex-col">
               <KlineChartComponent data={klineData} loading={loading || klineState === "loading"} state={klineState} />
             </div>

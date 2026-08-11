@@ -13,9 +13,6 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@/lib/api", () => ({ api: mocks }));
 vi.mock("@/hooks/useAuth", () => ({ useAuth: () => ({ isAuthenticated: true }) }));
-vi.mock("@/components/effects/MotionCard", () => ({
-  default: ({ children }: { children: React.ReactNode }) => React.createElement("div", null, children),
-}));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 describe("TradingPanel", () => {
@@ -36,5 +33,16 @@ describe("TradingPanel", () => {
 
     expect(mocks.buy).toHaveBeenCalledTimes(1);
     resolveBuy?.({ message: "Buy executed" });
+  });
+
+  it("does not execute an order from an unrelated global Enter key", () => {
+    render(React.createElement(TradingPanel, {
+      stock: { code: "AAPL", name: "Apple", price: 100, change_percent: 0 },
+      onTradeExecuted: vi.fn().mockResolvedValue("reconciled"),
+    }));
+
+    fireEvent.keyDown(window, { key: "Enter" });
+
+    expect(mocks.buy).not.toHaveBeenCalled();
   });
 });

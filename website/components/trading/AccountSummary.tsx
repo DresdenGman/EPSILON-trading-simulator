@@ -14,11 +14,11 @@ export default function AccountSummary({ data, loading, state = data ? "ready" :
     ? [
         { label: "Portfolio Value", value: `$${data.total_value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, accent: false },
         { label: "Cash", value: `$${data.cash.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, accent: false },
-        { label: "Total Return", value: `${data.total_return >= 0 ? "+" : ""}${data.total_return.toFixed(2)}%`, isPositive: data.total_return >= 0, isNegative: data.total_return < 0 },
-        { label: "Unrealized P&L", value: `${data.unrealized_pnl >= 0 ? "+" : ""}$${Math.abs(data.unrealized_pnl).toLocaleString(undefined, { maximumFractionDigits: 0 })}`, isPositive: data.unrealized_pnl >= 0, isNegative: data.unrealized_pnl < 0 },
+        { label: "Total Return", value: `${data.total_return >= 0 ? "+" : ""}${data.total_return.toFixed(2)}%`, isPositive: data.total_return > 0, isNegative: data.total_return < 0 },
+        { label: "Unrealized P&L", value: `${data.unrealized_pnl >= 0 ? "+" : ""}$${Math.abs(data.unrealized_pnl).toLocaleString(undefined, { maximumFractionDigits: 0 })}`, isPositive: data.unrealized_pnl > 0, isNegative: data.unrealized_pnl < 0 },
         { label: "Win Rate", value: `${data.win_rate.toFixed(1)}%`, accent: false },
         { label: "Profit Factor", value: data.profit_factor === 999.99 ? "∞" : data.profit_factor.toFixed(2), accent: false },
-        { label: "Max Drawdown", value: `${data.max_drawdown.toFixed(2)}%`, isNegative: true },
+        { label: "Max Drawdown", value: `${data.max_drawdown.toFixed(2)}%`, isNegative: data.max_drawdown < 0 },
       ]
     : [];
 

@@ -5,6 +5,8 @@ import { createChart, CandlestickSeries } from "lightweight-charts";
 
 interface KlineChartProps {
   data: {
+    code?: string;
+    name?: string;
     dates: string[];
     open: number[];
     high: number[];
@@ -139,6 +141,23 @@ export default function KlineChart({ data, loading, state = data?.dates.length ?
   }
 
   return (
-    <div ref={chartRef} className="h-full min-h-[280px] w-full overflow-hidden rounded-xl border border-base-300/90 shadow-[0_14px_36px_rgba(0,0,0,0.1)]" />
+    <section className="flex h-full min-h-[280px] w-full flex-col overflow-hidden rounded-xl border border-base-300/90 bg-[#0B0D14] shadow-[0_12px_32px_rgba(0,0,0,0.08)]" aria-label={`${data.code ?? "Selected instrument"} price evidence`}>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-white/[0.06] px-4 py-3">
+        <div className="min-w-0">
+          <div className="flex items-baseline gap-2">
+            <h3 className="font-mono text-sm font-semibold text-[#E5E7EB]">{data.code ?? "MARKET"}</h3>
+            <span className="truncate text-xs text-[#64748B]">{data.name ?? "Price evidence"}</span>
+          </div>
+          <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-[#475569]">
+            {data.dates[0]} → {data.dates[data.dates.length - 1]}
+          </p>
+        </div>
+        <div className="ml-auto flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.12em]">
+          <span className="rounded border border-white/[0.08] px-2 py-1 text-[#64748B]">90D</span>
+          <span className="rounded border border-[#64FFDA]/15 bg-[#64FFDA]/[0.04] px-2 py-1 text-[#64FFDA]/70">Synthetic daily</span>
+        </div>
+      </div>
+      <div ref={chartRef} className="min-h-[240px] flex-1" />
+    </section>
   );
 }
