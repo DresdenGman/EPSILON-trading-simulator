@@ -89,7 +89,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
         </nav>
       </div>
 
-      {!loading && isAuthenticated && (pathname === "/dashboard" || pathname.startsWith("/dashboard/backtest")) && <ActiveExperimentBar />}
+      {!loading && isAuthenticated && pathname.startsWith("/dashboard/backtest") && <ActiveExperimentBar />}
 
       <main className="max-w-7xl mx-auto px-5 py-6 relative">
         <div className="fixed inset-0 opacity-[0.02] pointer-events-none bg-grid-subtle" />

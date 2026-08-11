@@ -21,6 +21,10 @@ export default function ActiveExperimentBar() {
         </div>
         <div className="min-w-0 flex-1 border-base-300 md:border-l md:pl-4">
           <p className="truncate text-xs text-base-content/70">{experiment.hypothesis || "No hypothesis recorded — frame one before treating any result as evidence."}</p>
+          <p className="mt-1 truncate text-2xs text-base-content/40">
+            <span className="font-mono uppercase tracking-[0.11em] text-warning/70">Falsified if · </span>
+            {experiment.falsification || "No rejection rule recorded."}
+          </p>
           {experiment.test && (
             <p className="mt-1 font-mono text-2xs uppercase tracking-[0.11em] text-base-content/40">
               Last success · {experiment.test.strategy.replaceAll("_", " ")} · {experiment.test.symbols.join(", ")} · return {experiment.test.totalReturn.toFixed(2)}%

@@ -31,7 +31,7 @@ function configurationsMatch(left: SubmittedConfiguration, right: SubmittedConfi
 }
 
 export default function BacktestForm() {
-  const { experiment, hydrated, testState, setHypothesis, recordBacktest } = useResearchExperiment();
+  const { experiment, hydrated, testState, setHypothesis, setFalsification, recordBacktest } = useResearchExperiment();
   const searchParams = useSearchParams();
   const transferredSymbols = searchParams.get("symbols");
   const [strategy, setStrategy] = useState("momentum");
@@ -146,7 +146,16 @@ export default function BacktestForm() {
             placeholder="Record the claim this test is meant to challenge."
             className="mt-2 w-full resize-y border border-[#334155] bg-[#111C30] px-3 py-2 text-xs leading-5 text-white outline-none placeholder:text-[#64748B] focus:border-[#00D09C]"
           />
-          {testState === "stale" && <p className="mt-2 text-xs leading-5 text-[#FDE68A]">Needs retest — the last successful result belongs to the previous subject or hypothesis.</p>}
+          <label htmlFor="strategy-falsification" className="mt-4 block font-mono text-[10px] uppercase tracking-[0.14em] text-[#FBBF24]">Falsified if</label>
+          <textarea
+            id="strategy-falsification"
+            value={experiment.falsification}
+            onChange={(event) => setFalsification(event.target.value)}
+            rows={2}
+            placeholder="Define the evidence that would make you reject or revise the claim."
+            className="mt-2 w-full resize-y border border-[#334155] bg-[#111C30] px-3 py-2 text-xs leading-5 text-white outline-none placeholder:text-[#64748B] focus:border-[#FBBF24]"
+          />
+          {testState === "stale" && <p className="mt-2 text-xs leading-5 text-[#FDE68A]">Needs retest — the last successful result belongs to the previous subject, thesis, or rejection rule.</p>}
         </div>
         <div className="space-y-4">
           <div>

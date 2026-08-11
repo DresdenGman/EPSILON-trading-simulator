@@ -13,7 +13,7 @@ interface StockPickerProps {
 
 export default function StockPicker({ stocks, selectedCode, onSelect, loading, state = stocks.length > 0 ? "ready" : "empty" }: StockPickerProps) {
   return (
-    <div className="card bg-base-200 shadow-sm overflow-hidden h-full border border-base-300">
+    <div className="card h-full overflow-hidden border border-base-300/90 bg-base-200/65 shadow-[0_14px_36px_rgba(0,0,0,0.1)]">
       <div className="card-body p-0">
         <div className="flex items-start justify-between gap-3 border-b border-base-300 px-4 py-3.5">
           <div>

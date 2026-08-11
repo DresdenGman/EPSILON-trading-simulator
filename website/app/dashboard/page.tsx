@@ -38,7 +38,7 @@ function toDateString(date: Date) {
 
 export default function DashboardPage() {
   const { isAuthenticated, isGuest } = useAuth();
-  const { experiment, setSubject, setHypothesis } = useResearchExperiment();
+  const { experiment, testState, setSubject, setHypothesis, setFalsification } = useResearchExperiment();
 
   const [stocks, setStocks] = useState<StockPrice[]>([]);
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
@@ -245,6 +245,20 @@ export default function DashboardPage() {
             ? "DATA READY"
             : "DATA NOT CONFIRMED";
 
+  const evidenceLabel = testState === "current"
+    ? "EVIDENCE CURRENT"
+    : testState === "stale"
+      ? "RETEST REQUIRED"
+      : experiment.hypothesis
+        ? "THESIS UNTESTED"
+        : "THESIS OPEN";
+  const protocolSteps = [
+    { index: "01", label: "Observe", detail: selectedCode ?? "Select market", complete: Boolean(selectedCode) },
+    { index: "02", label: "Frame", detail: experiment.hypothesis ? "Thesis recorded" : "Define thesis", complete: Boolean(experiment.hypothesis) },
+    { index: "03", label: "Test", detail: testState === "current" ? "Evidence current" : testState === "stale" ? "Evidence stale" : "Awaiting test", complete: testState === "current" },
+    { index: "04", label: "Challenge", detail: experiment.falsification ? "Rejection rule set" : "Define rejection rule", complete: Boolean(experiment.falsification) },
+  ];
+
   const diagnosis = sensitivityBaseline && sensitivityPerturbed
     ? diagnoseExperiment({
         baselineReturn: sensitivityBaseline.totalReturn,
@@ -311,62 +325,88 @@ export default function DashboardPage() {
   // Authenticated dashboard — a decision workspace: observe → act → review → challenge
   return (
     <div className="space-y-3 min-h-[calc(100vh-5rem)] flex flex-col">
-      {/* Experiment header — the selected instrument is the workspace subject. */}
-      <div className="flex flex-col gap-3 border-b border-base-300/80 pb-3 sm:flex-row sm:items-end sm:justify-between shrink-0">
-        <div className="min-w-0">
-          <p className="product-kicker">Market observation / {isGuest ? "guest simulation" : "simulated environment"}</p>
-          <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h1 className="font-mono text-xl font-semibold tracking-tight text-base-content sm:text-2xl">
-              {selectedCode ?? "MARKET"}<span className="text-base-content/30"> / </span>OBSERVATION
+      <section aria-labelledby="research-thesis" className="overflow-hidden rounded-2xl border border-base-300/90 bg-base-200/55 shadow-[0_18px_60px_rgba(0,0,0,0.16)]">
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_18rem]">
+          <div className="p-5 sm:p-6">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="product-kicker">Research thesis / {selectedCode ?? "market"}</span>
+              <span className={`rounded-full border px-2 py-1 font-mono text-2xs uppercase tracking-[0.12em] ${testState === "current" ? "border-primary/30 bg-primary/5 text-primary" : testState === "stale" ? "border-warning/30 bg-warning/5 text-warning" : "border-base-300 text-base-content/45"}`}>
+                {evidenceLabel}
+              </span>
+            </div>
+            <h1 id="research-thesis" className="mt-3 max-w-4xl text-2xl font-semibold leading-tight tracking-[-0.025em] text-base-content sm:text-3xl">
+              What claim are you testing—and what evidence would make you reject it?
             </h1>
-            <span className={`rounded-full border px-2 py-1 text-2xs font-mono uppercase tracking-[0.12em] ${accountErrors > 0 ? "border-warning/30 text-warning" : accountLoading ? "border-info/30 text-info" : "border-primary/20 text-primary/70"}`}>
-              {dashboardState}
-            </span>
-          </div>
-          <p className="mt-1 text-xs text-base-content/45">
-            Select an instrument, frame a hypothesis, then test whether the evidence supports it.
-            {lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString()} · Auto 30s.` : ""}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {selectedCode && (
-            <Link
-              href={`/dashboard/backtest?symbols=${encodeURIComponent(selectedCode)}`}
-              className="rounded-btn border border-primary/30 bg-primary/5 px-3 py-2 text-2xs font-mono uppercase tracking-[0.12em] text-primary transition-colors hover:bg-primary/10"
-            >
-              Test {selectedCode} in Strategy Lab →
-            </Link>
-          )}
-          <button
-            onClick={() => { fetchStocks(); fetchPortfolioData(); }}
-            className="btn btn-ghost btn-xs text-base-content/45"
-          >
-            ↻ Refresh
-          </button>
-        </div>
-      </div>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-base-content/50">
+              Observe the market, state the claim, define failure before seeing the result, then test it in a controlled simulation.
+            </p>
 
-      <section aria-labelledby="research-frame" className="border border-base-300/80 bg-base-200/30 p-4 sm:flex sm:items-end sm:gap-4">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <span className="product-kicker">Research context</span>
-            <h2 id="research-frame" className="text-xs font-semibold text-base-content/70">Frame the experiment</h2>
+            <div className="mt-5 grid gap-3 md:grid-cols-2">
+              <label className="group block rounded-xl border border-base-300/80 bg-base-100/55 p-3 transition-colors focus-within:border-primary/60">
+                <span className="metric-label">Hypothesis</span>
+                <span className="mt-1 block text-xs text-base-content/40">What do you believe is happening in {selectedCode ?? "this market"}?</span>
+                <textarea
+                  id="research-hypothesis"
+                  value={experiment.hypothesis}
+                  onChange={(event) => setHypothesis(event.target.value)}
+                  rows={2}
+                  placeholder="Recent momentum persists after realistic execution costs."
+                  className="mt-2 w-full resize-none bg-transparent text-sm leading-6 text-base-content outline-none placeholder:text-base-content/25"
+                />
+              </label>
+              <label className="group block rounded-xl border border-base-300/80 bg-base-100/55 p-3 transition-colors focus-within:border-warning/60">
+                <span className="font-mono text-2xs uppercase tracking-[0.14em] text-warning/80">Falsified if</span>
+                <span className="mt-1 block text-xs text-base-content/40">Define the evidence that would force a change of mind.</span>
+                <textarea
+                  id="research-falsification"
+                  value={experiment.falsification}
+                  onChange={(event) => setFalsification(event.target.value)}
+                  rows={2}
+                  placeholder="The edge disappears out of sample or reverses under higher costs."
+                  className="mt-2 w-full resize-none bg-transparent text-sm leading-6 text-base-content outline-none placeholder:text-base-content/25"
+                />
+              </label>
+            </div>
           </div>
-          <label htmlFor="research-hypothesis" className="mt-2 block text-2xs text-base-content/45">What do you think is happening in {selectedCode ?? "this market"}?</label>
-          <input
-            id="research-hypothesis"
-            value={experiment.hypothesis}
-            onChange={(event) => setHypothesis(event.target.value)}
-            placeholder="Example: recent momentum in this period is persistent enough to test."
-            className="mt-1 w-full border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content outline-none transition-colors placeholder:text-base-content/30 focus:border-primary"
-          />
+
+          <aside className="flex flex-col justify-between border-t border-base-300/80 bg-base-100/35 p-5 lg:border-l lg:border-t-0" aria-label="Research status and actions">
+            <div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="metric-label">Workspace state</span>
+                <span className={`h-2 w-2 rounded-full ${accountErrors > 0 ? "bg-warning" : accountLoading ? "animate-pulse bg-info" : "bg-primary"}`} />
+              </div>
+              <p className="mt-2 font-mono text-sm font-semibold text-base-content">{dashboardState}</p>
+              <p className="mt-1 text-xs leading-5 text-base-content/40">
+                {isGuest ? "Session-local simulation" : "Simulated environment"}
+                {lastUpdated ? ` · synced ${lastUpdated.toLocaleTimeString()}` : " · awaiting first sync"}
+              </p>
+            </div>
+            <div className="mt-6 space-y-2">
+              <Link href={selectedCode ? `/dashboard/backtest?symbols=${encodeURIComponent(selectedCode)}` : "/dashboard/backtest"} className="flex w-full items-center justify-between rounded-lg bg-primary px-3 py-2.5 text-xs font-semibold text-primary-content transition-transform hover:-translate-y-0.5">
+                <span>Run controlled test</span><span aria-hidden="true">→</span>
+              </Link>
+              <Link href="/dashboard/ai" className="flex w-full items-center justify-between rounded-lg border border-base-300 bg-base-200/70 px-3 py-2.5 text-xs font-semibold text-base-content/70 transition-colors hover:border-primary/40 hover:text-primary">
+                <span>Challenge this thesis</span><span aria-hidden="true">↗</span>
+              </Link>
+              <button onClick={() => { fetchStocks(); fetchPortfolioData(); }} className="w-full py-1.5 text-center font-mono text-2xs uppercase tracking-[0.12em] text-base-content/35 hover:text-base-content/60">
+                Refresh evidence
+              </button>
+            </div>
+          </aside>
         </div>
-        <Link
-          href={selectedCode ? `/dashboard/backtest?symbols=${encodeURIComponent(selectedCode)}` : "/dashboard/backtest"}
-          className="mt-3 inline-flex shrink-0 rounded-btn border border-primary/30 bg-primary/5 px-3 py-2 text-2xs font-mono uppercase tracking-[0.12em] text-primary transition-colors hover:bg-primary/10 sm:mt-0"
-        >
-          Continue to test →
-        </Link>
+      </section>
+
+      <section aria-label="Experiment protocol" className="grid overflow-hidden rounded-xl border border-base-300/80 bg-base-200/35 sm:grid-cols-2 lg:grid-cols-4">
+        {protocolSteps.map((step) => (
+          <div key={step.index} className="relative border-b border-base-300/70 px-4 py-3 last:border-b-0 sm:nth-[2n-1]:border-r lg:border-b-0 lg:border-r lg:last:border-r-0">
+            <div className="flex items-center gap-2">
+              <span className={`font-mono text-2xs ${step.complete ? "text-primary" : "text-base-content/30"}`}>{step.index}</span>
+              <span className="text-xs font-semibold text-base-content/75">{step.label}</span>
+              <span className={`ml-auto h-1.5 w-1.5 rounded-full ${step.complete ? "bg-primary" : "bg-base-content/15"}`} />
+            </div>
+            <p className="mt-1 truncate pl-6 text-2xs text-base-content/40">{step.detail}</p>
+          </div>
+        ))}
       </section>
 
       {/* Trade flash overlay */}
@@ -381,8 +421,9 @@ export default function DashboardPage() {
       {/* Layer 1: decision context */}
       <section aria-labelledby="decision-context" className="shrink-0">
         <div className="mb-1 flex items-center gap-2">
-          <span className="product-kicker">Account context</span>
-          <h2 id="decision-context" className="text-xs font-semibold text-base-content/70">{isGuest ? "Session-local simulated account" : "Confirmed account state"}</h2>
+          <span className="product-kicker">Evidence strip</span>
+          <h2 id="decision-context" className="text-xs font-semibold text-base-content/70">{isGuest ? "Observed account outcomes" : "Confirmed account evidence"}</h2>
+          <span className="ml-auto font-mono text-2xs uppercase tracking-[0.12em] text-base-content/35">Outcome ≠ conclusion</span>
         </div>
         <AccountSummary data={performance} loading={loading || performanceState === "loading"} state={performanceState} />
       </section>
@@ -390,8 +431,8 @@ export default function DashboardPage() {
       {/* Layer 2: the primary action workspace */}
       <section aria-labelledby="action-workspace" className="flex flex-col gap-2 lg:flex-1 lg:min-h-[34rem]">
         <div className="flex items-center gap-2">
-          <span className="product-kicker">01 / Observe → execute</span>
-          <h2 id="action-workspace" className="text-xs font-semibold text-base-content/70">Market decision workspace</h2>
+          <span className="product-kicker">Execution layer</span>
+          <h2 id="action-workspace" className="text-xs font-semibold text-base-content/70">Market evidence and simulated action</h2>
           <span className="hidden text-2xs text-base-content/35 sm:inline">Select evidence, then prepare a simulated action.</span>
         </div>
         <div className="grid grid-cols-1 gap-2 lg:flex-1 lg:min-h-0 lg:grid-cols-12">

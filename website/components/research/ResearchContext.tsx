@@ -5,6 +5,7 @@ import React from "react";
 export type ResearchTestArtifact = {
   subjectSnapshot: string | null;
   hypothesisSnapshot: string;
+  falsificationSnapshot: string;
   method: "backtest";
   strategy: string;
   symbols: string[];
@@ -31,7 +32,7 @@ export type ResearchTestArtifact = {
   };
 };
 
-export type ResearchTestInput = Omit<ResearchTestArtifact, "subjectSnapshot" | "hypothesisSnapshot">;
+export type ResearchTestInput = Omit<ResearchTestArtifact, "subjectSnapshot" | "hypothesisSnapshot" | "falsificationSnapshot">;
 export type ResearchTestState = "empty" | "current" | "stale";
 
 export const UNKNOWN_BACKTEST_PROVENANCE: ResearchTestArtifact["provenance"] = {
@@ -65,6 +66,7 @@ export const GUEST_BACKTEST_PROVENANCE: ResearchTestArtifact["provenance"] = {
 export type ResearchExperiment = {
   symbol: string | null;
   hypothesis: string;
+  falsification: string;
   test: ResearchTestArtifact | null;
   updatedAt: string | null;
 };
@@ -75,6 +77,7 @@ type ResearchContextValue = {
   testState: ResearchTestState;
   setSubject: (symbol: string | null) => void;
   setHypothesis: (hypothesis: string) => void;
+  setFalsification: (falsification: string) => void;
   recordBacktest: (artifact: ResearchTestInput) => void;
   resetExperiment: () => void;
 };
@@ -82,6 +85,7 @@ type ResearchContextValue = {
 const EMPTY_EXPERIMENT: ResearchExperiment = {
   symbol: null,
   hypothesis: "",
+  falsification: "",
   test: null,
   updatedAt: null,
 };
@@ -97,7 +101,8 @@ export function testMatchesExperiment(experiment: ResearchExperiment) {
   if (!experiment.test) return false;
   return (
     experiment.test.subjectSnapshot === experiment.symbol &&
-    experiment.test.hypothesisSnapshot === normalizeHypothesis(experiment.hypothesis)
+    experiment.test.hypothesisSnapshot === normalizeHypothesis(experiment.hypothesis) &&
+    experiment.test.falsificationSnapshot === normalizeHypothesis(experiment.falsification)
   );
 }
 
@@ -109,6 +114,7 @@ function readStoredExperiment(): ResearchExperiment {
     return {
       symbol: typeof parsed.symbol === "string" ? parsed.symbol : null,
       hypothesis: typeof parsed.hypothesis === "string" ? parsed.hypothesis : "",
+      falsification: typeof parsed.falsification === "string" ? parsed.falsification : "",
       test: parsed.test && typeof parsed.test === "object"
         ? {
             ...parsed.test as ResearchTestArtifact,
@@ -117,6 +123,9 @@ function readStoredExperiment(): ResearchExperiment {
               : null,
             hypothesisSnapshot: typeof (parsed.test as Partial<ResearchTestArtifact>).hypothesisSnapshot === "string"
               ? (parsed.test as ResearchTestArtifact).hypothesisSnapshot
+              : "",
+            falsificationSnapshot: typeof (parsed.test as Partial<ResearchTestArtifact>).falsificationSnapshot === "string"
+              ? (parsed.test as ResearchTestArtifact).falsificationSnapshot
               : "",
             provenance: { ...UNKNOWN_BACKTEST_PROVENANCE, ...(parsed.test as Partial<ResearchTestArtifact>).provenance },
           }
@@ -153,6 +162,7 @@ export function ResearchProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
   const setHypothesis = React.useCallback((hypothesis: string) => updateExperiment({ hypothesis }), [updateExperiment]);
+  const setFalsification = React.useCallback((falsification: string) => updateExperiment({ falsification }), [updateExperiment]);
   const recordBacktest = React.useCallback((artifact: ResearchTestInput) => {
     setExperiment((current) => {
       const symbol = current.symbol && artifact.symbols.includes(current.symbol)
@@ -162,6 +172,7 @@ export function ResearchProvider({ children }: { children: React.ReactNode }) {
         ...artifact,
         subjectSnapshot: symbol,
         hypothesisSnapshot: normalizeHypothesis(current.hypothesis),
+        falsificationSnapshot: normalizeHypothesis(current.falsification),
       };
       return { ...current, symbol, test, updatedAt: new Date().toISOString() };
     });
@@ -183,9 +194,10 @@ export function ResearchProvider({ children }: { children: React.ReactNode }) {
     testState,
     setSubject,
     setHypothesis,
+    setFalsification,
     recordBacktest,
     resetExperiment,
-  }), [experiment, hydrated, recordBacktest, resetExperiment, setHypothesis, setSubject, testState]);
+  }), [experiment, hydrated, recordBacktest, resetExperiment, setFalsification, setHypothesis, setSubject, testState]);
 
   return <ResearchContext.Provider value={value}>{children}</ResearchContext.Provider>;
 }

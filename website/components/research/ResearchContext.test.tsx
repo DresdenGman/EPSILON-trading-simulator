@@ -10,7 +10,7 @@ import {
 } from "./ResearchContext";
 
 function Probe() {
-  const { experiment, hydrated, testState, setSubject, setHypothesis, recordBacktest } = useResearchExperiment();
+  const { experiment, hydrated, testState, setSubject, setHypothesis, setFalsification, recordBacktest } = useResearchExperiment();
   const record = (totalReturn: number) => recordBacktest({
     method: "backtest",
     strategy: "momentum",
@@ -34,6 +34,7 @@ function Probe() {
       <button onClick={() => setSubject("AAPL")}>subject</button>
       <button onClick={() => setHypothesis("Momentum persists.")}>hypothesis</button>
       <button onClick={() => setHypothesis("Momentum fails in high-volatility regimes.")}>refine</button>
+      <button onClick={() => setFalsification("Reject if out-of-sample Sharpe is below zero.")}>falsification</button>
       <button onClick={() => record(5)}>record first</button>
       <button onClick={() => undefined}>failed retest</button>
       <button onClick={() => record(2)}>record second</button>
@@ -65,6 +66,11 @@ describe("ResearchProvider", () => {
     fireEvent.click(screen.getByRole("button", { name: "record second" }));
     expect(screen.getByTestId("state").textContent).toBe("current");
     expect(screen.getByTestId("return").textContent).toBe("2");
+
+    fireEvent.click(screen.getByRole("button", { name: "falsification" }));
+    expect(screen.getByTestId("state").textContent).toBe("stale");
+    fireEvent.click(screen.getByRole("button", { name: "record second" }));
+    expect(screen.getByTestId("state").textContent).toBe("current");
 
     await waitFor(() => expect(window.sessionStorage.getItem("epsilon.research-experiment.v1")).toContain('"totalReturn":2'));
     view.unmount();

@@ -96,8 +96,8 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
   }
 
   return (
-    <MotionCard className="card bg-base-200 shadow-sm h-full border border-base-300" glowColor="100,255,218">
-      <div className="p-3 space-y-2.5">
+    <MotionCard className="card h-full border border-base-300/90 bg-base-200/65 shadow-[0_14px_36px_rgba(0,0,0,0.1)]" glowColor="100,255,218">
+      <div className="space-y-3 p-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -108,17 +108,17 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
           </div>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-bold text-base-content font-mono">${currentPrice.toFixed(2)}</div>
+          <div className="font-mono text-2xl font-semibold tracking-tight text-base-content">${currentPrice.toFixed(2)}</div>
           <div className="text-xs text-base-content/40 uppercase tracking-wide">Last Price</div>
         </div>
       </div>
 
       {/* Buy/Sell toggle */}
-      <div className="flex rounded-btn overflow-hidden border border-base-300 p-0.5 bg-base-300/30">
+      <div className="flex overflow-hidden rounded-lg border border-base-300 p-1 bg-base-100/40">
         <button
           onClick={() => setSide("buy")}
           className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
-            side === "buy" ? "bg-success text-success-content" : "text-base-content/50 hover:text-base-content"
+            side === "buy" ? "bg-primary/15 text-primary" : "text-base-content/50 hover:text-base-content"
           }`}
         >
           Buy
@@ -126,7 +126,7 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
         <button
           onClick={() => setSide("sell")}
           className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
-            side === "sell" ? "bg-error text-error-content" : "text-base-content/50 hover:text-base-content"
+            side === "sell" ? "bg-error/15 text-error" : "text-base-content/50 hover:text-base-content"
           }`}
         >
           Sell
@@ -181,7 +181,7 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
       )}
 
       {/* Estimated total */}
-      <div className="flex justify-between items-center py-1.5 px-2.5 rounded bg-base-300/30">
+      <div className="flex items-center justify-between rounded-lg border border-base-300/60 bg-base-100/35 px-3 py-2">
         <span className="text-2xs text-base-content/40 uppercase tracking-wide">Estimated</span>
         <span className="text-base-content font-mono font-semibold text-xs">${estimatedTotal.toLocaleString()}</span>
       </div>

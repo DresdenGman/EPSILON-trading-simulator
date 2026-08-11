@@ -24,7 +24,7 @@ export default function AccountSummary({ data, loading, state = data ? "ready" :
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 overflow-hidden rounded-box border border-base-300 bg-base-200/60 sm:grid-cols-4 lg:grid-cols-7">
+      <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-base-300 bg-base-200/50 sm:grid-cols-4 lg:grid-cols-8">
         {[...Array(7)].map((_, i) => (
           <div key={i} className="border-b border-r border-base-300/70 p-3 last:border-r-0 lg:border-b-0" style={{ animationDelay: `${i * 80}ms` }}>
             <div className="skeleton h-3 w-16" />
@@ -44,11 +44,11 @@ export default function AccountSummary({ data, loading, state = data ? "ready" :
   }
 
   return (
-    <div className="grid grid-cols-2 overflow-hidden rounded-box border border-base-300 bg-base-200/70 sm:grid-cols-4 lg:grid-cols-7">
+    <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-base-300/90 bg-base-200/55 shadow-[0_12px_32px_rgba(0,0,0,0.08)] sm:grid-cols-4 lg:grid-cols-8">
       {cards.map((card, i) => (
-        <div key={card.label} className={`min-w-0 border-b border-r border-base-300/70 px-3 py-2.5 last:border-r-0 sm:nth-[4n]:border-r-0 lg:border-b-0 lg:nth-[4n]:border-r lg:nth-[7n]:border-r-0 stagger-item stagger-${i+1}`}>
+        <div key={card.label} className={`min-w-0 border-b border-r border-base-300/70 px-3 py-3 last:border-r-0 sm:nth-[4n]:border-r-0 lg:border-b-0 lg:nth-[4n]:border-r lg:nth-[7n]:border-r-0 ${i === 0 ? "lg:col-span-2 lg:px-4" : ""}`}>
           <div className="font-mono text-2xs uppercase tracking-[0.12em] text-base-content/40 truncate">{card.label}</div>
-          <div className={`mt-1 text-sm font-mono font-semibold truncate ${
+          <div className={`mt-1 font-mono font-semibold truncate ${i === 0 ? "text-base" : "text-sm"} ${
             card.isPositive ? "text-success" : card.isNegative ? "text-error" : "text-base-content"
           }`}>{card.value}</div>
         </div>

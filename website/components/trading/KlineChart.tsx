@@ -139,6 +139,6 @@ export default function KlineChart({ data, loading, state = data?.dates.length ?
   }
 
   return (
-    <div ref={chartRef} className="w-full h-full rounded-xl overflow-hidden border border-base-300 shadow-sm min-h-[280px]" />
+    <div ref={chartRef} className="h-full min-h-[280px] w-full overflow-hidden rounded-xl border border-base-300/90 shadow-[0_14px_36px_rgba(0,0,0,0.1)]" />
   );
 }
