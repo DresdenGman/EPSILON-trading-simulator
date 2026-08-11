@@ -73,7 +73,7 @@ export default function EquityChart({ data, initialCapital, loading, state = dat
           {baselineLabel}
         </span>
       </div>
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 overflow-hidden">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData}>
           <defs>
