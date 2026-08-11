@@ -44,7 +44,6 @@ class AccountResponse(BaseModel):
 class TradeRequest(BaseModel):
     stock_code: str = Field(..., min_length=1, max_length=20)
     shares: int = Field(..., gt=0)
-    price: float = Field(..., gt=0)
 
 
 class OrderRequest(BaseModel):

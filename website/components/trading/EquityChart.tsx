@@ -7,9 +7,10 @@ interface EquityChartProps {
   data: { date: string; equity: number }[];
   initialCapital?: number;
   loading?: boolean;
+  state?: "idle" | "loading" | "ready" | "empty" | "error";
 }
 
-export default function EquityChart({ data, initialCapital, loading }: EquityChartProps) {
+export default function EquityChart({ data, initialCapital, loading, state = data.length > 0 ? "ready" : "empty" }: EquityChartProps) {
   if (loading) {
     return (
       <div className="surface-card w-full h-[300px] flex items-center justify-center">
@@ -21,35 +22,55 @@ export default function EquityChart({ data, initialCapital, loading }: EquityCha
     );
   }
 
+  if (state === "error") {
+    return (
+      <div className="surface-card w-full h-[300px] flex items-center justify-center px-6 text-center">
+        <p className="text-sm text-warning">Equity history is unavailable. No fallback series is shown.</p>
+      </div>
+    );
+  }
+
   if (data.length === 0) {
     return (
       <div className="surface-card w-full h-[300px] flex items-center justify-center">
         <div className="text-center text-muted">
           <div className="text-2xl mb-2">📈</div>
-          <p className="text-sm">No trading data yet</p>
+          <p className="text-sm">No confirmed equity history yet</p>
         </div>
       </div>
     );
   }
 
   const chartData = data
-    .filter((d) => d.date && d.equity != null)
+    .filter((d) => d.date && Number.isFinite(Number(d.equity)))
     .map((d) => ({
       date: d.date,
       equity: Number(Number(d.equity).toFixed(2)),
     }));
 
-  if (chartData.length === 0) return null;
+  if (chartData.length === 0) {
+    return (
+      <div className="surface-card w-full h-[300px] flex items-center justify-center px-6 text-center">
+        <div className="text-muted">
+          <div className="text-2xl mb-2">📈</div>
+          <p className="text-sm">No valid equity history is available to chart.</p>
+        </div>
+      </div>
+    );
+  }
 
   const min = Math.min(...chartData.map((d) => d.equity));
-  const base = initialCapital || chartData[0]?.equity || 100000;
+  const base = initialCapital ?? chartData[0]?.equity;
+  const baselineLabel = initialCapital != null
+    ? `Initial capital: $${initialCapital.toLocaleString()}`
+    : "Initial capital unavailable";
 
   return (
     <div className="surface-card w-full h-full p-3 flex flex-col min-h-[200px]">
       <div className="flex items-center justify-between mb-1 shrink-0">
-        <h3 className="text-base-content text-sm font-semibold">Equity Curve</h3>
+        <h3 className="text-base-content text-sm font-semibold">Equity History</h3>
         <span className="text-2xs text-base-content/40 font-mono">
-          ${base.toLocaleString()}
+          {baselineLabel}
         </span>
       </div>
       <div className="flex-1 min-h-0">
@@ -85,15 +106,17 @@ export default function EquityChart({ data, initialCapital, loading }: EquityCha
               borderRadius: "10px",
               color: "#EDF0F5",
               fontSize: "12px",
-              fontFamily: "JetBrains Mono, monospace",
+              fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
             }}
             formatter={(value: number) => [`$${value.toLocaleString()}`, "Equity"]}
           />
-          <ReferenceLine
-            y={base}
-            stroke="rgba(255,255,255,0.12)"
-            strokeDasharray="5 5"
-          />
+          {base != null && (
+            <ReferenceLine
+              y={base}
+              stroke="rgba(255,255,255,0.12)"
+              strokeDasharray="5 5"
+            />
+          )}
           <Line
             type="monotone"
             dataKey="equity"

@@ -13,9 +13,10 @@ interface KlineChartProps {
     volume: number[];
   } | null;
   loading?: boolean;
+  state?: "idle" | "loading" | "ready" | "empty" | "error";
 }
 
-export default function KlineChart({ data, loading }: KlineChartProps) {
+export default function KlineChart({ data, loading, state = data?.dates.length ? "ready" : "empty" }: KlineChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<any>(null);
 
@@ -103,12 +104,35 @@ export default function KlineChart({ data, loading }: KlineChartProps) {
     );
   }
 
+  if (state === "error") {
+    return (
+      <div className="surface-card w-full h-full flex items-center justify-center min-h-[280px]">
+        <div className="text-center text-warning">
+          <div className="text-3xl mb-3">⚠</div>
+          <p className="text-sm">Price history could not be loaded.</p>
+          <p className="mt-1 text-xs text-base-content/40">No fallback data is shown.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!data) {
     return (
       <div className="surface-card w-full h-full flex items-center justify-center min-h-[280px]">
         <div className="text-center text-base-content/40">
           <div className="text-3xl mb-3">📈</div>
           <p className="text-sm">Select a stock to view chart</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (state === "empty" || data.dates.length === 0) {
+    return (
+      <div className="surface-card w-full h-full flex items-center justify-center min-h-[280px]">
+        <div className="text-center text-base-content/40">
+          <div className="text-3xl mb-3">📉</div>
+          <p className="text-sm">No price history is available for this symbol.</p>
         </div>
       </div>
     );

@@ -1,8 +1,9 @@
 {
-  "rewrites": [
+  "redirects": [
     {
       "source": "/",
-      "destination": "/video",
+      "destination": "/landing",
+      "permanent": true,
       "has": [
         {
           "type": "host",

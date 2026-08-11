@@ -1,22 +1,32 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Order } from "@/lib/api";
 import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 interface OrderListProps {
   orders: Order[];
   loading?: boolean;
-  onUpdate: () => void;
+  state?: "idle" | "loading" | "ready" | "empty" | "error";
+  onUpdate: () => Promise<boolean>;
 }
 
-export default function OrderList({ orders, loading, onUpdate }: OrderListProps) {
+export default function OrderList({ orders, loading, state = "ready", onUpdate }: OrderListProps) {
+  const [cancellingId, setCancellingId] = useState<number | null>(null);
+
   const handleCancel = async (id: number) => {
+    if (cancellingId !== null) return;
+    setCancellingId(id);
     try {
       await api.cancelOrder(id);
-      onUpdate();
+      const reconciled = await onUpdate();
+      if (reconciled) toast.success(`Order #${id} cancelled and order state reconciled.`);
+      else toast.warning("Order cancelled, but account data may be stale.");
     } catch (e: any) {
-      console.error(e);
+      toast.error(e.message || "Order cancellation failed");
+    } finally {
+      setCancellingId(null);
     }
   };
 
@@ -41,20 +51,30 @@ export default function OrderList({ orders, loading, onUpdate }: OrderListProps)
   return (
     <div className="surface-card overflow-hidden">
       <div className="px-4 py-3.5 border-b border-white/5 flex items-center justify-between">
-        <h3 className="text-text-primary text-sm font-semibold">Pending Orders</h3>
+        <div>
+          <h3 className="text-text-primary text-sm font-semibold">Pending Orders</h3>
+          <p className="mt-1 text-2xs text-muted">Recorded instructions. Automatic conditional execution is not enabled.</p>
+        </div>
         <span className="text-2xs text-muted">{pendingOrders.length} active</span>
       </div>
-      {pendingOrders.length === 0 ? (
+      {state === "error" ? (
+        <div className="p-8 text-center text-warning text-sm">
+          <div className="text-2xl mb-2">⚠</div>
+          <p className="font-medium">Orders unavailable</p>
+          <p className="mt-1 text-xs text-base-content/45">We couldn&apos;t confirm your pending orders.</p>
+        </div>
+      ) : pendingOrders.length === 0 ? (
         <div className="p-8 text-center text-muted text-sm">
           <div className="text-2xl mb-2">📝</div>
-          No pending orders
+          <p>No pending orders</p>
+          <p className="mt-1 text-xs text-muted">There are currently no orders waiting to execute.</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-muted text-2xs uppercase tracking-wide">
-                {["ID", "Symbol", "Type", "Side", "Shares", "Price", ""].map((h) => (
+                {["ID", "Symbol", "Type", "Side", "Shares", "Target", ""].map((h) => (
                   <th key={h} className={h === "ID" || h === "Symbol" || h === "Type" || h === "Side" ? "text-left font-medium px-4 py-2" : "text-right font-medium px-4 py-2"}>{h}</th>
                 ))}
               </tr>
@@ -70,14 +90,17 @@ export default function OrderList({ orders, loading, onUpdate }: OrderListProps)
                   </td>
                   <td className="px-4 py-2.5 text-right text-text-primary font-mono text-xs">{order.shares}</td>
                   <td className="px-4 py-2.5 text-right text-secondary font-mono text-xs">
-                    ${((order.price || order.trigger_price) || 0).toFixed(2)}
+                    {order.price != null || order.trigger_price != null
+                      ? `$${(order.price ?? order.trigger_price ?? 0).toFixed(2)}`
+                      : "—"}
                   </td>
                   <td className="px-4 py-2.5 text-right">
                     <button
                       onClick={() => handleCancel(order.id)}
+                      disabled={cancellingId !== null}
                       className="text-danger hover:text-danger-light text-2xs font-semibold uppercase tracking-wide transition-colors px-2 py-1 rounded hover:bg-danger/10"
                     >
-                      Cancel
+                      {cancellingId === order.id ? "Cancelling…" : "Cancel"}
                     </button>
                   </td>
                 </tr>

@@ -11,13 +11,34 @@ import PortfolioTable from "@/components/trading/PortfolioTable";
 import OrderList from "@/components/trading/OrderList";
 import TradeHistory from "@/components/trading/TradeHistory";
 import EquityChart from "@/components/trading/EquityChart";
-import Particles from "@/components/effects/Particles";
+import ExperimentHeader from "@/components/experiment/ExperimentHeader";
+import SensitivitySummary from "@/components/experiment/SensitivitySummary";
+import type { SensitivityRun } from "@/components/experiment/SensitivitySummary";
+import ExperimentConclusion from "@/components/experiment/ExperimentConclusion";
+import { diagnoseExperiment } from "@/lib/experiment";
+import { useResearchExperiment } from "@/components/research/ResearchContext";
 import Link from "next/link";
 
 const AUTO_REFRESH_MS = 30000;
+type ResourceState = "idle" | "loading" | "ready" | "empty" | "error";
+type ReconciliationState = "reconciled" | "stale";
+const FLAGSHIP_CONFIG = {
+  strategy: "momentum",
+  stockCodes: ["AAPL", "MSFT", "NVDA"],
+  initialCash: 100000,
+  feeRate: 0.0001,
+  minFee: 1,
+  baselineSlippage: 0.01,
+  epsilonSlippage: 0.02,
+};
+
+function toDateString(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
 
 export default function DashboardPage() {
   const { isAuthenticated } = useAuth();
+  const { experiment, setSubject, setHypothesis } = useResearchExperiment();
 
   const [stocks, setStocks] = useState<StockPrice[]>([]);
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
@@ -28,59 +49,121 @@ export default function DashboardPage() {
   const [trades, setTrades] = useState<TradeRecord[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [equityData, setEquityData] = useState<{ date: string; equity: number }[]>([]);
+  const [equityInitialCapital, setEquityInitialCapital] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [marketState, setMarketState] = useState<ResourceState>("idle");
+  const [klineState, setKlineState] = useState<ResourceState>("idle");
+  const [portfolioState, setPortfolioState] = useState<ResourceState>("idle");
+  const [performanceState, setPerformanceState] = useState<ResourceState>("idle");
+  const [ordersState, setOrdersState] = useState<ResourceState>("idle");
+  const [tradesState, setTradesState] = useState<ResourceState>("idle");
+  const [equityState, setEquityState] = useState<ResourceState>("idle");
   const [tradeFlash, setTradeFlash] = useState<"buy" | "sell" | null>(null);
+  const [sensitivityStatus, setSensitivityStatus] = useState<"pending" | "running" | "validated" | "inconclusive" | "failed">("pending");
+  const [sensitivityBaseline, setSensitivityBaseline] = useState<SensitivityRun | null>(null);
+  const [sensitivityPerturbed, setSensitivityPerturbed] = useState<SensitivityRun | null>(null);
+  const [sensitivityConclusion, setSensitivityConclusion] = useState<"preserved" | "reversed" | null>(null);
+  const [sensitivityError, setSensitivityError] = useState<string | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchStocks = useCallback(async () => {
+    setMarketState("loading");
     try {
       const data = await api.getStockPrices();
       setStocks(data);
+      setMarketState(data.length > 0 ? "ready" : "empty");
       if (data.length > 0 && !selectedCode) {
         setSelectedCode(data[0].code);
         setSelectedStock(data[0]);
       }
     } catch (e) {
       console.error("Failed to fetch stocks:", e);
+      setMarketState("error");
     }
   }, [selectedCode]);
 
   const fetchKline = useCallback(async (code: string) => {
+    setKlineState("loading");
     try {
       const data = await api.getKline(code, 90);
       setKlineData(data);
+      setKlineState(data.dates.length > 0 ? "ready" : "empty");
       const stock = stocks.find((s) => s.code === code) || null;
       setSelectedStock(stock);
     } catch (e) {
       console.error("Failed to fetch kline:", e);
+      setKlineState("error");
     }
   }, [stocks]);
 
-  const fetchPortfolioData = useCallback(async () => {
-    if (!isAuthenticated) return;
-    try {
-      const [pos, perf, tradeHistory, orderList, equity] = await Promise.all([
-        api.getPortfolio(),
-        api.getPerformance(),
-        api.getTradeHistory(),
-        api.getOrders(),
-        api.getEquityCurve(),
-      ]);
-      setPositions(pos);
-      setPerformance(perf);
-      setTrades(tradeHistory);
-      setOrders(orderList);
+  const fetchPortfolioData = useCallback(async (): Promise<boolean> => {
+    if (!isAuthenticated) return false;
+    setPortfolioState("loading");
+    setPerformanceState("loading");
+    setTradesState("loading");
+    setOrdersState("loading");
+    setEquityState("loading");
+
+    const [portfolioResult, performanceResult, tradeResult, orderResult, equityResult] = await Promise.allSettled([
+      api.getPortfolio(),
+      api.getPerformance(),
+      api.getTradeHistory(),
+      api.getOrders(),
+      api.getEquityCurve(),
+    ]);
+
+    const portfolioReady = portfolioResult.status === "fulfilled";
+    const performanceReady = performanceResult.status === "fulfilled";
+    const tradesReady = tradeResult.status === "fulfilled";
+    const ordersReady = orderResult.status === "fulfilled";
+    const equityReady = equityResult.status === "fulfilled";
+
+    if (portfolioReady) {
+      setPositions(portfolioResult.value);
+      setPortfolioState(portfolioResult.value.length > 0 ? "ready" : "empty");
+    } else {
+      setPortfolioState("error");
+      console.error("Failed to fetch portfolio:", portfolioResult.reason);
+    }
+    if (performanceReady) {
+      setPerformance(performanceResult.value);
+      setPerformanceState("ready");
+    } else {
+      setPerformanceState("error");
+      console.error("Failed to fetch performance:", performanceResult.reason);
+    }
+    if (tradesReady) {
+      setTrades(tradeResult.value);
+      setTradesState(tradeResult.value.length > 0 ? "ready" : "empty");
+    } else {
+      setTradesState("error");
+      console.error("Failed to fetch trade history:", tradeResult.reason);
+    }
+    if (ordersReady) {
+      setOrders(orderResult.value);
+      setOrdersState(orderResult.value.length > 0 ? "ready" : "empty");
+    } else {
+      setOrdersState("error");
+      console.error("Failed to fetch orders:", orderResult.reason);
+    }
+    if (equityReady) {
+      setEquityInitialCapital(equityResult.value.initial_capital);
       setEquityData(
-        equity.dates.map((d: string, i: number) => ({
+        equityResult.value.dates.map((d: string, i: number) => ({
           date: d,
-          equity: equity.equity[i],
+          equity: equityResult.value.equity[i],
         }))
       );
-      setLastUpdated(new Date());
-    } catch (e) {
-      console.error("Failed to fetch portfolio:", e);
+      setEquityState(equityResult.value.dates.length > 0 ? "ready" : "empty");
+    } else {
+      setEquityState("error");
+      console.error("Failed to fetch equity:", equityResult.reason);
     }
+
+    const allReady = portfolioReady && performanceReady && tradesReady && ordersReady && equityReady;
+    if (allReady) setLastUpdated(new Date());
+    return allReady;
   }, [isAuthenticated]);
 
   // Initial load
@@ -127,102 +210,164 @@ export default function DashboardPage() {
 
   const handleStockSelect = (code: string) => {
     setSelectedCode(code);
+    setSubject(code);
     const stock = stocks.find((s) => s.code === code) || null;
     setSelectedStock(stock);
   };
 
-  const handleTradeExecuted = (side?: "buy" | "sell") => {
+  useEffect(() => {
+    if (selectedCode) setSubject(selectedCode);
+  }, [selectedCode, setSubject]);
+
+  const handleTradeExecuted = async (side?: "buy" | "sell"): Promise<ReconciliationState> => {
     if (side) {
       setTradeFlash(side);
       setTimeout(() => setTradeFlash(null), 1000);
     }
-    fetchPortfolioData();
+    const reconciled = await fetchPortfolioData();
+    return reconciled ? "reconciled" : "stale";
   };
 
-  // Welcome screen (not authenticated)
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 relative overflow-hidden">
-        {/* Canvas particles background */}
-        <Particles quantity={30} color="100,255,218" staticMode={false} />
+  const accountStates = [portfolioState, performanceState, ordersState, tradesState, equityState];
+  const accountLoading = accountStates.some((state) => state === "loading");
+  const accountErrors = accountStates.filter((state) => state === "error").length;
+  const accountReady = accountStates.filter((state) => state === "ready" || state === "empty").length;
+  const sourceErrors = accountErrors + (marketState === "error" ? 1 : 0) + (klineState === "error" ? 1 : 0);
+  const dashboardState = loading && accountReady === 0
+    ? "LOADING…"
+    : accountLoading
+      ? "REFRESHING…"
+      : sourceErrors === accountStates.length + 2
+        ? "DATA UNAVAILABLE"
+        : sourceErrors > 0
+          ? `PARTIAL DATA · ${sourceErrors} source${sourceErrors === 1 ? "" : "s"} unavailable`
+          : accountReady > 0
+            ? "DATA READY"
+            : "DATA NOT CONFIRMED";
 
-        {/* Floating blobs */}
-        <div className="absolute -z-10 opacity-15">
-          <div className="w-96 h-96 rounded-full bg-primary blur-3xl animate-blob absolute -top-32 -left-32" style={{ animationDelay: '0s' }} />
-          <div className="w-72 h-72 rounded-full bg-secondary blur-3xl animate-blob absolute top-20 right-0" style={{ animationDelay: '3s' }} />
-          <div className="w-80 h-80 rounded-full bg-accent blur-3xl animate-blob absolute -bottom-20 left-1/4" style={{ animationDelay: '6s' }} />
-        </div>
+  const diagnosis = sensitivityBaseline && sensitivityPerturbed
+    ? diagnoseExperiment({
+        baselineReturn: sensitivityBaseline.totalReturn,
+        perturbedReturn: sensitivityPerturbed.totalReturn,
+        baselineTrades: sensitivityBaseline.tradeCount,
+        perturbedTrades: sensitivityPerturbed.tradeCount,
+        parameter: "slippage_per_share",
+        baselineParameter: sensitivityBaseline.slippagePerShare,
+        perturbedParameter: sensitivityPerturbed.slippagePerShare,
+      })
+    : null;
 
-        <div className="max-w-3xl text-center space-y-8">
-          {/* Hero with edge-outline title */}
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-medium mb-4">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
-              </span>
-              Live Market Data
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-              Trade Smarter.<br />
-              <span className="text-gradient-accent text-edge-outline">Analyze Deeper.</span>
-            </h1>
-            <p className="text-base-content/60 text-lg max-w-xl mx-auto leading-relaxed">
-              EPSILON is an institutional-grade trading simulator. Practice with real-time data, advanced analytics, and AI-powered strategy insights — risk-free.
-            </p>
-          </div>
+  const runSensitivityValidation = async () => {
+    setSensitivityStatus("running");
+    setSensitivityError(null);
+    setSensitivityBaseline(null);
+    setSensitivityPerturbed(null);
+    setSensitivityConclusion(null);
 
-          {/* Feature cards — neumorphic */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
-            {[
-              { icon: "📊", title: "Live Trading", desc: "15 US stocks with real-time price simulation" },
-              { icon: "🤖", title: "AI Advisor", desc: "DeepSeek-powered strategy analysis and insights" },
-              { icon: "📈", title: "Backtesting", desc: "Test strategies on historical data with metrics" },
-            ].map((f, i) => (
-              <div key={f.title} className={`card-neumorph p-5 text-left stagger-item stagger-${i+1}`}>
-                <div className="text-2xl mb-3">{f.icon}</div>
-                <h3 className="text-base-content font-semibold text-sm mb-1">{f.title}</h3>
-                <p className="text-base-content/50 text-xs leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
-          </div>
+    const end = new Date();
+    const start = new Date(end);
+    start.setDate(start.getDate() - 90);
+    const baseRequest = {
+      strategy: FLAGSHIP_CONFIG.strategy,
+      start_date: toDateString(start),
+      end_date: toDateString(end),
+      stock_codes: FLAGSHIP_CONFIG.stockCodes,
+      initial_cash: FLAGSHIP_CONFIG.initialCash,
+      fee_rate: FLAGSHIP_CONFIG.feeRate,
+      min_fee: FLAGSHIP_CONFIG.minFee,
+    };
 
-          {/* CTA — offset shadow buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 stagger-item stagger-6">
-            <Link href="/auth/register" className="btn-offset-primary px-8 py-3 !text-sm !font-semibold no-underline">
-              Start Trading Free
-            </Link>
-            <Link href="/auth/login" className="text-base-content/60 hover:text-base-content transition-colors text-sm font-medium">
-              Sign In →
-            </Link>
-          </div>
+    try {
+      const [baselineResult, perturbedResult] = await Promise.all([
+        api.backtest({ ...baseRequest, slippage_per_share: FLAGSHIP_CONFIG.baselineSlippage }),
+        api.backtest({ ...baseRequest, slippage_per_share: FLAGSHIP_CONFIG.epsilonSlippage }),
+      ]);
+      const toRun = (result: typeof baselineResult, slippagePerShare: number): SensitivityRun => ({
+        slippagePerShare,
+        totalReturn: result.performance.total_return,
+        sharpe: result.performance.sharpe,
+        maxDrawdown: result.performance.max_drawdown,
+        tradeCount: result.trades.length,
+      });
+      const baseline = toRun(baselineResult, FLAGSHIP_CONFIG.baselineSlippage);
+      const perturbed = toRun(perturbedResult, FLAGSHIP_CONFIG.epsilonSlippage);
+      setSensitivityBaseline(baseline);
+      setSensitivityPerturbed(perturbed);
 
-          <p className="text-base-content/30 text-xs">No real money. No risk. Pure education.</p>
-        </div>
-      </div>
-    );
-  }
+      if (baseline.tradeCount === 0 || perturbed.tradeCount === 0) {
+        setSensitivityStatus("inconclusive");
+        return;
+      }
+      const baselinePositive = baseline.totalReturn > 0;
+      const perturbedPositive = perturbed.totalReturn > 0;
+      setSensitivityConclusion(baselinePositive === perturbedPositive ? "preserved" : "reversed");
+      setSensitivityStatus("validated");
+    } catch (error) {
+      setSensitivityStatus("failed");
+      setSensitivityError(error instanceof Error ? error.message : "Backtest results unavailable.");
+    }
+  };
 
-  // Authenticated dashboard — optimized for 16:10 single-view
+  // Authenticated dashboard — a decision workspace: observe → act → review → challenge
   return (
-    <div className="space-y-2 h-[calc(100vh-5rem)] flex flex-col">
-      {/* Header bar */}
-      <div className="flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3">
-          <h1 className="text-sm font-bold text-base-content uppercase tracking-wide">Dashboard</h1>
-          {lastUpdated && (
-            <span className="text-2xs text-base-content/30">
-              Updated {lastUpdated.toLocaleTimeString()} · Auto 30s
+    <div className="space-y-3 min-h-[calc(100vh-5rem)] flex flex-col">
+      {/* Experiment header — the selected instrument is the workspace subject. */}
+      <div className="flex flex-col gap-3 border-b border-base-300/80 pb-3 sm:flex-row sm:items-end sm:justify-between shrink-0">
+        <div className="min-w-0">
+          <p className="product-kicker">Market observation / simulated environment</p>
+          <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h1 className="font-mono text-xl font-semibold tracking-tight text-base-content sm:text-2xl">
+              {selectedCode ?? "MARKET"}<span className="text-base-content/30"> / </span>OBSERVATION
+            </h1>
+            <span className={`rounded-full border px-2 py-1 text-2xs font-mono uppercase tracking-[0.12em] ${accountErrors > 0 ? "border-warning/30 text-warning" : accountLoading ? "border-info/30 text-info" : "border-primary/20 text-primary/70"}`}>
+              {dashboardState}
             </span>
-          )}
+          </div>
+          <p className="mt-1 text-xs text-base-content/45">
+            Select an instrument, frame a hypothesis, then test whether the evidence supports it.
+            {lastUpdated ? ` Updated ${lastUpdated.toLocaleTimeString()} · Auto 30s.` : ""}
+          </p>
         </div>
-        <button
-          onClick={() => { fetchStocks(); fetchPortfolioData(); }}
-          className="btn btn-ghost btn-xs text-base-content/40"
-        >
-          ↻ Refresh
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          {selectedCode && (
+            <Link
+              href={`/dashboard/backtest?symbols=${encodeURIComponent(selectedCode)}`}
+              className="rounded-btn border border-primary/30 bg-primary/5 px-3 py-2 text-2xs font-mono uppercase tracking-[0.12em] text-primary transition-colors hover:bg-primary/10"
+            >
+              Test {selectedCode} in Strategy Lab →
+            </Link>
+          )}
+          <button
+            onClick={() => { fetchStocks(); fetchPortfolioData(); }}
+            className="btn btn-ghost btn-xs text-base-content/45"
+          >
+            ↻ Refresh
+          </button>
+        </div>
       </div>
+
+      <section aria-labelledby="research-frame" className="border border-base-300/80 bg-base-200/30 p-4 sm:flex sm:items-end sm:gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="product-kicker">Research context</span>
+            <h2 id="research-frame" className="text-xs font-semibold text-base-content/70">Frame the experiment</h2>
+          </div>
+          <label htmlFor="research-hypothesis" className="mt-2 block text-2xs text-base-content/45">What do you think is happening in {selectedCode ?? "this market"}?</label>
+          <input
+            id="research-hypothesis"
+            value={experiment.hypothesis}
+            onChange={(event) => setHypothesis(event.target.value)}
+            placeholder="Example: recent momentum in this period is persistent enough to test."
+            className="mt-1 w-full border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content outline-none transition-colors placeholder:text-base-content/30 focus:border-primary"
+          />
+        </div>
+        <Link
+          href={selectedCode ? `/dashboard/backtest?symbols=${encodeURIComponent(selectedCode)}` : "/dashboard/backtest"}
+          className="mt-3 inline-flex shrink-0 rounded-btn border border-primary/30 bg-primary/5 px-3 py-2 text-2xs font-mono uppercase tracking-[0.12em] text-primary transition-colors hover:bg-primary/10 sm:mt-0"
+        >
+          Continue to test →
+        </Link>
+      </section>
 
       {/* Trade flash overlay */}
       {tradeFlash && (
@@ -233,41 +378,94 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Account Summary — compact */}
-      <div className="shrink-0">
-        <AccountSummary data={performance} loading={loading} />
-      </div>
+      {/* Layer 1: decision context */}
+      <section aria-labelledby="decision-context" className="shrink-0">
+        <div className="mb-1 flex items-center gap-2">
+          <span className="product-kicker">Account context</span>
+          <h2 id="decision-context" className="text-xs font-semibold text-base-content/70">Confirmed account state</h2>
+        </div>
+        <AccountSummary data={performance} loading={loading || performanceState === "loading"} state={performanceState} />
+      </section>
 
-      {/* Main trading area — fills remaining height */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 flex-1 min-h-0">
-        {/* Left: Stock Picker */}
-        <div className="lg:col-span-2 flex flex-col min-h-0">
-          <StockPicker stocks={stocks} selectedCode={selectedCode} onSelect={handleStockSelect} loading={loading} />
+      {/* Layer 2: the primary action workspace */}
+      <section aria-labelledby="action-workspace" className="flex flex-col gap-2 lg:flex-1 lg:min-h-[34rem]">
+        <div className="flex items-center gap-2">
+          <span className="product-kicker">01 / Observe → execute</span>
+          <h2 id="action-workspace" className="text-xs font-semibold text-base-content/70">Market decision workspace</h2>
+          <span className="hidden text-2xs text-base-content/35 sm:inline">Select evidence, then prepare a simulated action.</span>
         </div>
+        <div className="grid grid-cols-1 gap-2 lg:flex-1 lg:min-h-0 lg:grid-cols-12">
+          {/* Left: Stock Picker */}
+          <div className="lg:col-span-2 flex flex-col min-h-0">
+          <StockPicker stocks={stocks} selectedCode={selectedCode} onSelect={handleStockSelect} loading={loading || marketState === "loading"} state={marketState} />
+          </div>
 
-        {/* Center: K-line Chart */}
-        <div className="lg:col-span-7 flex flex-col min-h-0">
-          <KlineChartComponent data={klineData} loading={loading} />
-        </div>
+          {/* Center: K-line Chart */}
+          <div className="lg:col-span-7 flex flex-col min-h-0">
+            <div className="relative flex min-h-0 flex-1 flex-col">
+              <KlineChartComponent data={klineData} loading={loading || klineState === "loading"} state={klineState} />
+            </div>
+          </div>
 
-        {/* Right: Trading Panel */}
-        <div className="lg:col-span-3 flex flex-col min-h-0">
-          <TradingPanel stock={selectedStock} onTradeExecuted={handleTradeExecuted} />
+          {/* Right: Trading Panel */}
+          <div className="lg:col-span-3 flex flex-col min-h-0">
+            <TradingPanel stock={selectedStock} onTradeExecuted={handleTradeExecuted} />
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Bottom row: Portfolio + Orders + History — 3 equal columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 shrink-0" style={{ maxHeight: "30vh" }}>
-        <div className="min-h-0 overflow-hidden">
-          <PortfolioTable positions={positions} loading={loading} />
+      {/* Layer 3: consequence review */}
+      <section aria-labelledby="consequence-review" className="shrink-0">
+        <div className="mb-1 flex items-center gap-2">
+          <span className="product-kicker">02 / Challenge</span>
+          <h2 id="consequence-review" className="text-xs font-semibold text-base-content/70">Evidence review</h2>
         </div>
-        <div className="min-h-0 overflow-hidden">
-            <EquityChart data={equityData} loading={loading} />
+        <p className="mb-2 text-2xs text-base-content/40">Account outcome, equity path, and execution record are shown together so a decision can be reviewed against confirmed evidence.</p>
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:max-h-[32vh] lg:grid-cols-4">
+          <div className="lg:min-h-0 lg:overflow-hidden">
+            <PortfolioTable positions={positions} loading={loading || portfolioState === "loading"} state={portfolioState} />
+          </div>
+          <div className="lg:min-h-0 lg:overflow-hidden">
+            <OrderList orders={orders} loading={loading || ordersState === "loading"} state={ordersState} onUpdate={fetchPortfolioData} />
+          </div>
+          <div className="lg:min-h-0 lg:overflow-hidden">
+            <EquityChart data={equityData} initialCapital={equityInitialCapital ?? undefined} loading={loading || equityState === "loading"} state={equityState} />
+          </div>
+          <div className="lg:min-h-0 lg:overflow-hidden">
+            <TradeHistory trades={trades} loading={loading || tradesState === "loading"} state={tradesState} />
+          </div>
         </div>
-        <div className="min-h-0 overflow-hidden">
-          <TradeHistory trades={trades} loading={loading} />
+      </section>
+
+      {/* Layer 4: challenge the assumption — research remains a next step, not the trading workspace hero. */}
+      <section aria-labelledby="challenge-assumption" className="shrink-0">
+        <div className="mb-1 flex items-center gap-2">
+          <span className="product-kicker">03 / Interrogate</span>
+          <h2 id="challenge-assumption" className="text-xs font-semibold text-base-content/70">Question the conclusion</h2>
+          <Link href="/dashboard/ai" className="ml-auto text-2xs font-mono uppercase tracking-[0.12em] text-primary hover:underline">Interrogate this experiment →</Link>
         </div>
-      </div>
+        <div className="grid grid-cols-1 gap-2 xl:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
+          <ExperimentHeader
+            strategy="Momentum (2%)"
+            universe={FLAGSHIP_CONFIG.stockCodes.join(" · ")}
+            initialCash={FLAGSHIP_CONFIG.initialCash}
+            feeRate={FLAGSHIP_CONFIG.feeRate}
+            slippagePerShare={FLAGSHIP_CONFIG.baselineSlippage}
+          />
+          <SensitivitySummary
+            totalReturn={performance?.total_return}
+            status={sensitivityStatus}
+            baseline={sensitivityBaseline}
+            perturbed={sensitivityPerturbed}
+            conclusion={sensitivityConclusion}
+            error={sensitivityError}
+            onRun={runSensitivityValidation}
+          />
+        </div>
+        {diagnosis && sensitivityBaseline && sensitivityPerturbed && (
+          <div className="mt-2"><ExperimentConclusion diagnosis={diagnosis} baseline={sensitivityBaseline} perturbed={sensitivityPerturbed} /></div>
+        )}
+      </section>
     </div>
   );
 }

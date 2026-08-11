@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { api, StockPrice } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
@@ -8,7 +8,7 @@ import MotionCard from "@/components/effects/MotionCard";
 
 interface TradingPanelProps {
   stock: StockPrice | null;
-  onTradeExecuted: (side?: "buy" | "sell") => void;
+  onTradeExecuted: (side?: "buy" | "sell") => Promise<"reconciled" | "stale">;
 }
 
 export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelProps) {
@@ -20,16 +20,69 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
   const [triggerPrice, setTriggerPrice] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const currentPrice = stock?.price ?? 0;
+  const estimatedTotal = shares * currentPrice;
+  const isConditionalOrder = orderType !== "market";
+  const requiresTrigger = orderType === "stop_loss" || orderType === "take_profit";
+  const targetLabel = requiresTrigger ? "Trigger Price" : "Limit Price";
+  const orderTypeLabel = orderType.replace("_", " ");
+
+  const handleTrade = useCallback(async () => {
+    if (!stock || loading) return;
+    if (!isAuthenticated) {
+      toast.error("Please login to trade");
+      return;
+    }
+    setLoading(true);
+    try {
+      if (orderType === "market") {
+        const fn = side === "buy" ? api.buy : api.sell;
+        const result = await fn({ stock_code: stock.code, shares });
+        const reconciliation = await onTradeExecuted(side);
+        toast.success(result.message, {
+          description: reconciliation === "reconciled"
+            ? "Execution price confirmed and account state reconciled."
+            : "Trade accepted by the server, but displayed account data may be stale.",
+        });
+      } else {
+        const targetValue = requiresTrigger ? triggerPrice : limitPrice;
+        const targetPrice = Number(targetValue);
+        if (!Number.isFinite(targetPrice) || targetPrice <= 0) {
+          toast.error(`${targetLabel} is required for a ${orderTypeLabel} order.`);
+          return;
+        }
+        const result = await api.placeOrder({
+          stock_code: stock.code,
+          order_type: orderType,
+          side,
+          shares,
+          price: requiresTrigger ? undefined : targetPrice,
+          trigger_price: requiresTrigger ? targetPrice : undefined,
+        });
+        const reconciliation = await onTradeExecuted();
+        toast.success(result.message, {
+          description: reconciliation === "reconciled"
+            ? "Recorded as pending. Automatic conditional execution is not enabled in this simulator."
+            : "Order recorded, but displayed account data may be stale.",
+        });
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Trade failed");
+    } finally {
+      setLoading(false);
+    }
+  }, [isAuthenticated, limitPrice, loading, onTradeExecuted, orderType, orderTypeLabel, requiresTrigger, shares, side, stock, targetLabel, triggerPrice]);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && !loading && stock && isAuthenticated) {
+      if (e.key === "Enter" && !loading) {
         e.preventDefault();
-        handleTrade();
+        void handleTrade();
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [loading, stock, isAuthenticated, shares, side, orderType, limitPrice, triggerPrice]);
+  }, [handleTrade, loading]);
 
   if (!stock) {
     return (
@@ -42,46 +95,14 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
     );
   }
 
-  const currentPrice = stock.price;
-  const estimatedTotal = shares * currentPrice;
-
-  const handleTrade = async () => {
-    if (!isAuthenticated) {
-      toast.error("Please login to trade");
-      return;
-    }
-    setLoading(true);
-    try {
-      if (orderType === "market") {
-        const fn = side === "buy" ? api.buy : api.sell;
-        const result = await fn({ stock_code: stock.code, shares, price: currentPrice });
-        toast.success(result.message, {
-          description: `${side === "buy" ? "Bought" : "Sold"} ${shares} shares of ${stock.code} at $${currentPrice.toFixed(2)}`,
-        });
-        onTradeExecuted(side);
-      } else {
-        const price = limitPrice ? parseFloat(limitPrice) : undefined;
-        const trigger = triggerPrice ? parseFloat(triggerPrice) : undefined;
-        const result = await api.placeOrder({
-          stock_code: stock.code, order_type: orderType, side, shares, price, trigger_price: trigger,
-        });
-        toast.success(result.message);
-        onTradeExecuted();
-      }
-    } catch (e: any) {
-      toast.error(e.message || "Trade failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <MotionCard className="card bg-base-200 shadow-sm h-full" glowColor="100,255,218">
+    <MotionCard className="card bg-base-200 shadow-sm h-full border border-base-300" glowColor="100,255,218">
       <div className="p-3 space-y-2.5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-bold text-lg text-base-content">{stock.code}</h3>
+          <p className="product-kicker">Decision / execution</p>
+          <h3 className="mt-1 font-mono text-lg font-semibold text-base-content">{stock.code}</h3>
           <div className={`text-xs font-medium mt-0.5 ${stock.change_percent >= 0 ? "text-success" : "text-error"}`}>
             {stock.change_percent >= 0 ? "+" : ""}{stock.change_percent.toFixed(2)}%
           </div>
@@ -138,21 +159,24 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
       </div>
 
       {/* Limit / Trigger price */}
-      {orderType !== "market" && (
+      {isConditionalOrder && (
         <div>
           <label className="text-xs text-base-content/40 uppercase tracking-wide mb-1.5 block">
-            {orderType === "stop_loss" || orderType === "take_profit" ? "Trigger Price" : "Limit Price"}
+            {targetLabel}
           </label>
           <input
-            type="number" step="0.01"
-            value={orderType === "stop_loss" || orderType === "take_profit" ? triggerPrice : limitPrice}
+            type="number" min="0.01" step="0.01" required
+            value={requiresTrigger ? triggerPrice : limitPrice}
             onChange={(e) => {
-              if (orderType === "stop_loss" || orderType === "take_profit") setTriggerPrice(e.target.value);
+              if (requiresTrigger) setTriggerPrice(e.target.value);
               else setLimitPrice(e.target.value);
             }}
             placeholder={currentPrice.toFixed(2)}
             className="input input-bordered input-sm w-full bg-base-300/50 font-mono"
           />
+          <p className="mt-1 text-2xs text-base-content/40">
+            This order is recorded as pending and can be cancelled. It does not auto-execute in the current simulator.
+          </p>
         </div>
       )}
 
@@ -173,7 +197,11 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
         } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
       >
         {loading ? <span className="loading loading-spinner loading-xs mr-2" /> : null}
-        {loading ? "Processing" : `${side === "buy" ? "Buy" : "Sell"} ${stock.code}`}
+        {loading
+          ? "Processing"
+          : isConditionalOrder
+            ? `Place ${side === "buy" ? "Buy" : "Sell"} ${orderTypeLabel} order`
+            : `${side === "buy" ? "Buy" : "Sell"} ${stock.code}`}
       </button>
 
       {!isAuthenticated && (

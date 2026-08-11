@@ -1,16 +1,22 @@
 import datetime
+import hashlib
 import json
+import math
 import os
 import random
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
+
+CONTROLLED_MARKET_MODEL_VERSION = "CSP-v1"
+CONTROLLED_MARKET_ANCHOR = datetime.date(2020, 1, 1)
+
 try:
     import akshare as ak
 
     AKSHARE_AVAILABLE = True
-except Exception:
+except (ImportError, ModuleNotFoundError):
     ak = None  # type: ignore[assignment]
     AKSHARE_AVAILABLE = False
 
@@ -38,7 +44,8 @@ class StockDataManager:
             try:
                 with open(self.data_file, "r", encoding="utf-8") as f:
                     return json.load(f)
-            except Exception:
+            except (json.JSONDecodeError, IOError, OSError) as e:
+                print(f"Failed to load data file {self.data_file}: {e}")
                 return {}
         return {}
 
@@ -56,7 +63,7 @@ class StockDataManager:
                     # 期望结构：list[{"code":..., "start":"YYYY-MM-DD", "days":N, "impact_pct":+/-x}]
                     if isinstance(data, list):
                         return data
-            except Exception as e:
+            except (json.JSONDecodeError, IOError, OSError) as e:
                 print(f"Failed to load stock_events.json: {e}")
         return []
 
@@ -65,7 +72,7 @@ class StockDataManager:
         try:
             with open(self.events_file, "w", encoding="utf-8") as f:
                 json.dump(self.events, f, ensure_ascii=False, indent=2)
-        except Exception as e:
+        except (IOError, OSError) as e:
             print(f"Failed to save stock_events.json: {e}")
 
     def _determine_mock_mode(self, explicit_flag: Optional[bool]) -> bool:
@@ -118,6 +125,12 @@ class StockDataManager:
     def get_stock_list(self) -> Dict[str, str]:
         """Get stock list."""
         return self.stock_list
+
+    @staticmethod
+    def _stable_code_value(code: str) -> int:
+        """Return a cross-process stable integer for a stock code."""
+        digest = hashlib.sha256(code.encode("utf-8")).digest()
+        return int.from_bytes(digest[:8], "big")
 
     def get_stock_data(self, code: str, date: datetime.date) -> Optional[Dict[str, Any]]:
         """Get data for specified date and stock code."""
@@ -193,75 +206,70 @@ class StockDataManager:
         end_date: datetime.date,
         window_days: int = 60,
     ) -> Optional[pd.DataFrame]:
-        """Get historical OHLC data for k-line chart.
+        """Get a deterministic, continuous synthetic OHLC history.
 
-        Returns a pandas DataFrame with columns: date, open, high, low, close, volume.
-
-        Note: 为了保证在本地离线环境、以及不同日期选择下都有平滑且可重复的效果，
-        这里不再强依赖 akshare 的真实历史数据，而是统一基于当前选择的日期和股票代码
-        生成一个“合成但合理”的 K 线序列。
+        The controlled path is anchored before the requested range and evolves
+        from the previous close. This keeps the demo offline and reproducible
+        without pretending that it is historical market validation.
         """
-        # 统一使用合成 OHLC 数据，围绕每日收盘价构造。
-        dates: List[str] = []
-        opens: List[float] = []
-        highs: List[float] = []
-        lows: List[float] = []
-        closes: List[float] = []
-        for i in range(window_days, 0, -1):
-            d = end_date - datetime.timedelta(days=i)
-            data = self.get_stock_data(code, d)
-            if data is None:
-                continue
-            close_price = float(data["price"])
-            # Deterministic randomness based on code+date
-            seed = f"{code}-{d.strftime('%Y-%m-%d')}-ohlc"
-            rng = random.Random(seed)
-            # Generate open/close with small variation
-            spread = close_price * 0.02  # 2% intraday range baseline
-            open_price = close_price + rng.uniform(-0.5, 0.5) * spread
-            high_price = max(open_price, close_price) + rng.uniform(0.1, 0.6) * spread
-            low_price = min(open_price, close_price) - rng.uniform(0.1, 0.6) * spread
+        return self._generate_controlled_history(code, end_date, window_days)
 
-            dates.append(d.strftime("%Y-%m-%d"))
-            opens.append(round(open_price, 2))
-            highs.append(round(high_price, 2))
-            lows.append(round(low_price, 2))
-            closes.append(round(close_price, 2))
-
-        if not dates:
+    def _generate_controlled_history(
+        self,
+        code: str,
+        end_date: datetime.date,
+        window_days: int,
+    ) -> Optional[pd.DataFrame]:
+        target_start = end_date - datetime.timedelta(days=max(window_days, 1))
+        all_dates = [
+            CONTROLLED_MARKET_ANCHOR + datetime.timedelta(days=offset)
+            for offset in range((end_date - CONTROLLED_MARKET_ANCHOR).days + 1)
+            if (CONTROLLED_MARKET_ANCHOR + datetime.timedelta(days=offset)).weekday() < 5
+            and CONTROLLED_MARKET_ANCHOR + datetime.timedelta(days=offset) <= end_date
+        ]
+        if not all_dates:
             return None
 
-        # 生成与价格对应的合成成交量（与波动程度、价格水平弱相关，便于展示）
-        volumes: List[int] = []
-        for i, cp in enumerate(closes):
-            # 使用与 K 线相同的 deterministic 随机源，保证同一日期/股票下重复性
-            d = datetime.datetime.strptime(dates[i], "%Y-%m-%d").date()
-            seed = f"{code}-{d.strftime('%Y-%m-%d')}-vol"
-            rng = random.Random(seed)
-            base_vol = 1_000_000 + (abs(hash(code)) % 500_000)
-            # 让高波动日的成交量略高
-            intraday_range = highs[i] - lows[i]
-            vol_scale = 1.0 + min(intraday_range / max(cp, 1.0), 0.5)
-            volume = int(base_vol * vol_scale * rng.uniform(0.7, 1.3))
-            volumes.append(volume)
+        stable_value = self._stable_code_value(code)
+        base_price = 50.0 + (stable_value % 250)
+        drift = ((stable_value % 900) - 450) / 10_000_000
+        close_price = base_price
+        records: List[Dict[str, Any]] = []
 
-        df = pd.DataFrame(
-            {
-                "date": dates,
-                "open": opens,
-                "high": highs,
-                "low": lows,
-                "close": closes,
-                "volume": volumes,
-            }
-        )
-        return df
+        for date in all_dates:
+            date_key = date.strftime("%Y-%m-%d")
+            gap_rng = random.Random(f"{CONTROLLED_MARKET_MODEL_VERSION}:{code}:{date_key}:gap")
+            return_rng = random.Random(f"{CONTROLLED_MARKET_MODEL_VERSION}:{code}:{date_key}:return")
+            range_rng = random.Random(f"{CONTROLLED_MARKET_MODEL_VERSION}:{code}:{date_key}:range")
+            volume_rng = random.Random(f"{CONTROLLED_MARKET_MODEL_VERSION}:{code}:{date_key}:volume")
+
+            open_price = close_price * math.exp(gap_rng.uniform(-0.003, 0.003))
+            daily_return = drift + return_rng.uniform(-0.018, 0.018)
+            next_close = open_price * math.exp(daily_return)
+            intraday_spread = max(open_price, next_close) * range_rng.uniform(0.002, 0.012)
+            high_price = max(open_price, next_close) + intraday_spread
+            low_price = max(0.01, min(open_price, next_close) - intraday_spread)
+            base_volume = 1_000_000 + (stable_value % 500_000)
+            volume = int(base_volume * volume_rng.uniform(0.75, 1.25))
+
+            if date >= target_start:
+                records.append({
+                    "date": date_key,
+                    "open": round(open_price, 2),
+                    "high": round(high_price, 2),
+                    "low": round(low_price, 2),
+                    "close": round(next_close, 2),
+                    "volume": volume,
+                })
+            close_price = next_close
+
+        return pd.DataFrame(records, columns=["date", "open", "high", "low", "close", "volume"])
 
     def _generate_mock_stock_data(self, code: str, date: datetime.date) -> Dict[str, Any]:
         """Generate deterministic mock stock data."""
         date_str = date.strftime("%Y-%m-%d")
         rng = random.Random(f"{code}-{date_str}")
-        base_price = 50 + (abs(hash(code)) % 250)
+        base_price = 50 + (self._stable_code_value(code) % 250)
         change_percent = round(rng.uniform(-4.5, 4.5), 2)
 
         # 应用事件脚本：在事件持续期间对日涨跌幅做偏移
@@ -324,5 +332,3 @@ class StockDataManager:
             self._save_data()
         except Exception as e:
             print(f"Failed to clear cached prices for event on {code}: {e}")
-
-

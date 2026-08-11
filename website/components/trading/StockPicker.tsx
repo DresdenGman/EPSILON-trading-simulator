@@ -8,14 +8,19 @@ interface StockPickerProps {
   selectedCode: string | null;
   onSelect: (code: string) => void;
   loading?: boolean;
+  state?: "idle" | "loading" | "ready" | "empty" | "error";
 }
 
-export default function StockPicker({ stocks, selectedCode, onSelect, loading }: StockPickerProps) {
+export default function StockPicker({ stocks, selectedCode, onSelect, loading, state = stocks.length > 0 ? "ready" : "empty" }: StockPickerProps) {
   return (
-    <div className="card bg-base-200 shadow-sm overflow-hidden h-full">
+    <div className="card bg-base-200 shadow-sm overflow-hidden h-full border border-base-300">
       <div className="card-body p-0">
-        <div className="px-4 py-3.5 border-b border-base-300">
-          <h3 className="card-title text-sm">Market Watch</h3>
+        <div className="flex items-start justify-between gap-3 border-b border-base-300 px-4 py-3.5">
+          <div>
+            <p className="product-kicker">01 / Observe</p>
+            <h3 className="mt-1 text-sm font-semibold text-base-content">Market universe</h3>
+          </div>
+          {selectedCode && <span className="rounded-full border border-primary/20 bg-primary/5 px-2 py-1 font-mono text-2xs text-primary">{selectedCode}</span>}
         </div>
         <div className="overflow-y-auto max-h-[360px]">
           {loading ? (
@@ -28,8 +33,13 @@ export default function StockPicker({ stocks, selectedCode, onSelect, loading }:
                 </div>
               ))}
             </div>
+          ) : state === "error" ? (
+            <div className="p-8 text-center text-sm text-warning">
+              <p>Market prices are unavailable.</p>
+              <p className="mt-1 text-xs text-base-content/40">No fallback prices are shown.</p>
+            </div>
           ) : stocks.length === 0 ? (
-            <div className="p-8 text-center text-base-content/40 text-sm">No stocks available</div>
+            <div className="p-8 text-center text-base-content/40 text-sm">No market prices are available yet.</div>
           ) : (
             <table className="table table-sm">
               <thead>

@@ -6,14 +6,16 @@ import { PortfolioPosition } from "@/lib/api";
 interface PortfolioTableProps {
   positions: PortfolioPosition[];
   loading?: boolean;
+  state?: "idle" | "loading" | "ready" | "empty" | "error";
 }
 
-export default function PortfolioTable({ positions, loading }: PortfolioTableProps) {
+export default function PortfolioTable({ positions, loading, state = "ready" }: PortfolioTableProps) {
   if (loading) {
     return (
-      <div className="card bg-base-200 shadow-sm p-6 space-y-3">
+      <div className="border border-base-300 bg-base-200/70 p-5 space-y-4" aria-label="Loading position ledger">
+        <div className="skeleton h-3 w-32" />
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="flex items-center gap-4">
+          <div key={i} className="flex items-center gap-4 border-t border-base-300/70 pt-3">
             <div className="skeleton h-4 w-14" />
             <div className="skeleton h-4 w-10" />
             <div className="skeleton h-4 w-16 ml-auto" />
@@ -27,31 +29,40 @@ export default function PortfolioTable({ positions, loading }: PortfolioTablePro
   }
 
   return (
-    <div className="card bg-base-200 shadow-sm overflow-hidden">
-      <div className="card-body p-0">
-        <div className="px-4 py-3.5 border-b border-base-300 flex items-center justify-between">
-          <h3 className="card-title text-sm">Portfolio</h3>
-          <span className="badge badge-ghost badge-sm">{positions.length}</span>
+    <section className="overflow-hidden border border-base-300 bg-base-200/70" aria-label="Position ledger">
+        <div className="flex items-center justify-between border-b border-base-300 px-4 py-3.5">
+          <div>
+            <p className="font-mono text-2xs uppercase tracking-[0.14em] text-primary/70">Position ledger</p>
+            <h3 className="mt-1 text-sm font-semibold text-base-content">Confirmed open positions</h3>
+          </div>
+          <span className="font-mono text-2xs text-base-content/45">{positions.length} {positions.length === 1 ? "POSITION" : "POSITIONS"}</span>
         </div>
-        {positions.length === 0 ? (
-          <div className="p-8 text-center text-base-content/40 text-sm">
-            <div className="text-2xl mb-2">💼</div>
-            No positions yet
+        {state === "error" ? (
+          <div className="p-5 text-sm text-warning">
+            <p className="font-mono text-2xs uppercase tracking-[0.14em]">Source unavailable</p>
+            <p className="mt-2 font-medium">Portfolio unavailable</p>
+            <p className="mt-1 text-xs text-base-content/45">We couldn&apos;t confirm your current positions, so no holdings are inferred here.</p>
+          </div>
+        ) : positions.length === 0 ? (
+          <div className="p-5 text-sm text-base-content/45">
+            <p className="font-mono text-2xs uppercase tracking-[0.14em] text-primary/70">No current exposure</p>
+            <p className="mt-2 text-base-content/70">No positions yet</p>
+            <p className="mt-1 text-xs">Your account currently has no confirmed open positions.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="table table-sm">
-              <thead>
+              <thead className="bg-base-300/30">
                 <tr>
                   {["Symbol", "Shares", "Avg Cost", "Price", "Value", "P&L"].map((h) => (
-                    <th key={h} className={h === "Symbol" ? "" : "text-right"}>{h}</th>
+                    <th key={h} className={`font-mono text-2xs uppercase tracking-[0.1em] text-base-content/45 ${h === "Symbol" ? "" : "text-right"}`}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {positions.map((pos) => (
-                  <tr key={pos.stock_code} className="hover">
-                    <td className="font-semibold text-xs">{pos.stock_code}</td>
+                  <tr key={pos.stock_code} className="hover:bg-base-300/20">
+                    <td className="font-mono font-semibold text-xs text-base-content">{pos.stock_code}</td>
                     <td className="text-right font-mono text-xs">{pos.shares}</td>
                     <td className="text-right text-base-content/60 font-mono text-xs">${pos.avg_cost.toFixed(2)}</td>
                     <td className="text-right font-mono text-xs">${pos.current_price.toFixed(2)}</td>
@@ -65,7 +76,6 @@ export default function PortfolioTable({ positions, loading }: PortfolioTablePro
             </table>
           </div>
         )}
-      </div>
-    </div>
+    </section>
   );
 }
