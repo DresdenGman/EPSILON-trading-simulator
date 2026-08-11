@@ -17,17 +17,17 @@ export type ResearchTestArtifact = {
   tradeCount: number;
   completedAt: string;
   provenance: {
-    resultOrigin: "backtest-service-response";
-    dataMode: "unknown";
-    dataSource: null;
-    dataProvider: null;
-    samplingInterval: null;
+    resultOrigin: "backtest-service-response" | "guest-simulation";
+    dataMode: "unknown" | "controlled-synthetic";
+    dataSource: string | null;
+    dataProvider: string | null;
+    samplingInterval: string | null;
     dataAsOf: null;
-    feeRate: null;
-    minimumFee: null;
-    slippagePerShare: null;
-    fillModel: null;
-    benchmark: null;
+    feeRate: number | null;
+    minimumFee: number | null;
+    slippagePerShare: number | null;
+    fillModel: string | null;
+    benchmark: string | null;
   };
 };
 
@@ -45,6 +45,20 @@ export const UNKNOWN_BACKTEST_PROVENANCE: ResearchTestArtifact["provenance"] = {
   minimumFee: null,
   slippagePerShare: null,
   fillModel: null,
+  benchmark: null,
+};
+
+export const GUEST_BACKTEST_PROVENANCE: ResearchTestArtifact["provenance"] = {
+  resultOrigin: "guest-simulation",
+  dataMode: "controlled-synthetic",
+  dataSource: "Deterministic browser-generated market path",
+  dataProvider: "EPSILON guest engine",
+  samplingInterval: "Synthetic daily observations",
+  dataAsOf: null,
+  feeRate: null,
+  minimumFee: null,
+  slippagePerShare: null,
+  fillModel: "Deterministic demonstration model",
   benchmark: null,
 };
 

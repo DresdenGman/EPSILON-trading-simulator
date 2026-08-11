@@ -1,3 +1,6 @@
+import { guestRequest } from "@/lib/guest-api";
+import { GUEST_MODE } from "@/lib/guest-mode";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 export const AUTH_FAILURE_EVENT = "epsilon:authentication-failed";
 
@@ -5,6 +8,9 @@ async function request<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
+  if (GUEST_MODE && typeof window !== "undefined") {
+    return guestRequest<T>(path, options);
+  }
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(options.headers as Record<string, string>),

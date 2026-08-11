@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { api, AUTH_FAILURE_EVENT } from "@/lib/api";
+import { resetGuestSession } from "@/lib/guest-api";
+import { GUEST_MODE } from "@/lib/guest-mode";
 
 interface User {
   id: number;
@@ -16,6 +18,7 @@ interface AuthContextType {
   register: (email: string, username: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  isGuest: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -66,12 +69,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [login]);
 
   const logout = useCallback(() => {
+    if (GUEST_MODE) {
+      resetGuestSession();
+      setUser({ id: 0, email: "guest@epsilon.local", username: "Guest Researcher" });
+      return;
+    }
     void api.logout().catch(() => undefined);
     setUser(null);
   }, []);
 
+  const isGuest = user?.id === 0;
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, isAuthenticated: user !== null }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, isAuthenticated: user !== null, isGuest }}>
       {children}
     </AuthContext.Provider>
   );

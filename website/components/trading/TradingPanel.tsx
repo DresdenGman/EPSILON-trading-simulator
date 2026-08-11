@@ -12,7 +12,7 @@ interface TradingPanelProps {
 }
 
 export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelProps) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isGuest } = useAuth();
   const [shares, setShares] = useState(10);
   const [orderType, setOrderType] = useState("market");
   const [side, setSide] = useState<"buy" | "sell">("buy");
@@ -205,8 +205,11 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
       </button>
 
       {!isAuthenticated && (
-        <p className="text-xs text-base-content/40 text-center">
-          <a href="/auth/login" className="link link-success">Login</a> to trade
+        <p className="text-center text-xs text-base-content/40">Trading session unavailable.</p>
+      )}
+      {isGuest && (
+        <p className="text-center font-mono text-2xs uppercase tracking-[0.1em] text-base-content/35">
+          Guest simulation · stored in this tab only
         </p>
       )}
       </div>

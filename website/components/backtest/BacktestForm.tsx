@@ -3,8 +3,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { api, BacktestResult } from "@/lib/api";
+import { GUEST_MODE } from "@/lib/guest-mode";
 import { BacktestExportConfiguration, downloadBacktestResult } from "@/lib/backtest-export";
-import { UNKNOWN_BACKTEST_PROVENANCE, useResearchExperiment } from "@/components/research/ResearchContext";
+import { GUEST_BACKTEST_PROVENANCE, UNKNOWN_BACKTEST_PROVENANCE, useResearchExperiment } from "@/components/research/ResearchContext";
 
 function normalizeStockCodes(value: string) {
   return Array.from(new Set(
@@ -117,7 +118,7 @@ export default function BacktestForm() {
         maxDrawdown: data.performance.max_drawdown,
         tradeCount: data.trades.length,
         completedAt: new Date().toISOString(),
-        provenance: UNKNOWN_BACKTEST_PROVENANCE,
+        provenance: GUEST_MODE ? GUEST_BACKTEST_PROVENANCE : UNKNOWN_BACKTEST_PROVENANCE,
       });
       setLatestAttemptStatus("succeeded");
     } catch (e: any) {
@@ -264,15 +265,15 @@ export default function BacktestForm() {
               <div className="mt-4 grid border border-white/10 text-xs sm:grid-cols-3" aria-label="Backtest evidence provenance">
                 <div className="border-b border-white/10 p-3 sm:border-b-0 sm:border-r">
                   <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#64748B]">Result origin</div>
-                  <div className="mt-1 text-[#E2E8F0]">Backtest service response</div>
+                  <div className="mt-1 text-[#E2E8F0]">{GUEST_MODE ? "Guest simulation engine" : "Backtest service response"}</div>
                 </div>
                 <div className="border-b border-white/10 p-3 sm:border-b-0 sm:border-r">
                   <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#64748B]">Data source / sampling</div>
-                  <div className="mt-1 text-[#FDE68A]">Not provided by service</div>
+                  <div className={`mt-1 ${GUEST_MODE ? "text-[#E2E8F0]" : "text-[#FDE68A]"}`}>{GUEST_MODE ? "Controlled synthetic path / daily observations" : "Not provided by service"}</div>
                 </div>
                 <div className="p-3">
                   <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#64748B]">Fees / slippage / fill / benchmark</div>
-                  <div className="mt-1 text-[#FDE68A]">Not provided by service</div>
+                  <div className="mt-1 text-[#FDE68A]">{GUEST_MODE ? "Demonstration assumptions / not historical evidence" : "Not provided by service"}</div>
                 </div>
               </div>
               <p className="mt-4 text-xs leading-5 text-[#94A3B8]">This controlled simulation describes this configuration only. It does not establish historical validity, live performance, profitability, or general robustness.</p>

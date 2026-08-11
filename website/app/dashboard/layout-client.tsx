@@ -3,11 +3,10 @@
 import React from "react";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import ThemeToggle from "@/components/layout/ThemeToggle";
-import { authRouteWithNext } from "@/lib/auth-redirect";
 import { ResearchProvider } from "@/components/research/ResearchContext";
 import ActiveExperimentBar from "@/components/research/ActiveExperimentBar";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const productNav = [
   { label: "Market", detail: "Observe", href: "/dashboard" },
@@ -16,24 +15,11 @@ const productNav = [
 ];
 
 function DashboardInner({ children }: { children: React.ReactNode }) {
-  const { user, isAuthenticated, loading, logout } = useAuth();
-  const [open, setOpen] = React.useState(false);
+  const { isAuthenticated, loading, isGuest, logout } = useAuth();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const currentWorkspacePath = `${pathname}${searchParams.size > 0 ? `?${searchParams.toString()}` : ""}`;
-  const loginHref = authRouteWithNext("/auth/login", currentWorkspacePath);
-  const registerHref = authRouteWithNext("/auth/register", currentWorkspacePath);
   const protectedContent = loading ? (
     <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-label="Checking session">
       <div className="surface-card px-5 py-4 text-sm text-base-content/55">Checking your session…</div>
-    </div>
-  ) : !isAuthenticated ? (
-    <div className="flex min-h-[60vh] items-center justify-center">
-      <div className="surface-card max-w-md px-6 py-7 text-center">
-        <p className="text-lg font-semibold">Sign in to access your workspace</p>
-        <p className="mt-2 text-sm text-base-content/60">Your dashboard loads only after EPSILON confirms your session.</p>
-        <Link href={loginHref} className="btn btn-primary btn-sm mt-5">Sign in</Link>
-      </div>
     </div>
   ) : children;
 
@@ -69,33 +55,17 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
           <ThemeToggle />
           {loading ? (
             <span className="skeleton h-8 w-24 rounded-btn" aria-label="Checking session" />
-          ) : !isAuthenticated ? (
-            <div className="flex items-center gap-2">
-              <Link href={loginHref} className="btn btn-ghost btn-sm">Login</Link>
-              <Link href={registerHref} className="btn btn-primary btn-sm">Register</Link>
-            </div>
+          ) : isGuest ? (
+            <button
+              type="button"
+              onClick={logout}
+              title="Reset the data stored in this browser tab"
+              className="rounded-full border border-primary/25 bg-primary/5 px-3 py-1.5 font-mono text-2xs uppercase tracking-[0.12em] text-primary/80 transition-colors hover:bg-primary/10"
+            >
+              Guest session · Reset
+            </button>
           ) : (
-            <div className="dropdown dropdown-end">
-              <button tabIndex={0} className="btn btn-ghost btn-sm gap-2" onClick={() => setOpen(!open)}>
-                <div className="avatar placeholder">
-                  <div className="bg-primary text-primary-content rounded-full w-6">
-                    <span className="text-xs font-bold">{user?.username?.[0]?.toUpperCase() || "?"}</span>
-                  </div>
-                </div>
-                <span className="hidden sm:inline text-base-content/70">{user?.username}</span>
-              </button>
-              {open && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-                  <ul className="dropdown-content menu p-2 shadow bg-base-200 rounded-box w-48 z-50 border border-base-300 mt-1">
-                    <li className="menu-title"><span>{user?.username}</span></li>
-                    <li><span className="text-xs text-base-content/50">{user?.email}</span></li>
-                    <div className="divider my-1" />
-                    <li><button onClick={() => { logout(); setOpen(false); }} className="text-error">Logout</button></li>
-                  </ul>
-                </>
-              )}
-            </div>
+            <span className="rounded-full border border-base-300 px-3 py-1.5 font-mono text-2xs uppercase tracking-[0.12em] text-base-content/55">Workspace</span>
           )}
         </div>
       </div>
@@ -109,7 +79,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
         </nav>
       </div>
 
-      {isAuthenticated && (pathname === "/dashboard" || pathname.startsWith("/dashboard/backtest")) && <ActiveExperimentBar />}
+      {!loading && isAuthenticated && (pathname === "/dashboard" || pathname.startsWith("/dashboard/backtest")) && <ActiveExperimentBar />}
 
       <main className="max-w-7xl mx-auto px-5 py-6 relative">
         <div className="fixed inset-0 opacity-[0.02] pointer-events-none bg-grid-subtle" />

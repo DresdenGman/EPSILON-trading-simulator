@@ -8,6 +8,7 @@ import DashboardClientLayout from "./layout-client";
 const authState = vi.hoisted(() => ({
   loading: true,
   isAuthenticated: false,
+  isGuest: false,
   user: null as { username: string; email: string } | null,
   logout: vi.fn(),
 }));
@@ -44,15 +45,13 @@ describe("DashboardClientLayout", () => {
     expect(screen.queryByRole("link", { name: /download|simulator|research/i })).toBeNull();
   });
 
-  it("does not mount protected content for an unauthenticated session", () => {
+  it("keeps the public workspace available without an account session", () => {
     authState.loading = false;
     authState.isAuthenticated = false;
     renderLayout();
 
-    expect(screen.getByText("Sign in to access your workspace")).toBeTruthy();
-    expect(screen.queryByText("Protected workspace")).toBeNull();
-    expect(screen.getByRole("link", { name: "Sign in" }).getAttribute("href"))
-      .toBe("/auth/login?next=%2Fdashboard%2Fbacktest%3Fsymbols%3DAAPL");
+    expect(screen.getByText("Protected workspace")).toBeTruthy();
+    expect(screen.queryByRole("link", { name: "Sign in" })).toBeNull();
   });
 
   it("mounts protected content only after the session is confirmed", () => {
@@ -64,7 +63,7 @@ describe("DashboardClientLayout", () => {
     expect(screen.getByText("Protected workspace")).toBeTruthy();
   });
 
-  it("removes protected content when the confirmed session becomes invalid", () => {
+  it("does not remove the public workspace when an account session becomes invalid", () => {
     authState.loading = false;
     authState.isAuthenticated = true;
     authState.user = { username: "Ada", email: "ada@example.com" };
@@ -77,7 +76,7 @@ describe("DashboardClientLayout", () => {
       React.createElement(DashboardClientLayout, null, React.createElement("div", null, "Protected workspace")),
     );
 
-    expect(screen.queryByText("Protected workspace")).toBeNull();
-    expect(screen.getByText("Sign in to access your workspace")).toBeTruthy();
+    expect(screen.getByText("Protected workspace")).toBeTruthy();
+    expect(screen.queryByText("Sign in to access your workspace")).toBeNull();
   });
 });

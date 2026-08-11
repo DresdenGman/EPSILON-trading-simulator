@@ -37,7 +37,7 @@ function toDateString(date: Date) {
 }
 
 export default function DashboardPage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isGuest } = useAuth();
   const { experiment, setSubject, setHypothesis } = useResearchExperiment();
 
   const [stocks, setStocks] = useState<StockPrice[]>([]);
@@ -314,7 +314,7 @@ export default function DashboardPage() {
       {/* Experiment header — the selected instrument is the workspace subject. */}
       <div className="flex flex-col gap-3 border-b border-base-300/80 pb-3 sm:flex-row sm:items-end sm:justify-between shrink-0">
         <div className="min-w-0">
-          <p className="product-kicker">Market observation / simulated environment</p>
+          <p className="product-kicker">Market observation / {isGuest ? "guest simulation" : "simulated environment"}</p>
           <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <h1 className="font-mono text-xl font-semibold tracking-tight text-base-content sm:text-2xl">
               {selectedCode ?? "MARKET"}<span className="text-base-content/30"> / </span>OBSERVATION
@@ -382,7 +382,7 @@ export default function DashboardPage() {
       <section aria-labelledby="decision-context" className="shrink-0">
         <div className="mb-1 flex items-center gap-2">
           <span className="product-kicker">Account context</span>
-          <h2 id="decision-context" className="text-xs font-semibold text-base-content/70">Confirmed account state</h2>
+          <h2 id="decision-context" className="text-xs font-semibold text-base-content/70">{isGuest ? "Session-local simulated account" : "Confirmed account state"}</h2>
         </div>
         <AccountSummary data={performance} loading={loading || performanceState === "loading"} state={performanceState} />
       </section>

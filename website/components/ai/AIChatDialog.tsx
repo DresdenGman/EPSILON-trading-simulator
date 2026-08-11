@@ -12,7 +12,7 @@ interface Message {
 }
 
 export default function AIChatDialog() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isGuest } = useAuth();
   const { experiment, testState } = useResearchExperiment();
   const activeTest = testState === "current" ? experiment.test : null;
   const [messages, setMessages] = useState<Message[]>([]);
@@ -39,6 +39,25 @@ export default function AIChatDialog() {
     abortRef.current = controller;
 
     try {
+      if (isGuest) {
+        await new Promise((resolve) => window.setTimeout(resolve, 280));
+        const evidenceState = activeTest
+          ? `The current guest artifact reports ${activeTest.totalReturn.toFixed(2)}% total return across ${activeTest.tradeCount} simulated trades.`
+          : "There is no current test artifact, so the claim cannot yet be evaluated against a result.";
+        const response = [
+          "Guest critic · local heuristic",
+          "",
+          `Question under review: ${question}`,
+          "",
+          evidenceState,
+          "",
+          "Challenge the conclusion by separating the claim, the assumptions built into the synthetic path, and the evidence that would reverse your decision. A stable next test changes one assumption only—such as execution friction, sample window, or universe—while preserving the falsification rule.",
+          "",
+          "This response is generated locally for the public guest experience. It is not live AI analysis, market evidence, or financial advice.",
+        ].join("\n");
+        setMessages((prev) => [...prev, { role: "assistant", content: response, kind: "response" }]);
+        return;
+      }
       const res = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -212,8 +231,8 @@ export default function AIChatDialog() {
             onKeyDown={handleKeyDown}
             placeholder={
               isAuthenticated
-                ? "Ask about your strategy..."
-                : "Login to ask about your portfolio..."
+                ? isGuest ? "Challenge this guest experiment..." : "Ask about your strategy..."
+                : "Research session unavailable..."
             }
             disabled={loading}
             className="flex-1 border border-[#334155] bg-[#1E293B] px-3 py-3 text-sm text-white outline-none transition-colors placeholder:text-[#64748B] focus:border-[#00D09C] disabled:opacity-40"
