@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { Toaster } from 'sonner'
+import { SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://epsilon-trading.com'),
+  metadataBase: new URL(SITE_URL),
   applicationName: 'EPSILON Quantitative Decision Lab',
   title: {
     default: 'EPSILON | Quantitative Decision Laboratory',
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://epsilon-trading.com',
+    url: SITE_URL,
     siteName: 'EPSILON',
     title: 'EPSILON | Quantitative Decision Laboratory',
     description: 'Build a market idea, test it, and try to break it through one transparent research cycle.',
@@ -40,7 +41,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" data-theme="epsilon">
       <body className="font-sans antialiased">
-        {children}
+        <a href="#main-content" className="sr-only fixed left-4 top-4 z-[100] rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-content focus:not-sr-only">Skip to main content</a>
+        <div id="main-content" tabIndex={-1}>{children}</div>
         <Toaster
           theme="dark"
           position="bottom-right"

@@ -124,4 +124,12 @@ describe("AIChatDialog", () => {
     expect((screen.getByLabelText("Research question") as HTMLInputElement).value).toBe("What specific evidence would falsify this hypothesis or force me to revise it?");
     expect(fetch).not.toHaveBeenCalled();
   });
+
+  it("respects reduced-motion preferences when moving the transcript", () => {
+    vi.stubGlobal("matchMedia", vi.fn().mockReturnValue({ matches: true }));
+
+    render(<ResearchProvider><AIChatDialog /></ResearchProvider>);
+
+    expect(Element.prototype.scrollIntoView).toHaveBeenCalledWith({ behavior: "auto" });
+  });
 });

@@ -221,6 +221,7 @@ export default function BacktestForm() {
             {latestAttemptConfiguration.stockCodes.join(", ")} · {latestAttemptConfiguration.strategy.replaceAll("_", " ")}. {attemptError}
           </div>
         )}
+        {latestAttemptStatus === "succeeded" && <p role="status" aria-live="polite" className="sr-only">Backtest complete. Result evidence is available for review.</p>}
       </section>
 
       <section className="border border-[#1E293B] bg-[#0F172A] p-5 lg:p-6" aria-label="Experiment evidence">

@@ -126,9 +126,9 @@ export default function FlagshipDemo() {
 
       <section id="demo-step-1" className="px-5 py-9 md:px-8 md:py-12">
         <div className="font-mono text-2xs uppercase tracking-[0.18em] text-primary">01 / Question · {DEMO_EXPERIMENT.id}</div>
-        <h1 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight tracking-tight md:text-5xl">
+        <h2 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight tracking-tight md:text-5xl">
           {DEMO_EXPERIMENT.hypothesis}
-        </h1>
+        </h2>
 
         <div className="mt-8 border-y border-base-300/70 py-5">
           <div className="font-mono text-2xs uppercase tracking-[0.16em] text-base-content/40">Controlled change</div>
@@ -166,7 +166,7 @@ export default function FlagshipDemo() {
       <section id="demo-step-2" className="px-5 py-8 md:px-8 md:py-10">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="font-mono text-2xs uppercase tracking-[0.18em] text-primary">02 / Primary evidence</div>
-          <span className={`font-mono text-2xs ${state === "failed" ? "text-error" : "text-base-content/45"}`}>{statusText}</span>
+          <span role="status" aria-live="polite" className={`font-mono text-2xs ${state === "failed" ? "text-error" : "text-base-content/45"}`}>{statusText}</span>
         </div>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-base-content/60">Same strategy, universe, capital, date window, fees, and model. Only execution slippage changes.</p>
         <div className="mt-3 border-l-2 border-primary/30 pl-3 font-mono text-2xs uppercase tracking-[0.12em] text-base-content/45">Data: controlled synthetic path · Model: {GUEST_MODE ? "browser-local windowed model" : "CSP-v1"} · Synthetic ≠ historical market validation</div>

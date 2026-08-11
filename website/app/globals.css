@@ -26,6 +26,7 @@
   ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
   @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto !important; }
     *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 }

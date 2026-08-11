@@ -41,35 +41,33 @@ export default function StockPicker({ stocks, selectedCode, onSelect, loading, s
           ) : stocks.length === 0 ? (
             <div className="p-8 text-center text-base-content/40 text-sm">No market prices are available yet.</div>
           ) : (
-            <table className="table table-sm">
-              <thead>
-                <tr>
-                  <th>Symbol</th>
-                  <th className="text-right">Price</th>
-                  <th className="text-right">Chg%</th>
-                </tr>
-              </thead>
-              <tbody>
-                {stocks.map((stock) => (
-                  <tr
-                    key={stock.code}
-                    onClick={() => onSelect(stock.code)}
-                    className={`cursor-pointer transition-colors ${
-                      selectedCode === stock.code ? "bg-primary/10 border-l-2 border-l-primary" : "hover"
-                    }`}
-                  >
-                    <td>
-                      <div className="font-semibold text-xs">{stock.code}</div>
-                      <div className="text-xs text-base-content/40 truncate max-w-[80px]">{stock.name}</div>
-                    </td>
-                    <td className="text-right font-mono text-xs">${stock.price.toFixed(2)}</td>
-                    <td className={`text-right font-mono text-xs font-medium ${stock.change_percent >= 0 ? "text-success" : "text-error"}`}>
-                      {stock.change_percent >= 0 ? "+" : ""}{stock.change_percent.toFixed(2)}%
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div role="listbox" aria-label="Market universe">
+              <div className="grid grid-cols-[1fr_auto_auto] gap-4 border-b border-base-300 px-4 py-2 font-mono text-2xs uppercase tracking-[0.1em] text-base-content/45" aria-hidden="true">
+                <span>Symbol</span><span className="text-right">Price</span><span className="text-right">Chg%</span>
+              </div>
+              {stocks.map((stock) => (
+                <button
+                  key={stock.code}
+                  type="button"
+                  role="option"
+                  aria-selected={selectedCode === stock.code}
+                  aria-label={`Select ${stock.code}, ${stock.name}, price $${stock.price.toFixed(2)}, change ${stock.change_percent >= 0 ? "plus" : "minus"} ${Math.abs(stock.change_percent).toFixed(2)} percent`}
+                  onClick={() => onSelect(stock.code)}
+                  className={`grid w-full grid-cols-[1fr_auto_auto] items-center gap-4 border-b border-base-300/60 px-4 py-2.5 text-left transition-colors last:border-b-0 hover:bg-base-300/40 focus-visible:relative focus-visible:z-10 ${
+                    selectedCode === stock.code ? "border-l-2 border-l-primary bg-primary/10" : "border-l-2 border-l-transparent"
+                  }`}
+                >
+                  <span className="min-w-0">
+                    <span className="block text-xs font-semibold">{stock.code}</span>
+                    <span className="block max-w-[90px] truncate text-xs text-base-content/40">{stock.name}</span>
+                  </span>
+                  <span className="text-right font-mono text-xs">${stock.price.toFixed(2)}</span>
+                  <span className={`text-right font-mono text-xs font-medium ${stock.change_percent >= 0 ? "text-success" : "text-error"}`}>
+                    {stock.change_percent >= 0 ? "+" : ""}{stock.change_percent.toFixed(2)}%
+                  </span>
+                </button>
+              ))}
+            </div>
           )}
         </div>
       </div>

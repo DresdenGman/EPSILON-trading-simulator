@@ -41,7 +41,8 @@ export default function AIChatDialog() {
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const reduceMotion = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    bottomRef.current?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
   }, [messages]);
 
   const handleSend = async () => {
@@ -200,6 +201,9 @@ export default function AIChatDialog() {
       </aside>
 
       <section className="flex min-h-[500px] flex-col" aria-label="Research conversation">
+      <span className="sr-only" role="status" aria-live="polite">
+        {loading ? "Research critic running." : messages.length > 0 ? messages[messages.length - 1].kind === "error" ? "Research critic failed." : "Research critic complete." : ""}
+      </span>
       <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 lg:px-6">
         <div><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#00D09C]">02 / Interrogate</p><h3 className="mt-1 text-sm font-semibold text-white">Research transcript</h3></div>
         <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#64748B]">{isGuest ? "Local heuristic · no live AI/web" : searchEnabled ? "Web evidence on" : "Model assisted"}</span>

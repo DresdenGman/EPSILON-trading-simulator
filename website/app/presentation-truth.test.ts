@@ -27,4 +27,19 @@ describe("presentation source of truth", () => {
     expect(metadata).toContain("falsifiable hypothesis");
     expect(metadata).not.toContain("/screenshots/main_interface.png");
   });
+
+  it("keeps canonical and discovery metadata on the EPSILON deployment", () => {
+    const metadata = read("./layout.tsx");
+    const site = read("../lib/site.ts");
+    const robots = read("./robots.ts");
+    const sitemap = read("./sitemap.ts");
+
+    for (const source of [metadata, site, robots, sitemap]) {
+      expect(source).not.toContain("epsilon-trading.com");
+    }
+    expect(metadata).toContain("SITE_URL");
+    expect(site).toContain("epsilon-git-codex-final-p0-release");
+    expect(robots).toContain("/dashboard");
+    expect(sitemap).toContain("/demo");
+  });
 });

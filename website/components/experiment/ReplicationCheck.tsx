@@ -72,6 +72,7 @@ export default function ReplicationCheck({ primaryDiagnosis, strategy, stockCode
 
   return (
     <section id="demo-step-5" className={`px-5 py-8 md:px-8 md:py-10 ${verdict === "not_replicated" ? "bg-warning/5" : ""}`} aria-label="Pre-specified replication check">
+      <span className="sr-only" role="status" aria-live="polite">{status === "running" ? "Replication running." : status === "complete" ? "Replication complete." : status === "failed" ? "Replication failed." : ""}</span>
       <div className="font-mono text-2xs uppercase tracking-[0.18em] text-primary">05 / Replication challenge</div>
       <h2 className="mt-3 text-2xl font-semibold">The obvious objection: was the primary window cherry-picked?</h2>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-base-content/60">Repeat the exact protocol on the immediately preceding non-overlapping calendar quarter. The rule and window are visible before execution.</p>
