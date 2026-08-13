@@ -21,6 +21,9 @@ export default function LandingPage() {
             EPS<span className="text-[#3ecfb9]">ILON</span>
           </Link>
           <nav aria-label="Public navigation" className="flex items-center gap-1 text-xs sm:gap-3 sm:text-sm">
+            <Link href="/impact" className="rounded-md px-2 py-2 font-medium text-[#a9bac6] transition-colors hover:bg-white/5 hover:text-white sm:px-4">
+              Impact
+            </Link>
             <Link href="#workflow" className="rounded-md px-2 py-2 font-medium text-[#a9bac6] transition-colors hover:bg-white/5 hover:text-white sm:px-4">
               How it works
             </Link>
