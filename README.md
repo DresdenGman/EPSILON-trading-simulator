@@ -1,5 +1,19 @@
 # EPSILON — Quantitative Decision Lab
 
+<p align="center">
+  <a href="https://epsilon-livid.vercel.app/landing">
+    <img src="website/public/social/epsilon-social-preview-v1.jpg" alt="EPSILON — Quantitative Decision Lab" width="100%">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://epsilon-livid.vercel.app/dashboard"><strong>Open Decision Lab</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/DresdenGman/EPSILON-trading-simulator/releases/download/v2.0.0/epsilon-decision-lab-30s.mp4"><strong>Watch the 30-second film</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/DresdenGman/EPSILON-trading-simulator/releases/tag/v2.0.0"><strong>Explore v2.0</strong></a>
+</p>
+
 > Build a market idea. Test it. Then try to break it.
 
 I first built EPSILON as a trading simulator. I have since reworked it into a decision lab focused less on producing an answer than on testing how much that answer deserves to be trusted.
@@ -9,6 +23,35 @@ EPSILON is a research environment for turning market ideas into explicit, testab
 `Observe → Frame a hypothesis → Test → Interrogate → Refine → Retest`
 
 EPSILON is not a trading recommendation engine. Its purpose is to make assumptions visible, preserve failed or negative evidence, and show exactly when a result no longer matches the question being asked.
+
+## See the product
+
+<p align="center">
+  <a href="https://github.com/DresdenGman/EPSILON-trading-simulator/releases/download/v2.0.0/epsilon-decision-lab-30s.mp4">
+    <img src="docs/media/epsilon-demo-30s/epsilon-decision-lab-30s-poster.jpg" alt="Watch the EPSILON 30-second product film" width="100%">
+  </a>
+</p>
+
+<p align="center"><em>Click the image to watch the 30-second product film.</em></p>
+
+<table>
+  <tr>
+    <td width="50%">
+      <a href="https://epsilon-livid.vercel.app/landing">
+        <img src="docs/screenshots/landing.png" alt="EPSILON public landing page">
+      </a>
+    </td>
+    <td width="50%">
+      <a href="https://epsilon-livid.vercel.app/dashboard/backtest">
+        <img src="docs/screenshots/strategy-lab.png" alt="EPSILON Strategy Lab">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><strong>One clear research path</strong><br><sub>Understand the idea and enter the workspace.</sub></td>
+    <td align="center"><strong>Evidence stays attached</strong><br><sub>Inspect inputs, metrics, trades, and boundaries together.</sub></td>
+  </tr>
+</table>
 
 ## Start here
 
@@ -27,7 +70,8 @@ Retired presentation and legacy URLs remain compatible without creating competin
 The product is ready for a controlled public launch around one clear idea: **a market result is more useful when its assumptions and failure conditions remain visible.**
 
 - [Public launch kit](docs/PUBLIC_LAUNCH_KIT.md) — approved positioning, channel sequence, and ready-to-adapt copy
-- [GitHub social preview (1280 × 640)](website/public/social/epsilon-social-preview-v1.jpg) — upload in the repository's **Settings → Social preview**
+- [GitHub social preview (1280 × 640)](website/public/social/epsilon-social-preview-v1.jpg)
+- [EPSILON v2.0 release](https://github.com/DresdenGman/EPSILON-trading-simulator/releases/tag/v2.0.0) — release notes, product film, and downloadable media assets
 
 The launch kit deliberately separates claims that are demonstrated by the product from aspirations that still need user evidence. It should be used for authentic feedback and early-adopter conversations, not performance marketing or investment claims.
 
