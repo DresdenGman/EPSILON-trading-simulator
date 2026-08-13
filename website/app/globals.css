@@ -52,6 +52,10 @@
   .lab-outline-action { @apply rounded-md border border-base-300 bg-base-200/45 px-4 py-2 text-sm text-base-content/60 transition-colors hover:border-primary/40 hover:text-primary; }
   .lab-panel { @apply rounded-xl border border-base-300/90 bg-base-200/65 shadow-[0_12px_32px_rgba(0,0,0,0.08)]; }
   .lab-input { @apply w-full rounded-md border border-base-300 bg-base-100/45 px-3 py-2 text-sm text-base-content outline-none placeholder:text-base-content/30 focus:border-primary/60; }
+  .lab-field-label { @apply mb-1 block font-mono text-2xs uppercase tracking-[0.12em] text-base-content/45; }
+  .lab-section-kicker { @apply font-mono text-2xs uppercase tracking-[0.2em] text-primary/75; }
+  .lab-muted-copy { @apply text-sm leading-6 text-base-content/55; }
+  .lab-status-note { @apply rounded-lg border border-base-300/80 bg-base-100/35 p-3 text-sm text-base-content/65; }
   .lab-tab { @apply border-b-2 px-5 py-4 text-left transition-colors; }
   .status-ready { @apply text-info; }
   .status-warning { @apply text-warning; }
