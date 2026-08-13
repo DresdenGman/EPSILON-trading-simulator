@@ -59,7 +59,7 @@ export const GUEST_BACKTEST_PROVENANCE: ResearchTestArtifact["provenance"] = {
   feeRate: null,
   minimumFee: null,
   slippagePerShare: null,
-  fillModel: "Browser-local windowed demonstration model",
+  fillModel: "Browser-local windowed execution model",
   benchmark: null,
 };
 

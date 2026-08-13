@@ -21,11 +21,11 @@ export default function LandingPage() {
             EPS<span className="text-[#3ecfb9]">ILON</span>
           </Link>
           <nav aria-label="Public navigation" className="flex items-center gap-1 text-xs sm:gap-3 sm:text-sm">
-            <Link href="/demo" className="rounded-md px-2 py-2 font-medium text-[#a9bac6] transition-colors hover:bg-white/5 hover:text-white sm:px-4">
-              <span className="sm:hidden">Experiment</span><span className="hidden sm:inline">Flagship Experiment</span>
+            <Link href="#workflow" className="rounded-md px-2 py-2 font-medium text-[#a9bac6] transition-colors hover:bg-white/5 hover:text-white sm:px-4">
+              How it works
             </Link>
             <Link href="/dashboard" className="rounded-md border border-[#3ecfb9]/45 bg-[#3ecfb9] px-3 py-2 font-semibold text-[#071323] transition-colors hover:bg-[#65dcc8] sm:px-4">
-              Enter Lab
+              Open workspace
             </Link>
           </nav>
         </div>
@@ -50,8 +50,8 @@ export default function LandingPage() {
                 <Link href="/dashboard" className="inline-flex min-h-12 items-center justify-center rounded-md bg-[#3ecfb9] px-6 py-3 text-sm font-semibold text-[#071323] transition-transform hover:-translate-y-0.5 hover:bg-[#65dcc8]">
                   Enter Decision Lab <span className="ml-2" aria-hidden="true">→</span>
                 </Link>
-                <Link href="/demo" className="inline-flex min-h-12 items-center justify-center rounded-md px-3 py-3 text-sm font-medium text-[#c3d0d9] transition-colors hover:bg-white/5 hover:text-white">
-                  Inspect one complete experiment →
+                <Link href="/dashboard/backtest" className="inline-flex min-h-12 items-center justify-center rounded-md px-3 py-3 text-sm font-medium text-[#c3d0d9] transition-colors hover:bg-white/5 hover:text-white">
+                  Open Strategy Lab →
                 </Link>
               </div>
               <div className="mt-12 grid max-w-2xl grid-cols-3 border-y border-[#26455d] py-4 font-mono text-[10px] uppercase tracking-[0.12em] text-[#7893a6] sm:text-xs">
@@ -61,25 +61,26 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <aside aria-label="Flagship experiment preview" className="border border-[#355a73] bg-[#0a1b2e]/90 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.28)] sm:p-7">
+            <aside aria-label="EPSILON product workflow" className="border border-[#355a73] bg-[#0a1b2e]/90 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.28)] sm:p-7">
               <div className="flex items-center justify-between gap-4 border-b border-[#29485e] pb-5 font-mono text-[10px] uppercase tracking-[0.18em]">
-                <span className="text-[#3ecfb9]">Active experiment · EXP-001</span>
-                <span className="rounded-full border border-[#3ecfb9]/35 px-2 py-1 text-[#75ddcb]">Public proof</span>
+                <span className="text-[#3ecfb9]">Active workspace · AAPL</span>
+                <span className="rounded-full border border-[#3ecfb9]/35 px-2 py-1 text-[#75ddcb]">Research state</span>
               </div>
               <div className="py-6">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#718da0]">Research question</p>
-                <h2 className="mt-3 text-2xl font-semibold leading-8 text-white">Does the conclusion survive a small increase in execution friction?</h2>
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#718da0]">Research thesis</p>
+                <h2 className="mt-3 text-2xl font-semibold leading-8 text-white">Recent momentum persists after realistic execution costs.</h2>
               </div>
-              <div className="grid gap-px overflow-hidden border border-[#29485e] bg-[#29485e] sm:grid-cols-2">
-                <div className="bg-[#0b2034] p-4"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#718da0]">Baseline</p><p className="mt-2 font-mono text-lg text-white">$0.010<span className="text-xs text-[#718da0]"> / share</span></p></div>
-                <div className="bg-[#0b2034] p-4"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#3ecfb9]">+ε perturbed</p><p className="mt-2 font-mono text-lg text-white">$0.020<span className="text-xs text-[#718da0]"> / share</span></p></div>
+              <div className="grid gap-px overflow-hidden border border-[#29485e] bg-[#29485e] sm:grid-cols-3">
+                <div className="bg-[#0b2034] p-4"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#718da0]">01 · Observe</p><p className="mt-2 text-sm font-semibold text-white">Market evidence</p></div>
+                <div className="bg-[#0b2034] p-4"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#3ecfb9]">02 · Test</p><p className="mt-2 text-sm font-semibold text-white">Strategy Lab</p></div>
+                <div className="bg-[#0b2034] p-4"><p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#718da0]">03 · Challenge</p><p className="mt-2 text-sm font-semibold text-white">Interrogate</p></div>
               </div>
               <div className="mt-5 border-l-2 border-[#e0bd62] bg-[#e0bd62]/5 px-4 py-3">
-                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e0bd62]">Falsification rule</p>
-                <p className="mt-2 text-sm leading-6 text-[#c9d4dc]">A return-sign reversal breaks the claim. The rule is fixed before the result.</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e0bd62]">Rejected if</p>
+                <p className="mt-2 text-sm leading-6 text-[#c9d4dc]">The edge disappears out of sample or reverses under higher costs.</p>
               </div>
               <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[10px] uppercase tracking-[0.12em] text-[#7893a6]">
-                <span>Data · controlled synthetic path</span><span>Replication · non-overlapping window</span>
+                <span>Submitted inputs</span><span>Computed outputs</span><span>Visible provenance</span>
               </div>
             </aside>
           </div>
@@ -88,18 +89,18 @@ export default function LandingPage() {
         <section className="bg-[#f4f7f9] px-4 py-24 text-[#0b1724] sm:px-6 lg:px-8">
           <div className="mx-auto grid max-w-6xl gap-14 lg:grid-cols-[0.8fr_1.2fr]">
             <div>
-              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#167a6b]">Why I built it</p>
-              <h2 className="mt-4 text-4xl font-semibold tracking-[-0.035em] sm:text-5xl">A simulator produced answers. I wanted to know when to stop believing them.</h2>
+              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#167a6b]">Why it exists</p>
+              <h2 className="mt-4 text-4xl font-semibold tracking-[-0.035em] sm:text-5xl">A backtest produces an answer. EPSILON shows what makes it fragile.</h2>
             </div>
             <div className="space-y-6 text-base leading-8 text-[#516273] sm:text-lg">
-              <p>I began by building a trading simulator. Once it could generate backtest results, a more interesting problem appeared: a convincing result can come from the assumptions I chose, the window I tested, or the way execution was simulated.</p>
-              <p>EPSILON evolved into a decision lab that makes those choices reviewable. The goal is not to remove uncertainty; it is to reason more honestly inside it.</p>
-              <p className="font-medium text-[#0b1724]">Built by Dresden E. Goehner as an ongoing investigation into quantitative reasoning, evidence, and uncertainty.</p>
+              <p>A convincing result can come from the assumptions, test window, sampling process, or execution model. EPSILON keeps those choices attached to the result instead of hiding them behind a performance number.</p>
+              <p>The product does not promise certainty. It makes the research question, evidence boundary, rejection rule, and next test visible in one continuous workspace.</p>
+              <p className="font-medium text-[#0b1724]">The objective is disciplined iteration: form a claim, test it, expose its limits, and update without rewriting history.</p>
             </div>
           </div>
         </section>
 
-        <section className="border-y border-[#26455d] bg-[#09182a] px-4 py-24 sm:px-6 lg:px-8">
+        <section id="workflow" className="scroll-mt-20 border-y border-[#26455d] bg-[#09182a] px-4 py-24 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#3ecfb9]">One product · one research loop</p>
             <div className="mt-5 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
@@ -126,7 +127,7 @@ export default function LandingPage() {
                 <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#167a6b]">Evidence discipline</p>
                 <h2 className="mt-4 text-4xl font-semibold tracking-[-0.035em] sm:text-5xl">The limitations are part of the result.</h2>
                 <p className="mt-6 max-w-xl text-base leading-7 text-[#5b6d7d]">EPSILON is designed to resist the easiest form of self-deception: quietly changing the meaning of evidence after seeing the output.</p>
-                <Link href="/demo" className="mt-8 inline-flex items-center rounded-md bg-[#0b1724] px-5 py-3 text-sm font-semibold text-white hover:bg-[#183047]">Inspect the Flagship Experiment →</Link>
+                <Link href="/dashboard/backtest" className="mt-8 inline-flex items-center rounded-md bg-[#0b1724] px-5 py-3 text-sm font-semibold text-white hover:bg-[#183047]">Open Strategy Lab →</Link>
               </div>
               <div className="border-t border-[#cfdae2]">
                 {evidenceRules.map(([title, detail]) => (

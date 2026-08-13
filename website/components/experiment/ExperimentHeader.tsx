@@ -29,7 +29,7 @@ export default function ExperimentHeader({
             <span>ε</span>
             <span>{experimentId}</span>
             <span className="text-base-content/30">/</span>
-            <span>Flagship experiment</span>
+            <span>Sensitivity protocol</span>
           </div>
           <h2 className="text-sm font-semibold text-base-content md:text-base">
             Does momentum survive small changes in its assumptions?

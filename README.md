@@ -15,11 +15,12 @@ EPSILON is not a trading recommendation engine. Its purpose is to make assumptio
 | Surface | Purpose |
 |---|---|
 | `/landing` | Understand what EPSILON is and why it exists |
-| `/demo` | Inspect one complete, controlled flagship experiment |
 | `/dashboard` | Enter the research product: Market → Strategy Lab → Interrogate |
+| `/dashboard/backtest` | Test a claim and inspect its evidence boundary |
+| `/dashboard/ai` | Interrogate the current result and refine the question |
 | `/download` | Review source and desktop distribution status |
 
-Legacy public URLs remain compatible without creating competing products: `/simulator` redirects to `/demo`, and `/video` redirects to `/landing`.
+Retired presentation and legacy URLs remain compatible without creating competing products: `/demo` redirects to `/dashboard/backtest`, `/simulator` redirects to `/dashboard`, and `/video` redirects to `/landing`.
 
 ## The research loop
 
@@ -39,9 +40,9 @@ Ask a research critic to identify assumptions, regime risk, parameter sensitivit
 
 Changing the subject or hypothesis makes the previous successful result stale without deleting it. A failed retest cannot overwrite the last successful artifact. Only a successful retest matching the current experiment becomes current evidence.
 
-## Flagship experiment
+## Integrated sensitivity validation
 
-The public experiment asks:
+The working product includes a controlled validation protocol that asks:
 
 > Does the conclusion remain unchanged when execution friction increases slightly?
 
@@ -51,7 +52,7 @@ Here, ε simply denotes the small increase in slippage used to test whether the 
 
 The experiment currently uses the deterministic controlled synthetic path `CSP-v1`. It tests experimental sensitivity; it is not historical market validation, statistical significance, evidence of profitability, or proof of predictive performance.
 
-Read the supporting records:
+The protocol now lives inside the Dashboard as part of the research workflow rather than as a separate public demo. Read the supporting records:
 
 - [Flagship experiment protocol](docs/FLAGSHIP_EXPERIMENT.md)
 - [Evidence matrix](docs/EVIDENCE.md)
@@ -76,11 +77,11 @@ EPSILON does not convert a hypothesis into a fact, a metric into a forecast, or 
 ```text
 Public understanding        Research product
 
-/landing ──→ /demo          /dashboard
-                │               │
-                │          Market / hypothesis
-                │               ↓
-                └──────→ Strategy Lab / test
+/landing ─────────────────→ /dashboard
+                                │
+                           Market / hypothesis
+                                ↓
+                         Strategy Lab / test
                                 ↓
                          Interrogate / refine
                                 ↓
@@ -116,7 +117,7 @@ NEXT_PUBLIC_API_URL=http://127.0.0.1:8000 npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). The root route converges on `/landing`.
 
-Account-independent surfaces such as the flagship experiment can run without PostgreSQL. Authentication and saved-account workflows remain database-dependent.
+Guest research surfaces can run without PostgreSQL. Authentication and saved-account workflows remain database-dependent.
 
 ## Verification
 

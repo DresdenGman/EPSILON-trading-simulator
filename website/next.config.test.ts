@@ -7,9 +7,10 @@ const nextConfig = require("./next.config.js") as {
 };
 
 describe("legacy public routes", () => {
-  it("converges old public experiences without deleting their source pages", async () => {
+  it("converges presentation and legacy routes on the product", async () => {
     await expect(nextConfig.redirects()).resolves.toEqual([
-      { source: "/simulator", destination: "/demo", permanent: true },
+      { source: "/demo", destination: "/dashboard/backtest", permanent: true },
+      { source: "/simulator", destination: "/dashboard", permanent: true },
       { source: "/video", destination: "/landing", permanent: true },
     ]);
   });

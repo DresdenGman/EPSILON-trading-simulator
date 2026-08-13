@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const read = (relativePath: string) => readFileSync(new URL(relativePath, import.meta.url), "utf8");
 
-describe("presentation source of truth", () => {
+describe("product source of truth", () => {
   it("describes one Decision Lab instead of competing legacy products", () => {
     const rootReadme = read("../../README.md");
     const webReadme = read("../README.md");
@@ -40,6 +40,6 @@ describe("presentation source of truth", () => {
     expect(metadata).toContain("SITE_URL");
     expect(site).toContain("epsilon-git-codex-final-p0-release");
     expect(robots).toContain("/dashboard");
-    expect(sitemap).toContain("/demo");
+    expect(sitemap).not.toContain("/demo");
   });
 });

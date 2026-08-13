@@ -23,7 +23,7 @@ import { ArrowRight, ExternalLink, RefreshCw } from "lucide-react";
 const AUTO_REFRESH_MS = 30000;
 type ResourceState = "idle" | "loading" | "ready" | "empty" | "error";
 type ReconciliationState = "reconciled" | "stale";
-const FLAGSHIP_CONFIG = {
+const VALIDATION_CONFIG = {
   strategy: "momentum",
   stockCodes: ["AAPL", "MSFT", "NVDA"],
   initialCash: 100000,
@@ -278,19 +278,19 @@ export default function DashboardPage() {
     const start = new Date(end);
     start.setDate(start.getDate() - 90);
     const baseRequest = {
-      strategy: FLAGSHIP_CONFIG.strategy,
+      strategy: VALIDATION_CONFIG.strategy,
       start_date: toDateString(start),
       end_date: toDateString(end),
-      stock_codes: FLAGSHIP_CONFIG.stockCodes,
-      initial_cash: FLAGSHIP_CONFIG.initialCash,
-      fee_rate: FLAGSHIP_CONFIG.feeRate,
-      min_fee: FLAGSHIP_CONFIG.minFee,
+      stock_codes: VALIDATION_CONFIG.stockCodes,
+      initial_cash: VALIDATION_CONFIG.initialCash,
+      fee_rate: VALIDATION_CONFIG.feeRate,
+      min_fee: VALIDATION_CONFIG.minFee,
     };
 
     try {
       const [baselineResult, perturbedResult] = await Promise.all([
-        api.backtest({ ...baseRequest, slippage_per_share: FLAGSHIP_CONFIG.baselineSlippage }),
-        api.backtest({ ...baseRequest, slippage_per_share: FLAGSHIP_CONFIG.epsilonSlippage }),
+        api.backtest({ ...baseRequest, slippage_per_share: VALIDATION_CONFIG.baselineSlippage }),
+        api.backtest({ ...baseRequest, slippage_per_share: VALIDATION_CONFIG.epsilonSlippage }),
       ]);
       const toRun = (result: typeof baselineResult, slippagePerShare: number): SensitivityRun => ({
         slippagePerShare,
@@ -299,8 +299,8 @@ export default function DashboardPage() {
         maxDrawdown: result.performance.max_drawdown,
         tradeCount: result.trades.length,
       });
-      const baseline = toRun(baselineResult, FLAGSHIP_CONFIG.baselineSlippage);
-      const perturbed = toRun(perturbedResult, FLAGSHIP_CONFIG.epsilonSlippage);
+      const baseline = toRun(baselineResult, VALIDATION_CONFIG.baselineSlippage);
+      const perturbed = toRun(perturbedResult, VALIDATION_CONFIG.epsilonSlippage);
       setSensitivityBaseline(baseline);
       setSensitivityPerturbed(perturbed);
 
@@ -483,10 +483,10 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 gap-2 xl:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
           <ExperimentHeader
             strategy="Momentum (2%)"
-            universe={FLAGSHIP_CONFIG.stockCodes.join(" · ")}
-            initialCash={FLAGSHIP_CONFIG.initialCash}
-            feeRate={FLAGSHIP_CONFIG.feeRate}
-            slippagePerShare={FLAGSHIP_CONFIG.baselineSlippage}
+            universe={VALIDATION_CONFIG.stockCodes.join(" · ")}
+            initialCash={VALIDATION_CONFIG.initialCash}
+            feeRate={VALIDATION_CONFIG.feeRate}
+            slippagePerShare={VALIDATION_CONFIG.baselineSlippage}
           />
           <SensitivitySummary
             totalReturn={performance?.total_return}

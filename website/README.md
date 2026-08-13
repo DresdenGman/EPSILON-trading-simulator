@@ -6,7 +6,7 @@ The web product has one research path:
 
 `Market → Strategy Lab → Interrogate → Refine → Retest`
 
-Public visitors start at `/landing` or inspect the controlled flagship experiment at `/demo`. `/download` is a support surface for source and desktop distribution status; it is not a primary product entry.
+Public visitors start at `/landing` and enter the working product at `/dashboard`. `/download` is a support surface for source and desktop distribution status; it is not a primary product entry.
 
 ## Development
 
@@ -34,12 +34,12 @@ Avoid running `next build` while a development server is actively using the same
 | Route | Role |
 |---|---|
 | `/landing` | Canonical public explanation |
-| `/demo` | Flagship controlled experiment |
 | `/dashboard` | Market workspace |
 | `/dashboard/backtest` | Strategy Lab |
 | `/dashboard/ai` | Research interrogation |
 | `/download` | Source and distribution support |
-| `/simulator` | Legacy URL redirected to `/demo` |
+| `/demo` | Retired presentation URL redirected to `/dashboard/backtest` |
+| `/simulator` | Legacy URL redirected to `/dashboard` |
 | `/video` | Legacy URL redirected to `/landing` |
 
-The original repository and legacy source pages are intentionally retained. Public routing converges them without deleting project history.
+The original repository and legacy source are intentionally retained. Public routing converges old entry points on the working product without deleting project history.

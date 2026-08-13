@@ -299,7 +299,7 @@ export default function BacktestForm() {
                 </div>
                 <div className="p-3">
                   <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#64748B]">Fees / slippage / fill / benchmark</div>
-                  <div className="mt-1 text-[#FDE68A]">{GUEST_MODE ? "Demonstration assumptions / not historical evidence" : "Not provided by service"}</div>
+                  <div className="mt-1 text-[#FDE68A]">{GUEST_MODE ? "Controlled synthetic assumptions / not historical evidence" : "Not provided by service"}</div>
                 </div>
               </div>
               <p className="mt-4 text-xs leading-5 text-[#94A3B8]">This controlled simulation describes this configuration only. It does not establish historical validity, live performance, profitability, or general robustness.</p>
