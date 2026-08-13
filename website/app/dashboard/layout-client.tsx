@@ -17,7 +17,7 @@ const productNav = [
 
 function DashboardInner({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, loading, isGuest, logout } = useAuth();
-  const { resetExperiment } = useResearchExperiment();
+  const { experiment, resetExperiment } = useResearchExperiment();
   const pathname = usePathname();
   const [guestSessionRevision, setGuestSessionRevision] = React.useState(0);
   const resetGuestWorkspace = () => {
@@ -28,8 +28,8 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
     setGuestSessionRevision((current) => current + 1);
   };
   const protectedContent = loading ? (
-    <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-label="Checking session">
-      <div className="surface-card px-5 py-4 text-sm text-base-content/55">Checking your session…</div>
+    <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-label="Restoring workspace">
+      <div className="surface-card px-5 py-4 text-sm text-base-content/55">Restoring workspace…</div>
     </div>
   ) : children;
 
@@ -48,10 +48,13 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
         <div className="navbar-center hidden md:flex items-center gap-1">
           {productNav.map((item) => {
             const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`));
+            const href = item.href === "/dashboard/backtest" && experiment.symbol
+              ? `/dashboard/backtest?symbols=${encodeURIComponent(experiment.symbol)}`
+              : item.href;
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={href}
                 aria-current={active ? "page" : undefined}
                 className={`group rounded-md border px-3 py-2 text-left transition-colors ${active ? "border-primary/20 bg-primary/[0.06] text-primary" : "border-transparent text-base-content/60 hover:border-base-300 hover:bg-base-200/60 hover:text-base-content"}`}
               >
@@ -88,7 +91,10 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
         <nav aria-label="Product navigation" className="flex gap-2 overflow-x-auto pb-1">
           {productNav.map((item) => {
             const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`));
-            return <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined} className={`whitespace-nowrap rounded-md border px-3 py-1.5 text-xs font-medium ${active ? "border-primary/20 bg-primary/[0.06] text-primary" : "border-transparent text-base-content/60"}`}>{item.label}</Link>;
+            const href = item.href === "/dashboard/backtest" && experiment.symbol
+              ? `/dashboard/backtest?symbols=${encodeURIComponent(experiment.symbol)}`
+              : item.href;
+            return <Link key={item.href} href={href} aria-current={active ? "page" : undefined} className={`whitespace-nowrap rounded-md border px-3 py-1.5 text-xs font-medium ${active ? "border-primary/20 bg-primary/[0.06] text-primary" : "border-transparent text-base-content/60"}`}>{item.label}</Link>;
           })}
         </nav>
       </div>

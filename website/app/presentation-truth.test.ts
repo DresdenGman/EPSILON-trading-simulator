@@ -42,4 +42,13 @@ describe("product source of truth", () => {
     expect(robots).toContain("/dashboard");
     expect(sitemap).not.toContain("/demo");
   });
+
+  it("keeps Market bound to the active experiment instead of a fixed showcase", () => {
+    const dashboard = read("./dashboard/page.tsx");
+
+    expect(dashboard).not.toContain("VALIDATION_CONFIG");
+    expect(dashboard).not.toContain("SensitivitySummary");
+    expect(dashboard).not.toContain("ExperimentConclusion");
+    expect(dashboard).toContain("getResearchNextStep");
+  });
 });

@@ -134,6 +134,20 @@ describe("BacktestForm", () => {
     expect(screen.getByText(/Needs retest/)).toBeTruthy();
   });
 
+  it("uses the active experiment subject for the first test universe", async () => {
+    window.localStorage.setItem("epsilon.research-experiment.v1", JSON.stringify({
+      symbol: "NVDA",
+      hypothesis: "NVDA momentum survives realistic costs.",
+      falsification: "The return reverses after higher costs.",
+      test: null,
+      updatedAt: "2026-08-12T20:00:00.000Z",
+    }));
+
+    renderBacktestForm();
+
+    expect(await screen.findByDisplayValue("NVDA")).toBeTruthy();
+  });
+
   it("renders the full server trade ledger without truncating entries after 100", async () => {
     const trades = Array.from({ length: 101 }, (_, index) => ({
       date: "2024-02-01",

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import React from "react";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import DashboardClientLayout from "./layout-client";
 
@@ -36,6 +36,8 @@ describe("DashboardClientLayout", () => {
     authState.isGuest = false;
     authState.user = null;
     authState.logout.mockClear();
+    window.localStorage.clear();
+    window.sessionStorage.clear();
   });
 
   afterEach(() => {
@@ -43,12 +45,12 @@ describe("DashboardClientLayout", () => {
     vi.restoreAllMocks();
   });
 
-  it("does not mount protected content while the session is being checked", () => {
+  it("does not mount protected content while the workspace is being restored", () => {
     authState.loading = true;
     authState.isAuthenticated = false;
     renderLayout();
 
-    expect(screen.getByText("Checking your session…")).toBeTruthy();
+    expect(screen.getByText("Restoring workspace…")).toBeTruthy();
     expect(screen.queryByText("Protected workspace")).toBeNull();
     expect(screen.getByRole("link", { name: "Market" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Strategy Lab" })).toBeTruthy();
@@ -105,5 +107,22 @@ describe("DashboardClientLayout", () => {
     fireEvent.click(reset);
     expect(authState.logout).toHaveBeenCalledTimes(1);
     expect(confirm).toHaveBeenCalledTimes(2);
+  });
+
+  it("carries the active subject through the global Strategy Lab navigation", async () => {
+    authState.loading = false;
+    authState.isAuthenticated = true;
+    window.localStorage.setItem("epsilon.research-experiment.v1", JSON.stringify({
+      symbol: "NVDA",
+      hypothesis: "NVDA momentum survives realistic costs.",
+      falsification: "The return reverses after higher costs.",
+      test: null,
+      updatedAt: "2026-08-12T20:00:00.000Z",
+    }));
+
+    renderLayout();
+
+    await waitFor(() => expect(screen.getByRole("link", { name: "Strategy Lab" }).getAttribute("href"))
+      .toBe("/dashboard/backtest?symbols=NVDA"));
   });
 });

@@ -11,35 +11,18 @@ import PortfolioTable from "@/components/trading/PortfolioTable";
 import OrderList from "@/components/trading/OrderList";
 import TradeHistory from "@/components/trading/TradeHistory";
 import EquityChart from "@/components/trading/EquityChart";
-import ExperimentHeader from "@/components/experiment/ExperimentHeader";
-import SensitivitySummary from "@/components/experiment/SensitivitySummary";
-import type { SensitivityRun } from "@/components/experiment/SensitivitySummary";
-import ExperimentConclusion from "@/components/experiment/ExperimentConclusion";
-import { diagnoseExperiment } from "@/lib/experiment";
 import { useResearchExperiment } from "@/components/research/ResearchContext";
+import { getResearchNextStep } from "@/lib/research-workflow";
 import Link from "next/link";
-import { ArrowRight, ExternalLink, RefreshCw } from "lucide-react";
+import { ArrowRight, RefreshCw } from "lucide-react";
 
 const AUTO_REFRESH_MS = 30000;
 type ResourceState = "idle" | "loading" | "ready" | "empty" | "error";
 type ReconciliationState = "reconciled" | "stale";
-const VALIDATION_CONFIG = {
-  strategy: "momentum",
-  stockCodes: ["AAPL", "MSFT", "NVDA"],
-  initialCash: 100000,
-  feeRate: 0.0001,
-  minFee: 1,
-  baselineSlippage: 0.01,
-  epsilonSlippage: 0.02,
-};
-
-function toDateString(date: Date) {
-  return date.toISOString().slice(0, 10);
-}
 
 export default function DashboardPage() {
   const { isAuthenticated, isGuest } = useAuth();
-  const { experiment, testState, setSubject, setHypothesis, setFalsification } = useResearchExperiment();
+  const { experiment, hydrated, testState, setSubject, setHypothesis, setFalsification } = useResearchExperiment();
 
   const [stocks, setStocks] = useState<StockPrice[]>([]);
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
@@ -60,12 +43,8 @@ export default function DashboardPage() {
   const [ordersState, setOrdersState] = useState<ResourceState>("idle");
   const [tradesState, setTradesState] = useState<ResourceState>("idle");
   const [equityState, setEquityState] = useState<ResourceState>("idle");
-  const [sensitivityStatus, setSensitivityStatus] = useState<"pending" | "running" | "validated" | "inconclusive" | "failed">("pending");
-  const [sensitivityBaseline, setSensitivityBaseline] = useState<SensitivityRun | null>(null);
-  const [sensitivityPerturbed, setSensitivityPerturbed] = useState<SensitivityRun | null>(null);
-  const [sensitivityConclusion, setSensitivityConclusion] = useState<"preserved" | "reversed" | null>(null);
-  const [sensitivityError, setSensitivityError] = useState<string | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const selectionInitializedRef = useRef(false);
 
   const fetchStocks = useCallback(async () => {
     setMarketState("loading");
@@ -73,15 +52,11 @@ export default function DashboardPage() {
       const data = await api.getStockPrices();
       setStocks(data);
       setMarketState(data.length > 0 ? "ready" : "empty");
-      if (data.length > 0 && !selectedCode) {
-        setSelectedCode(data[0].code);
-        setSelectedStock(data[0]);
-      }
     } catch (e) {
       console.error("Failed to fetch stocks:", e);
       setMarketState("error");
     }
-  }, [selectedCode]);
+  }, []);
 
   const fetchKline = useCallback(async (code: string) => {
     setKlineState("loading");
@@ -172,6 +147,16 @@ export default function DashboardPage() {
   }, [fetchStocks]);
 
   useEffect(() => {
+    if (!hydrated || selectionInitializedRef.current || stocks.length === 0) return;
+    selectionInitializedRef.current = true;
+    const activeStock = experiment.symbol ? stocks.find((stock) => stock.code === experiment.symbol) : null;
+    const initialStock = activeStock ?? stocks[0];
+    setSelectedCode(initialStock.code);
+    setSelectedStock(initialStock);
+    if (!experiment.symbol) setSubject(initialStock.code);
+  }, [experiment.symbol, hydrated, setSubject, stocks]);
+
+  useEffect(() => {
     if (selectedCode) fetchKline(selectedCode);
   }, [selectedCode, fetchKline]);
 
@@ -215,10 +200,6 @@ export default function DashboardPage() {
     setSelectedStock(stock);
   };
 
-  useEffect(() => {
-    if (selectedCode) setSubject(selectedCode);
-  }, [selectedCode, setSubject]);
-
   const handleTradeExecuted = async (): Promise<ReconciliationState> => {
     const reconciled = await fetchPortfolioData();
     return reconciled ? "reconciled" : "stale";
@@ -248,75 +229,13 @@ export default function DashboardPage() {
       : experiment.hypothesis
         ? "THESIS UNTESTED"
         : "THESIS OPEN";
-  const protocolSteps = [
-    { index: "01", label: "Observe", detail: selectedCode ?? "Select market", complete: Boolean(selectedCode) },
-    { index: "02", label: "Frame", detail: experiment.hypothesis ? "Thesis recorded" : "Define thesis", complete: Boolean(experiment.hypothesis) },
-    { index: "03", label: "Test", detail: testState === "current" ? "Evidence current" : testState === "stale" ? "Evidence stale" : "Awaiting test", complete: testState === "current" },
-    { index: "04", label: "Challenge", detail: experiment.falsification ? "Rejection rule set" : "Define rejection rule", complete: Boolean(experiment.falsification) },
-  ];
-
-  const diagnosis = sensitivityBaseline && sensitivityPerturbed
-    ? diagnoseExperiment({
-        baselineReturn: sensitivityBaseline.totalReturn,
-        perturbedReturn: sensitivityPerturbed.totalReturn,
-        baselineTrades: sensitivityBaseline.tradeCount,
-        perturbedTrades: sensitivityPerturbed.tradeCount,
-        parameter: "slippage_per_share",
-        baselineParameter: sensitivityBaseline.slippagePerShare,
-        perturbedParameter: sensitivityPerturbed.slippagePerShare,
-      })
-    : null;
-
-  const runSensitivityValidation = async () => {
-    setSensitivityStatus("running");
-    setSensitivityError(null);
-    setSensitivityBaseline(null);
-    setSensitivityPerturbed(null);
-    setSensitivityConclusion(null);
-
-    const end = new Date();
-    const start = new Date(end);
-    start.setDate(start.getDate() - 90);
-    const baseRequest = {
-      strategy: VALIDATION_CONFIG.strategy,
-      start_date: toDateString(start),
-      end_date: toDateString(end),
-      stock_codes: VALIDATION_CONFIG.stockCodes,
-      initial_cash: VALIDATION_CONFIG.initialCash,
-      fee_rate: VALIDATION_CONFIG.feeRate,
-      min_fee: VALIDATION_CONFIG.minFee,
-    };
-
-    try {
-      const [baselineResult, perturbedResult] = await Promise.all([
-        api.backtest({ ...baseRequest, slippage_per_share: VALIDATION_CONFIG.baselineSlippage }),
-        api.backtest({ ...baseRequest, slippage_per_share: VALIDATION_CONFIG.epsilonSlippage }),
-      ]);
-      const toRun = (result: typeof baselineResult, slippagePerShare: number): SensitivityRun => ({
-        slippagePerShare,
-        totalReturn: result.performance.total_return,
-        sharpe: result.performance.sharpe,
-        maxDrawdown: result.performance.max_drawdown,
-        tradeCount: result.trades.length,
-      });
-      const baseline = toRun(baselineResult, VALIDATION_CONFIG.baselineSlippage);
-      const perturbed = toRun(perturbedResult, VALIDATION_CONFIG.epsilonSlippage);
-      setSensitivityBaseline(baseline);
-      setSensitivityPerturbed(perturbed);
-
-      if (baseline.tradeCount === 0 || perturbed.tradeCount === 0) {
-        setSensitivityStatus("inconclusive");
-        return;
-      }
-      const baselinePositive = baseline.totalReturn > 0;
-      const perturbedPositive = perturbed.totalReturn > 0;
-      setSensitivityConclusion(baselinePositive === perturbedPositive ? "preserved" : "reversed");
-      setSensitivityStatus("validated");
-    } catch (error) {
-      setSensitivityStatus("failed");
-      setSensitivityError(error instanceof Error ? error.message : "Backtest results unavailable.");
-    }
-  };
+  const nextStep = getResearchNextStep({
+    hypothesis: experiment.hypothesis,
+    falsification: experiment.falsification,
+    testState,
+    symbol: selectedCode,
+  });
+  const hasAccountActivity = positions.length > 0 || trades.length > 0 || orders.some((order) => order.status === "pending");
 
   // Authenticated dashboard — a decision workspace: observe → act → review → challenge
   return (
@@ -373,57 +292,37 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <aside className="flex flex-col justify-between border-t border-base-300/80 bg-base-100/35 p-5 lg:border-l lg:border-t-0" aria-label="Research status and actions">
+          <aside className="flex flex-col justify-between border-t border-base-300/80 bg-base-100/35 p-5 lg:border-l lg:border-t-0" aria-label="Next research step">
             <div>
               <div className="flex items-center justify-between gap-3">
-                <span className="metric-label">Workspace state</span>
-                <span className={`h-2 w-2 rounded-full ${accountErrors > 0 ? "bg-warning" : accountLoading ? "animate-pulse bg-info" : "bg-primary"}`} />
+                <span className="product-kicker">Next / {nextStep.index}</span>
+                <span className="font-mono text-2xs uppercase tracking-[0.12em] text-base-content/35">{nextStep.stage}</span>
               </div>
-              <p className="mt-2 font-mono text-sm font-semibold text-base-content">{dashboardState}</p>
-              <p className="mt-1 text-xs leading-5 text-base-content/40">
-                {isGuest ? "Browser-local simulation" : "Simulated environment"}
-                {lastUpdated ? ` · synced ${lastUpdated.toLocaleTimeString()}` : " · awaiting first sync"}
-              </p>
+              <h2 className="mt-3 text-lg font-semibold leading-6 text-base-content">{nextStep.title}</h2>
+              <p className="mt-2 text-xs leading-5 text-base-content/45">{nextStep.description}</p>
             </div>
-            <div className="mt-6 space-y-2">
-              <Link href={selectedCode ? `/dashboard/backtest?symbols=${encodeURIComponent(selectedCode)}` : "/dashboard/backtest"} className="flex w-full items-center justify-between rounded-md bg-primary px-3 py-2.5 text-xs font-semibold text-primary-content transition-colors hover:bg-primary/90">
-                <span>Run controlled test</span><ArrowRight aria-hidden="true" size={14} strokeWidth={1.8} />
+            <div className="mt-6">
+              <Link href={nextStep.href} className="flex w-full items-center justify-between rounded-md bg-primary px-3 py-2.5 text-xs font-semibold text-primary-content transition-colors hover:bg-primary/90">
+                <span>{nextStep.action}</span><ArrowRight aria-hidden="true" size={14} strokeWidth={1.8} />
               </Link>
-              <Link href="/dashboard/ai" className="flex w-full items-center justify-between rounded-md border border-base-300 bg-base-200/70 px-3 py-2.5 text-xs font-semibold text-base-content/70 transition-colors hover:border-primary/40 hover:text-primary">
-                <span>Challenge this thesis</span><ExternalLink aria-hidden="true" size={13} strokeWidth={1.8} />
-              </Link>
-              <button onClick={() => { fetchStocks(); fetchPortfolioData(); }} className="flex w-full items-center justify-center gap-2 py-1.5 text-center font-mono text-2xs uppercase tracking-[0.12em] text-base-content/35 hover:text-base-content/60">
-                <RefreshCw aria-hidden="true" size={11} strokeWidth={1.8} /> Refresh evidence
-              </button>
+              <div className="mt-3 flex items-center justify-between gap-3 border-t border-base-300/70 pt-3">
+                <div className="min-w-0">
+                  <p className="truncate font-mono text-2xs font-semibold text-base-content/55">{dashboardState}</p>
+                  <p className="mt-0.5 truncate text-2xs text-base-content/35">
+                    {isGuest ? "Local workspace" : "Simulated environment"}
+                    {lastUpdated ? ` · ${lastUpdated.toLocaleTimeString()}` : " · awaiting sync"}
+                  </p>
+                </div>
+                <button type="button" aria-label="Refresh workspace evidence" onClick={() => { fetchStocks(); fetchPortfolioData(); }} className="rounded-md border border-base-300 p-2 text-base-content/35 transition-colors hover:border-primary/30 hover:text-primary">
+                  <RefreshCw aria-hidden="true" size={12} strokeWidth={1.8} />
+                </button>
+              </div>
             </div>
           </aside>
         </div>
       </section>
 
-      <section aria-label="Experiment protocol" className="grid overflow-hidden rounded-xl border border-base-300/80 bg-base-200/35 sm:grid-cols-2 lg:grid-cols-4">
-        {protocolSteps.map((step) => (
-          <div key={step.index} className="relative border-b border-base-300/70 px-4 py-3 last:border-b-0 sm:nth-[2n-1]:border-r lg:border-b-0 lg:border-r lg:last:border-r-0">
-            <div className="flex items-center gap-2">
-              <span className={`font-mono text-2xs ${step.complete ? "text-primary" : "text-base-content/30"}`}>{step.index}</span>
-              <span className="text-xs font-semibold text-base-content/75">{step.label}</span>
-              <span className={`ml-auto h-1.5 w-1.5 rounded-full ${step.complete ? "bg-primary" : "bg-base-content/15"}`} />
-            </div>
-            <p className="mt-1 truncate pl-6 text-2xs text-base-content/40">{step.detail}</p>
-          </div>
-        ))}
-      </section>
-
-      {/* Layer 1: decision context */}
-      <section aria-labelledby="decision-context" className="shrink-0">
-        <div className="mb-1 flex items-center gap-2">
-          <span className="product-kicker">Evidence strip</span>
-          <h2 id="decision-context" className="text-xs font-semibold text-base-content/70">{isGuest ? "Observed account outcomes" : "Confirmed account evidence"}</h2>
-          <span className="ml-auto font-mono text-2xs uppercase tracking-[0.12em] text-base-content/35">Outcome ≠ conclusion</span>
-        </div>
-        <AccountSummary data={performance} loading={loading || performanceState === "loading"} state={performanceState} />
-      </section>
-
-      {/* Layer 2: the primary action workspace */}
+      {/* Primary action workspace */}
       <section aria-labelledby="action-workspace" className="flex flex-col gap-2 lg:flex-1 lg:min-h-[34rem]">
         <div className="flex items-center gap-2">
           <span className="product-kicker">Execution layer</span>
@@ -450,56 +349,37 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* Layer 3: consequence review */}
+      {/* Consequence review appears only after the workspace contains execution evidence. */}
       <section aria-labelledby="consequence-review" className="shrink-0">
-        <div className="mb-1 flex items-center gap-2">
-          <span className="product-kicker">02 / Challenge</span>
-          <h2 id="consequence-review" className="text-xs font-semibold text-base-content/70">Evidence review</h2>
+        <div className="mb-2 flex items-center gap-2">
+          <span className="product-kicker">Account evidence</span>
+          <h2 id="consequence-review" className="text-xs font-semibold text-base-content/70">Review simulated consequences</h2>
+          {hasAccountActivity && <span className="ml-auto font-mono text-2xs uppercase tracking-[0.12em] text-base-content/35">Outcome ≠ conclusion</span>}
         </div>
-        <p className="mb-2 text-2xs text-base-content/40">Account outcome, equity path, and execution record are shown together so a decision can be reviewed against confirmed evidence.</p>
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:max-h-[32vh] lg:grid-cols-4">
-          <div className="lg:min-h-0 lg:overflow-hidden">
-            <PortfolioTable positions={positions} loading={loading || portfolioState === "loading"} state={portfolioState} />
+        {!hasAccountActivity ? (
+          <div className="flex flex-col justify-between gap-3 rounded-xl border border-dashed border-base-300 bg-base-200/25 px-4 py-4 sm:flex-row sm:items-center">
+            <div>
+              <p className="text-sm font-semibold text-base-content/70">
+                {accountErrors > 0 ? "Account evidence is not available." : accountLoading ? "Checking account evidence…" : "No execution evidence yet."}
+              </p>
+              <p className="mt-1 text-xs leading-5 text-base-content/40">
+                {accountErrors > 0
+                  ? "EPSILON does not infer positions or outcomes when the account source cannot be confirmed."
+                  : "A simulated trade or pending order will create the portfolio, equity, and execution review here."}
+              </p>
+            </div>
+            <span className="shrink-0 font-mono text-2xs uppercase tracking-[0.14em] text-base-content/30">Waiting for an action</span>
           </div>
-          <div className="lg:min-h-0 lg:overflow-hidden">
-            <OrderList orders={orders} loading={loading || ordersState === "loading"} state={ordersState} onUpdate={fetchPortfolioData} />
+        ) : (
+          <div className="space-y-2">
+            <AccountSummary data={performance} loading={loading || performanceState === "loading"} state={performanceState} />
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
+              <PortfolioTable positions={positions} loading={loading || portfolioState === "loading"} state={portfolioState} />
+              <OrderList orders={orders} loading={loading || ordersState === "loading"} state={ordersState} onUpdate={fetchPortfolioData} />
+              <EquityChart data={equityData} initialCapital={equityInitialCapital ?? undefined} loading={loading || equityState === "loading"} state={equityState} />
+              <TradeHistory trades={trades} loading={loading || tradesState === "loading"} state={tradesState} />
+            </div>
           </div>
-          <div className="lg:min-h-0 lg:overflow-hidden">
-            <EquityChart data={equityData} initialCapital={equityInitialCapital ?? undefined} loading={loading || equityState === "loading"} state={equityState} />
-          </div>
-          <div className="lg:min-h-0 lg:overflow-hidden">
-            <TradeHistory trades={trades} loading={loading || tradesState === "loading"} state={tradesState} />
-          </div>
-        </div>
-      </section>
-
-      {/* Layer 4: challenge the assumption — research remains a next step, not the trading workspace hero. */}
-      <section aria-labelledby="challenge-assumption" className="shrink-0">
-        <div className="mb-1 flex items-center gap-2">
-          <span className="product-kicker">03 / Interrogate</span>
-          <h2 id="challenge-assumption" className="text-xs font-semibold text-base-content/70">Question the conclusion</h2>
-          <Link href="/dashboard/ai" className="ml-auto text-2xs font-mono uppercase tracking-[0.12em] text-primary hover:underline">Interrogate this experiment →</Link>
-        </div>
-        <div className="grid grid-cols-1 gap-2 xl:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
-          <ExperimentHeader
-            strategy="Momentum (2%)"
-            universe={VALIDATION_CONFIG.stockCodes.join(" · ")}
-            initialCash={VALIDATION_CONFIG.initialCash}
-            feeRate={VALIDATION_CONFIG.feeRate}
-            slippagePerShare={VALIDATION_CONFIG.baselineSlippage}
-          />
-          <SensitivitySummary
-            totalReturn={performance?.total_return}
-            status={sensitivityStatus}
-            baseline={sensitivityBaseline}
-            perturbed={sensitivityPerturbed}
-            conclusion={sensitivityConclusion}
-            error={sensitivityError}
-            onRun={runSensitivityValidation}
-          />
-        </div>
-        {diagnosis && sensitivityBaseline && sensitivityPerturbed && (
-          <div className="mt-2"><ExperimentConclusion diagnosis={diagnosis} baseline={sensitivityBaseline} perturbed={sensitivityPerturbed} /></div>
         )}
       </section>
     </div>

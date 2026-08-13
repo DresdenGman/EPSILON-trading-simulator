@@ -62,8 +62,11 @@ export default function BacktestForm() {
     } else if (selectedSymbols.length > 0) {
       setStockCodes(selectedSymbols.join(","));
       setValidationError("");
+    } else if (experiment.symbol) {
+      setStockCodes(experiment.symbol);
+      setValidationError("");
     }
-  }, [experiment.test, hydrated, transferredSymbols]);
+  }, [experiment.symbol, experiment.test, hydrated, transferredSymbols]);
 
   const configurationChanged = Boolean(
     result && successfulConfiguration && !configurationsMatch({
