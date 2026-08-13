@@ -12,6 +12,8 @@
   <a href="https://github.com/DresdenGman/EPSILON-trading-simulator/releases/download/v2.0.0/epsilon-decision-lab-30s.mp4"><strong>Watch the 30-second film</strong></a>
   &nbsp;·&nbsp;
   <a href="https://github.com/DresdenGman/EPSILON-trading-simulator/releases/tag/v2.0.0"><strong>Explore v2.0</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://epsilon-livid.vercel.app/impact"><strong>Public impact ledger</strong></a>
 </p>
 
 > Build a market idea. Test it. Then try to break it.
@@ -71,6 +73,7 @@ The product is ready for a controlled public launch around one clear idea: **a m
 
 - [Public launch kit](docs/PUBLIC_LAUNCH_KIT.md) — approved positioning, channel sequence, and ready-to-adapt copy
 - [Communication pack](docs/COMMUNICATION_PACK.md) — bilingual launch copy aligned with the product truth and builder narrative
+- [Independent review log](docs/INDEPENDENT_REVIEW_LOG.md) — source-backed external challenges, dispositions, and feedback-led changes
 - [GitHub social preview (1280 × 640)](website/public/social/epsilon-social-preview-v1.jpg)
 - [EPSILON v2.0 release](https://github.com/DresdenGman/EPSILON-trading-simulator/releases/tag/v2.0.0) — release notes, product film, and downloadable media assets
 
