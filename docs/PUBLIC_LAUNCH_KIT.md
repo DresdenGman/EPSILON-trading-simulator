@@ -2,6 +2,8 @@
 
 This is the source of truth for communicating EPSILON publicly. It exists to make the project easier to discover without turning a research product into an overclaim.
 
+For audience-specific bilingual copy, personal-narrative framing, outreach messages, response templates, and the seven-day distribution sequence, use the [EPSILON Communication Pack](COMMUNICATION_PACK.md).
+
 ## The one-sentence position
 
 **EPSILON is a quantitative decision lab that turns a market idea into a falsifiable research loop: observe, test, challenge, and retest.**
