@@ -381,7 +381,7 @@ export default function DashboardPage() {
               </div>
               <p className="mt-2 font-mono text-sm font-semibold text-base-content">{dashboardState}</p>
               <p className="mt-1 text-xs leading-5 text-base-content/40">
-                {isGuest ? "Session-local simulation" : "Simulated environment"}
+                {isGuest ? "Browser-local simulation" : "Simulated environment"}
                 {lastUpdated ? ` · synced ${lastUpdated.toLocaleTimeString()}` : " · awaiting first sync"}
               </p>
             </div>

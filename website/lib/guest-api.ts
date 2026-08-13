@@ -9,6 +9,7 @@ import type {
   StockPrice,
   TradeRecord,
 } from "@/lib/api";
+import { readWorkspaceItem, removeWorkspaceItem, writeWorkspaceItem } from "@/lib/browser-workspace-storage";
 
 const STORAGE_KEY = "epsilon.guest-session.v1";
 const INITIAL_CASH = 100_000;
@@ -45,23 +46,56 @@ function initialState(): GuestState {
   };
 }
 
+function validPosition(value: unknown): value is GuestPosition {
+  if (!value || typeof value !== "object") return false;
+  const position = value as Partial<GuestPosition>;
+  return typeof position.shares === "number"
+    && Number.isInteger(position.shares)
+    && position.shares >= 0
+    && typeof position.avgCost === "number"
+    && Number.isFinite(position.avgCost)
+    && position.avgCost >= 0;
+}
+
+function sanitizePositions(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const positions: Record<string, GuestPosition> = {};
+  for (const [code, position] of Object.entries(value)) {
+    if (!MARKET.some((stock) => stock.code === code) || !validPosition(position)) return null;
+    positions[code] = position;
+  }
+  return positions;
+}
+
+function validEquityPoint(value: unknown): value is GuestState["equity"][number] {
+  if (!value || typeof value !== "object") return false;
+  const point = value as { date?: unknown; value?: unknown };
+  return typeof point.date === "string"
+    && typeof point.value === "number"
+    && Number.isFinite(point.value)
+    && point.value >= 0;
+}
+
 function readState(): GuestState {
   if (typeof window === "undefined") return initialState();
   try {
-    const raw = window.sessionStorage.getItem(STORAGE_KEY);
+    const raw = readWorkspaceItem(STORAGE_KEY);
     if (!raw) return initialState();
+    if (raw.length > 1_000_000) return initialState();
     const value = JSON.parse(raw) as Partial<GuestState>;
-    if (!Number.isFinite(value.cash) || !value.positions || !Array.isArray(value.trades) || !Array.isArray(value.orders)) {
+    const positions = sanitizePositions(value.positions);
+    if (!Number.isFinite(value.cash) || Number(value.cash) < 0 || !positions || !Array.isArray(value.trades) || !Array.isArray(value.orders)) {
       return initialState();
     }
+    const equity = Array.isArray(value.equity) ? value.equity.filter(validEquityPoint).slice(-500) : [];
     return {
       cash: Number(value.cash),
-      positions: value.positions as Record<string, GuestPosition>,
-      trades: value.trades,
-      orders: value.orders,
-      nextTradeId: Number.isInteger(value.nextTradeId) ? Number(value.nextTradeId) : value.trades.length + 1,
-      nextOrderId: Number.isInteger(value.nextOrderId) ? Number(value.nextOrderId) : value.orders.length + 1,
-      equity: Array.isArray(value.equity) && value.equity.length > 0 ? value.equity : initialState().equity,
+      positions,
+      trades: value.trades.slice(0, 500),
+      orders: value.orders.slice(0, 500),
+      nextTradeId: Number.isInteger(value.nextTradeId) && Number(value.nextTradeId) > 0 ? Number(value.nextTradeId) : value.trades.length + 1,
+      nextOrderId: Number.isInteger(value.nextOrderId) && Number(value.nextOrderId) > 0 ? Number(value.nextOrderId) : value.orders.length + 1,
+      equity: equity.length > 0 ? equity : initialState().equity,
     };
   } catch {
     return initialState();
@@ -69,7 +103,7 @@ function readState(): GuestState {
 }
 
 function writeState(state: GuestState) {
-  if (typeof window !== "undefined") window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  writeWorkspaceItem(STORAGE_KEY, JSON.stringify(state));
 }
 
 function marketPrice(code: string) {
@@ -244,12 +278,12 @@ function executeTrade(side: "buy" | "sell", data: Record<string, unknown>) {
   const current = state.positions[code] ?? { shares: 0, avgCost: 0 };
 
   if (side === "buy") {
-    if (state.cash < total + fee) throw new Error("Guest session has insufficient simulated cash.");
+    if (state.cash < total + fee) throw new Error("Local workspace has insufficient simulated cash.");
     const newShares = current.shares + shares;
     state.positions[code] = { shares: newShares, avgCost: (current.avgCost * current.shares + total) / newShares };
     state.cash -= total + fee;
   } else {
-    if (current.shares < shares) throw new Error(`Guest session holds only ${current.shares} ${code} shares.`);
+    if (current.shares < shares) throw new Error(`Local workspace holds only ${current.shares} ${code} shares.`);
     state.positions[code] = { ...current, shares: current.shares - shares };
     state.cash += total - fee;
   }
@@ -266,7 +300,7 @@ function executeTrade(side: "buy" | "sell", data: Record<string, unknown>) {
   });
   state.equity.push({ date: new Date().toISOString(), value: totalValue(state) });
   writeState(state);
-  return { success: true, message: `${side === "buy" ? "Bought" : "Sold"} ${shares} ${code} in this guest session.` };
+  return { success: true, message: `${side === "buy" ? "Bought" : "Sold"} ${shares} ${code} in this local workspace.` };
 }
 
 export async function guestRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -274,9 +308,9 @@ export async function guestRequest<T>(path: string, options: RequestInit = {}): 
   const body = parseBody(options);
   const state = readState();
 
-  if (pathname === "/api/me") return { id: 0, email: "guest@epsilon.local", username: "Guest Researcher", created_at: new Date(0).toISOString() } as T;
+  if (pathname === "/api/me") return { id: 0, email: "local@epsilon.local", username: "Local Researcher", created_at: new Date(0).toISOString() } as T;
   if (pathname === "/api/login") return { access_token: "guest-session" } as T;
-  if (pathname === "/api/register") return { id: 0, email: String(body.email ?? "guest@epsilon.local"), username: String(body.username ?? "Guest Researcher"), created_at: new Date().toISOString() } as T;
+  if (pathname === "/api/register") return { id: 0, email: String(body.email ?? "local@epsilon.local"), username: String(body.username ?? "Local Researcher"), created_at: new Date().toISOString() } as T;
   if (pathname === "/api/logout") return undefined as T;
   if (pathname === "/api/market/prices") {
     const requested = new URLSearchParams(query).get("codes")?.split(",").map((code) => code.toUpperCase());
@@ -325,9 +359,9 @@ export async function guestRequest<T>(path: string, options: RequestInit = {}): 
   if (pathname === "/api/backtest/strategies") return { strategies: [{ name: "buy_and_hold", label: "Buy & Hold" }, { name: "moving_average", label: "Moving Average" }, { name: "momentum", label: "Momentum" }] } as T;
   if (pathname === "/api/analysis/spectral") return spectral(Array.isArray(body.prices) ? body.prices.map(Number).filter(Number.isFinite) : []) as T;
 
-  throw new Error(`Guest session does not support ${pathname}.`);
+  throw new Error(`Local workspace does not support ${pathname}.`);
 }
 
 export function resetGuestSession() {
-  if (typeof window !== "undefined") window.sessionStorage.removeItem(STORAGE_KEY);
+  removeWorkspaceItem(STORAGE_KEY);
 }

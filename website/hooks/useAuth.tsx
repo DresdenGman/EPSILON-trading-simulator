@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(() => {
     if (GUEST_MODE) {
       resetGuestSession();
-      setUser({ id: 0, email: "guest@epsilon.local", username: "Guest Researcher" });
+      setUser({ id: 0, email: "local@epsilon.local", username: "Local Researcher" });
       return;
     }
     void api.logout().catch(() => undefined);

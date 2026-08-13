@@ -291,7 +291,7 @@ export default function BacktestForm() {
               <div className="mt-4 grid border border-white/10 text-xs sm:grid-cols-3" aria-label="Backtest evidence provenance">
                 <div className="border-b border-white/10 p-3 sm:border-b-0 sm:border-r">
                   <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#64748B]">Result origin</div>
-                  <div className="mt-1 text-[#E2E8F0]">{GUEST_MODE ? "Guest simulation engine" : "Backtest service response"}</div>
+                  <div className="mt-1 text-[#E2E8F0]">{GUEST_MODE ? "Browser-local simulation engine" : "Backtest service response"}</div>
                 </div>
                 <div className="border-b border-white/10 p-3 sm:border-b-0 sm:border-r">
                   <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#64748B]">Data source / sampling</div>

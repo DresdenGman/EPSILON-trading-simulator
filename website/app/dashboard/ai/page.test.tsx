@@ -14,7 +14,7 @@ describe("AIPage", () => {
     const { container } = render(React.createElement(ResearchProvider, null, React.createElement(AIPage)));
 
     expect(screen.getByText(/local heuristic · no live ai\/web/i)).toBeTruthy();
-    expect(screen.getByText(/guest sessions use a clearly labeled local heuristic/i)).toBeTruthy();
+    expect(screen.getByText(/browser-local workspaces use a clearly labeled local heuristic/i)).toBeTruthy();
     expect(container.textContent).not.toMatch(/Ollama|never leaves your machine/i);
   });
 });

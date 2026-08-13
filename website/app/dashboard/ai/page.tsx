@@ -65,7 +65,7 @@ export default function AIPage() {
         </div>
         <div className="p-5">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#00D09C]">03 / Verify</p>
-          <p className="mt-2 text-sm leading-6 text-[#94A3B8]">Guest sessions use a clearly labeled local heuristic. A configured deployment may use EPSILON&apos;s server-side model integration. Treat either critique as research support, not financial advice.</p>
+          <p className="mt-2 text-sm leading-6 text-[#94A3B8]">Browser-local workspaces use a clearly labeled local heuristic. A configured deployment may use EPSILON&apos;s server-side model integration. Treat either critique as research support, not financial advice.</p>
         </div>
       </section>
     </div>

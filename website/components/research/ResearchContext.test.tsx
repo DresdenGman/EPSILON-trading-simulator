@@ -43,7 +43,10 @@ function Probe() {
 }
 
 describe("ResearchProvider", () => {
-  beforeEach(() => window.sessionStorage.clear());
+  beforeEach(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+  });
   afterEach(() => cleanup());
 
   it("keeps old evidence stale until a successful matching retest replaces it", async () => {
@@ -72,7 +75,7 @@ describe("ResearchProvider", () => {
     fireEvent.click(screen.getByRole("button", { name: "record second" }));
     expect(screen.getByTestId("state").textContent).toBe("current");
 
-    await waitFor(() => expect(window.sessionStorage.getItem("epsilon.research-experiment.v1")).toContain('"totalReturn":2'));
+    await waitFor(() => expect(window.localStorage.getItem("epsilon.research-experiment.v1")).toContain('"totalReturn":2'));
     view.unmount();
     render(<ResearchProvider><Probe /></ResearchProvider>);
     await waitFor(() => expect(screen.getByTestId("state").textContent).toBe("current"));

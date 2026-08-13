@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { readWorkspaceItem, removeWorkspaceItem, writeWorkspaceItem } from "@/lib/browser-workspace-storage";
 
 export type ResearchTestArtifact = {
   subjectSnapshot: string | null;
@@ -108,7 +109,7 @@ export function testMatchesExperiment(experiment: ResearchExperiment) {
 
 function readStoredExperiment(): ResearchExperiment {
   try {
-    const stored = window.sessionStorage.getItem(STORAGE_KEY);
+    const stored = readWorkspaceItem(STORAGE_KEY);
     if (!stored) return EMPTY_EXPERIMENT;
     const parsed = JSON.parse(stored) as Partial<ResearchExperiment>;
     return {
@@ -148,7 +149,7 @@ export function ResearchProvider({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     if (!experiment.updatedAt) return;
-    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(experiment));
+    writeWorkspaceItem(STORAGE_KEY, JSON.stringify(experiment));
   }, [experiment]);
 
   const updateExperiment = React.useCallback((update: Partial<ResearchExperiment>) => {
@@ -178,7 +179,7 @@ export function ResearchProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
   const resetExperiment = React.useCallback(() => {
-    window.sessionStorage.removeItem(STORAGE_KEY);
+    removeWorkspaceItem(STORAGE_KEY);
     setExperiment(EMPTY_EXPERIMENT);
   }, []);
 

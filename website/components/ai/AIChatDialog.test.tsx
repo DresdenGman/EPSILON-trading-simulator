@@ -13,6 +13,7 @@ describe("AIChatDialog", () => {
   beforeEach(() => {
     mockAuthState.isAuthenticated = true;
     mockAuthState.isGuest = false;
+    window.localStorage.clear();
     window.sessionStorage.clear();
     Element.prototype.scrollIntoView = vi.fn();
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({

@@ -200,7 +200,7 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
       )}
       {isGuest && (
         <p className="text-center font-mono text-2xs uppercase tracking-[0.1em] text-base-content/35">
-          Guest simulation · stored in this tab only
+          Browser-local simulation · stored on this device
         </p>
       )}
       </div>

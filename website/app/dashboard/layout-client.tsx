@@ -21,7 +21,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [guestSessionRevision, setGuestSessionRevision] = React.useState(0);
   const resetGuestWorkspace = () => {
-    const confirmed = window.confirm("Reset this guest session? This clears the simulated portfolio, trades, orders, hypothesis, and test artifact stored in this browser tab.");
+    const confirmed = window.confirm("Reset this local workspace? This clears the simulated portfolio, trades, orders, hypothesis, and test artifact stored on this device.");
     if (!confirmed) return;
     logout();
     resetExperiment();
@@ -69,11 +69,11 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={resetGuestWorkspace}
-              aria-label="Reset guest session data"
-              title="Reset the data stored in this browser tab"
+              aria-label="Reset local workspace data"
+              title="Reset the workspace data stored on this device"
               className="inline-flex h-8 items-center gap-2 rounded-md border border-base-300 px-2.5 font-mono text-2xs uppercase tracking-[0.11em] text-base-content/45 transition-colors hover:border-primary/30 hover:text-primary"
             >
-              <span className="hidden sm:inline">Guest</span>
+              <span className="hidden sm:inline">Local</span>
               <span className="hidden h-3 w-px bg-base-300 sm:block" />
               <RotateCcw aria-hidden="true" size={11} strokeWidth={1.8} />
               <span>Reset</span>

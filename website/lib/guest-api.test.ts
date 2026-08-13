@@ -5,17 +5,20 @@ import { guestRequest } from "@/lib/guest-api";
 import type { BacktestResult, Order, PerformanceData, PortfolioPosition, StockPrice, TradeRecord } from "@/lib/api";
 
 describe("guestRequest", () => {
-  beforeEach(() => window.sessionStorage.clear());
+  beforeEach(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+  });
 
   it("opens a complete market and guest identity without registration", async () => {
     const user = await guestRequest<{ id: number; username: string }>("/api/me");
     const stocks = await guestRequest<StockPrice[]>("/api/market/prices");
 
-    expect(user).toEqual(expect.objectContaining({ id: 0, username: "Guest Researcher" }));
+    expect(user).toEqual(expect.objectContaining({ id: 0, username: "Local Researcher" }));
     expect(stocks.map((stock) => stock.code)).toContain("AAPL");
   });
 
-  it("keeps simulated trades and account changes inside the browser session", async () => {
+  it("persists simulated trades and account changes on this device", async () => {
     await guestRequest("/api/trade/buy", {
       method: "POST",
       body: JSON.stringify({ stock_code: "AAPL", shares: 10 }),
@@ -28,6 +31,39 @@ describe("guestRequest", () => {
     expect(positions[0]).toEqual(expect.objectContaining({ stock_code: "AAPL", shares: 10 }));
     expect(trades[0]).toEqual(expect.objectContaining({ stock_code: "AAPL", trade_type: "buy" }));
     expect(performance.cash).toBeLessThan(100_000);
+    expect(window.localStorage.getItem("epsilon.guest-session.v1")).toContain('"AAPL"');
+  });
+
+  it("migrates an earlier tab-scoped workspace into persistent storage", async () => {
+    window.sessionStorage.setItem("epsilon.guest-session.v1", JSON.stringify({
+      cash: 97500,
+      positions: {},
+      trades: [],
+      orders: [],
+      nextTradeId: 1,
+      nextOrderId: 1,
+      equity: [{ date: "2026-08-12T00:00:00.000Z", value: 97500 }],
+    }));
+
+    const performance = await guestRequest<PerformanceData>("/api/portfolio/performance");
+
+    expect(performance.cash).toBe(97500);
+    expect(window.localStorage.getItem("epsilon.guest-session.v1")).toContain("97500");
+    expect(window.sessionStorage.getItem("epsilon.guest-session.v1")).toBeNull();
+  });
+
+  it("rejects corrupted persistent account state", async () => {
+    window.localStorage.setItem("epsilon.guest-session.v1", JSON.stringify({
+      cash: -500,
+      positions: { AAPL: { shares: "all", avgCost: 1 } },
+      trades: [],
+      orders: [],
+    }));
+
+    const performance = await guestRequest<PerformanceData>("/api/portfolio/performance");
+
+    expect(performance.cash).toBe(100_000);
+    expect(performance.total_value).toBe(100_000);
   });
 
   it("records and cancels guest orders", async () => {

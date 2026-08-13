@@ -26,6 +26,7 @@ function renderBacktestForm() {
 describe("BacktestForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    window.localStorage.clear();
     window.sessionStorage.clear();
   });
   afterEach(() => cleanup());

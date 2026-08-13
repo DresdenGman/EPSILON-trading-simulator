@@ -98,7 +98,7 @@ describe("DashboardClientLayout", () => {
     const confirm = vi.spyOn(window, "confirm").mockReturnValueOnce(false).mockReturnValueOnce(true);
     renderLayout();
 
-    const reset = screen.getByRole("button", { name: "Reset guest session data" });
+    const reset = screen.getByRole("button", { name: "Reset local workspace data" });
     fireEvent.click(reset);
     expect(authState.logout).not.toHaveBeenCalled();
 

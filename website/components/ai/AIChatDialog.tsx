@@ -160,7 +160,7 @@ export default function AIChatDialog() {
       <aside className="border-b border-white/10 p-5 lg:border-b-0 lg:border-r lg:p-6" aria-label="Research frame">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#00D09C]">01 / Frame</p>
         <h2 className="mt-2 text-lg font-semibold text-white">Set the question.</h2>
-        <p className="mt-2 text-sm leading-6 text-[#94A3B8]">This workspace interrogates the active experiment. It only receives the research context and {isGuest ? "session-local guest artifact" : "completed service-response artifact"} shown below.</p>
+        <p className="mt-2 text-sm leading-6 text-[#94A3B8]">This workspace interrogates the active experiment. It only receives the research context and {isGuest ? "browser-local research artifact" : "completed service-response artifact"} shown below.</p>
         <div className="mt-5 border-y border-white/10 py-4 text-xs leading-5 text-[#94A3B8]">
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#E2E8F0]">Active experiment</p>
           <p className="mt-2">Subject: <span className="text-white">{experiment.symbol ?? "Not selected"}</span></p>
