@@ -70,6 +70,7 @@ Retired presentation and legacy URLs remain compatible without creating competin
 The product is ready for a controlled public launch around one clear idea: **a market result is more useful when its assumptions and failure conditions remain visible.**
 
 - [Public launch kit](docs/PUBLIC_LAUNCH_KIT.md) — approved positioning, channel sequence, and ready-to-adapt copy
+- [Communication pack](docs/COMMUNICATION_PACK.md) — bilingual launch copy aligned with the product truth and builder narrative
 - [GitHub social preview (1280 × 640)](website/public/social/epsilon-social-preview-v1.jpg)
 - [EPSILON v2.0 release](https://github.com/DresdenGman/EPSILON-trading-simulator/releases/tag/v2.0.0) — release notes, product film, and downloadable media assets
 
