@@ -1,8 +1,9 @@
 {
-  "rewrites": [
+  "redirects": [
     {
       "source": "/",
-      "destination": "/video",
+      "destination": "/landing",
+      "permanent": true,
       "has": [
         {
           "type": "host",
@@ -20,6 +21,7 @@
     }
   },
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://epsilon-api.railway.app"
+    "NEXT_PUBLIC_API_URL": "https://epsilon-api.railway.app",
+    "NEXT_PUBLIC_GUEST_MODE": "true"
   }
 }

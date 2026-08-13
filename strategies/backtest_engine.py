@@ -34,7 +34,7 @@ class BacktestEngine:
         """
         self.strategy = strategy
         # Create a fresh TradeManager for each backtest to avoid state pollution
-        self.trade_manager = TradeManager(initial_cash=initial_cash)
+        self.trade_manager = TradeManager(initial_cash=initial_cash, persist=False)
         self.trade_manager.fee_rate = fee_rate
         self.trade_manager.min_fee = min_fee
         self.trade_manager.slippage_per_share = slippage_per_share
@@ -72,7 +72,7 @@ class BacktestEngine:
         slippage = self.trade_manager.slippage_per_share
         
         # Create fresh TradeManager for this run
-        self.trade_manager = TradeManager(initial_cash=initial_cash)
+        self.trade_manager = TradeManager(initial_cash=initial_cash, persist=False)
         self.trade_manager.fee_rate = fee_rate
         self.trade_manager.min_fee = min_fee
         self.trade_manager.slippage_per_share = slippage
@@ -112,6 +112,10 @@ class BacktestEngine:
         if not history_data:
             return self._empty_results()
         
+        # Signals generated with information through day t execute on day t+1.
+        # This prevents same-bar/look-ahead execution and makes the timing model explicit.
+        pending_signals = []
+
         # Run backtest day by day
         for date in all_dates:
             # Get current prices and history up to this date
@@ -138,6 +142,19 @@ class BacktestEngine:
             
             if not current_prices:
                 continue
+
+            # Execute only signals generated on a prior trading day, using today's price.
+            for action, code, shares in pending_signals:
+                if code not in current_prices:
+                    continue
+                shares = int(shares)
+                if shares <= 0:
+                    continue
+                if action == 'buy':
+                    self._execute_buy(date, code, shares, current_prices[code])
+                elif action == 'sell':
+                    self._execute_sell(date, code, shares, current_prices[code])
+            pending_signals = []
             
             # Get current portfolio
             portfolio = self.trade_manager.get_portfolio()
@@ -162,22 +179,17 @@ class BacktestEngine:
                 print(f"Warning: Strategy {self.strategy.name} raised error on {date}: {e}")
                 signals = []
             
-            # Execute trades
+            # Queue signals for the next trading day's execution.
             for action, code, shares in signals:
                 if code not in current_prices:
                     continue
-                
-                price = current_prices[code]
                 shares = int(shares)
                 
                 if shares <= 0:
                     continue
                 
-                if action == 'buy':
-                    self._execute_buy(date, code, shares, price)
-                elif action == 'sell':
-                    self._execute_sell(date, code, shares, price)
-                # 'hold' action is ignored (no trade)
+                if action in ('buy', 'sell'):
+                    pending_signals.append((action, code, shares))
             
             # Record equity at end of day
             equity = self._calculate_equity(date, current_prices)

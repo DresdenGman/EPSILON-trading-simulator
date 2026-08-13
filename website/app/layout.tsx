@@ -1,45 +1,34 @@
 import type { Metadata } from 'next'
-import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'sonner'
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const jetbrains = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
+import { SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  applicationName: 'EPSILON Quantitative Decision Lab',
   title: {
-    default: 'EPSILON | Stock Trading Simulator',
+    default: 'EPSILON | Quantitative Decision Laboratory',
     template: '%s | EPSILON',
   },
   description:
-    'EPSILON is an institutional-grade stock trading simulator and quantitative education platform. Master trading with real-time data, advanced analytics, and risk management tools.',
-  keywords: ['stock trading', 'trading simulator', 'quantitative trading', 'investment education', 'risk management', 'technical analysis'],
+    'Build a market idea, test it, and try to break it. EPSILON is a quantitative decision lab for falsifiable hypotheses, transparent evidence, and disciplined retesting.',
+  keywords: ['quantitative research', 'decision science', 'backtesting', 'market simulation', 'falsifiable hypothesis', 'research reproducibility', 'data provenance'],
   authors: [{ name: 'Dresden E. Goehner' }],
   creator: 'Dresden E. Goehner',
   publisher: 'EPSILON',
+  alternates: { canonical: '/landing' },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://epsilon-trading.com',
+    url: SITE_URL,
     siteName: 'EPSILON',
-    title: 'EPSILON | Stock Trading Simulator',
-    description: 'Institutional-grade stock trading simulator for the next generation of quants.',
-    images: [{ url: '/screenshots/main_interface.png', width: 1200, height: 900, alt: 'EPSILON Interface' }],
+    title: 'EPSILON | Quantitative Decision Laboratory',
+    description: 'Build a market idea, test it, and try to break it through one transparent research cycle.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'EPSILON | Stock Trading Simulator',
-    description: 'Institutional-grade stock trading simulator for quantitative trading education.',
-    images: ['/screenshots/main_interface.png'],
+    title: 'EPSILON | Quantitative Decision Laboratory',
+    description: 'Build a market idea, test it, and try to break it through one transparent research cycle.',
   },
   robots: {
     index: true,
@@ -51,8 +40,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" data-theme="epsilon">
-      <body className={`${inter.variable} ${jetbrains.variable} font-sans antialiased`}>
-        {children}
+      <body className="font-sans antialiased">
+        <a href="#main-content" className="sr-only fixed left-4 top-4 z-[100] rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-content focus:not-sr-only">Skip to main content</a>
+        <div id="main-content" tabIndex={-1}>{children}</div>
         <Toaster
           theme="dark"
           position="bottom-right"

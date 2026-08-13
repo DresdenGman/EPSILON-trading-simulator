@@ -53,7 +53,6 @@ Thumbs.db
 screenshots/*.mp4
 Untitled
 
-
 # Node modules
 node_modules/
 website/node_modules/
@@ -66,3 +65,11 @@ website/out/
 .env
 .env.local
 .env*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.vercel

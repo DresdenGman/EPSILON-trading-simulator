@@ -1,219 +1,120 @@
-import Link from 'next/link'
-import { Download, Monitor, Apple, Terminal } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import Link from "next/link";
+import type { Metadata } from "next";
+import { ArrowDown, ArrowRight, ArrowUpRight, Check, Code2, PackageX, Terminal } from "lucide-react";
+
+const repositoryUrl = "https://github.com/DresdenGman/EPSILON-trading-simulator";
+const releaseUrl = `${repositoryUrl}/releases/tag/v1.0.0`;
+const sourceRunbook = "# Clone the repository\ngit clone https://github.com/DresdenGman/EPSILON-trading-simulator.git\ncd EPSILON-trading-simulator\n\n# Install dependencies\npip install -r requirements.txt\n\n# Run the application\npython mock.py";
+
+export const metadata: Metadata = {
+  title: "Source & Distribution",
+  description: "Review EPSILON's source-first desktop distribution status and verified release record.",
+  alternates: { canonical: "/download" },
+};
+
+const statusItems = [
+  { label: "Release", value: "v1.0.0", tone: "text-white" },
+  { label: "Source", value: "Available", tone: "text-[#A7F3D0]" },
+  { label: "Installers", value: "Not published", tone: "text-[#FDE68A]" },
+];
 
 export default function DownloadPage() {
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-gray-200">
-      {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-[#303030] bg-black/60 backdrop-blur-lg">
-        <div className="epsilon-shell py-3">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="h-7 w-7 overflow-hidden rounded-sm border border-epsilon-gold/70 bg-black/60 epsilon-inset-shadow-gold">
-                <span className="flex h-full w-full items-center justify-center font-mono text-[10px] text-epsilon-gold">ε</span>
-              </div>
-              <span className="font-mono text-sm font-semibold tracking-wide text-epsilon-gold">EPSILON</span>
-            </Link>
-            <Link href="/">
-              <Button variant="ghost" size="sm">
-                Back to Home
-              </Button>
-            </Link>
-          </div>
+    <div className="min-h-screen overflow-hidden bg-[#071323] text-[#E2E8F0]">
+      <header className="sticky top-0 z-30 border-b border-white/10 bg-[#071323]/88 backdrop-blur-xl">
+        <div className="epsilon-shell flex h-16 items-center justify-between">
+          <Link href="/landing" className="flex items-baseline gap-3">
+            <span className="font-mono text-sm font-semibold tracking-[0.12em] text-white">EPS<span className="text-[#3ecfb9]">ILON</span></span>
+            <span className="hidden border-l border-white/10 pl-3 font-mono text-[10px] uppercase tracking-[0.18em] text-[#64748B] sm:block">Decision Lab / Distribution</span>
+          </Link>
+          <nav aria-label="Distribution navigation" className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.12em] sm:text-[11px]">
+            <Link href="/landing" className="hidden text-[#94A3B8] transition-colors hover:text-white sm:block">Overview</Link>
+            <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-md border border-[#3ecfb9]/50 px-3 py-2 text-[#72dfcd] transition-colors hover:bg-[#3ecfb9]/10">Open the Lab <ArrowRight className="h-3 w-3" /></Link>
+          </nav>
         </div>
       </header>
 
-      <main className="epsilon-shell space-y-20 py-12">
-        {/* Hero */}
-        <section className="space-y-4">
-            <div>
-            <p className="text-xs font-medium uppercase tracking-normal text-gray-500">Download</p>
-            <h1 className="mt-2 text-3xl font-medium text-gray-100 md:text-4xl">
-              Download Stock Trading Simulator
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm font-light leading-relaxed text-gray-400">
-              Choose a platform build, or work directly from source. All distributions share the same
-              core simulation engine.
-            </p>
-            </div>
-        </section>
-
-        {/* Platform Downloads */}
-        <section className="space-y-6">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-normal text-gray-500">Binaries</p>
-            <h2 className="mt-2 text-lg font-medium text-gray-100">Platform builds</h2>
-            <p className="mt-2 text-xs font-light text-gray-400">
-              The links below are placeholders. Point them to your GitHub Releases or any hosting
-              you prefer once builds are published.
-            </p>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card className="border-[#282828] bg-[#101010]">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <Monitor className="h-5 w-5 text-gray-300" />
-                  <CardTitle className="text-sm">Windows</CardTitle>
+      <main>
+        <section className="relative border-b border-white/10">
+          <div className="pointer-events-none absolute inset-0 opacity-[0.18] [background-image:linear-gradient(rgba(255,255,255,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.12)_1px,transparent_1px)] [background-size:64px_64px]" />
+          <div className="pointer-events-none absolute left-1/2 top-0 h-[30rem] w-[44rem] -translate-x-1/2 rounded-full bg-[#3ecfb9]/5 blur-[110px]" />
+          <div className="epsilon-shell relative py-16 sm:py-24 lg:py-28">
+            <div className="grid gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.68fr)] lg:items-end">
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#3ecfb9]">EPSILON / Source & distribution</p>
+                <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl">The research client,<br /><span className="text-[#94A3B8]">without a false download.</span></h1>
+                <p className="mt-6 max-w-2xl text-base leading-7 text-[#94A3B8] sm:text-lg">EPSILON&apos;s original desktop environment remains available from source. Until signed installers are published and verifiable, the product says exactly what exists—and nothing more.</p>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                  <a href={repositoryUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-md bg-[#3ecfb9] px-5 py-3 text-sm font-semibold text-[#071323] transition-colors hover:bg-[#65dcc8]">View source <Code2 className="h-4 w-4" /></a>
+                  <a href="#run-from-source" className="inline-flex items-center justify-center gap-2 border border-white/15 px-5 py-3 text-sm font-semibold text-white transition-colors hover:border-white/30 hover:bg-white/5">Run locally <ArrowDown className="h-4 w-4" /></a>
                 </div>
-                <p className="mt-1 text-[11px] font-light text-gray-500">Windows 10 or later</p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Link href="#" className="block">
-                  <Button variant="primary" size="lg" className="w-full">
-                    <Download className="mr-2 h-4 w-4" />
-                Download for Windows (.exe)
-                  </Button>
-              </Link>
-                <p className="text-[10px] font-light leading-relaxed text-gray-500">
-                If SmartScreen warns about an unknown publisher, choose &quot;More info&quot; and
-                confirm if you trust the source.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-[#282828] bg-[#101010]">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <Apple className="h-5 w-5 text-gray-300" />
-                  <CardTitle className="text-sm">macOS</CardTitle>
               </div>
-                <p className="mt-1 text-[11px] font-light text-gray-500">macOS 10.14 or later</p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Link href="#" className="block">
-                  <Button variant="primary" size="lg" className="w-full">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download for macOS
-                  </Button>
-              </Link>
-                <p className="text-[10px] font-light leading-relaxed text-gray-500">
-                On first launch, you may need to open via Finder context menu to bypass Gatekeeper.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-[#282828] bg-[#101010]">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <Terminal className="h-5 w-5 text-gray-300" />
-                  <CardTitle className="text-sm">Linux</CardTitle>
-              </div>
-                <p className="mt-1 text-[11px] font-light text-gray-500">Most modern distributions</p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Link href="#" className="block">
-                  <Button variant="primary" size="lg" className="w-full">
-                    <Download className="mr-2 h-4 w-4" />
-                Download for Linux
-                  </Button>
-              </Link>
-                <p className="text-[10px] font-light leading-relaxed text-gray-500">
-                Remember to mark the file as executable before running it from the terminal.
-                </p>
-              </CardContent>
-            </Card>
+              <aside className="border border-white/10 bg-[#0A182A]/88 p-5 backdrop-blur" aria-label="Distribution status">
+                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                  <div><p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#64748B]">Public distribution</p><p className="mt-1 text-sm font-semibold text-white">Current verified state</p></div>
+                  <span className="h-2 w-2 rounded-full bg-[#3ecfb9]" aria-hidden="true" />
+                </div>
+                <dl className="divide-y divide-white/10">
+                  {statusItems.map((item) => <div key={item.label} className="flex items-center justify-between gap-4 py-4"><dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#64748B]">{item.label}</dt><dd className={`text-sm font-medium ${item.tone}`}>{item.value}</dd></div>)}
+                </dl>
+                <p className="border-t border-white/10 pt-4 text-xs leading-5 text-[#64748B]">No local build is represented as a public package. GitHub remains the source of truth.</p>
+              </aside>
+            </div>
           </div>
         </section>
 
-        {/* Installation Steps */}
-        <section className="space-y-6">
+        <section className="epsilon-shell py-14 sm:py-20">
+          <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16">
             <div>
-            <p className="text-xs font-medium uppercase tracking-normal text-gray-500">Install</p>
-            <h2 className="mt-2 text-lg font-medium text-gray-100">High-level installation steps</h2>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card className="border-[#282828] bg-[#0F0F0F]">
-              <CardHeader>
-                <CardTitle className="text-sm font-medium uppercase tracking-normal text-epsilon-gold">Windows</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ol className="space-y-2 text-xs font-light leading-relaxed text-gray-300">
-                  <li>1. Download the installer (.exe).</li>
-                  <li>2. Double-click to start the installation.</li>
-                  <li>3. Follow the prompts to complete setup.</li>
-                  <li>4. Launch from the Start Menu or desktop shortcut.</li>
-                </ol>
-              </CardContent>
-            </Card>
-
-            <Card className="border-[#282828] bg-[#0F0F0F]">
-              <CardHeader>
-                <CardTitle className="text-sm font-medium uppercase tracking-normal text-epsilon-gold">macOS</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ol className="space-y-2 text-xs font-light leading-relaxed text-gray-300">
-                  <li>1. Download the .app bundle or .zip file.</li>
-                  <li>2. If needed, extract the archive.</li>
-                  <li>3. Move the app into the Applications folder.</li>
-                  <li>4. Right-click and choose &quot;Open&quot; on first launch.</li>
-                </ol>
-              </CardContent>
-            </Card>
-
-            <Card className="border-[#282828] bg-[#0F0F0F]">
-              <CardHeader>
-                <CardTitle className="text-sm font-medium uppercase tracking-normal text-epsilon-gold">Linux</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ol className="space-y-2 text-xs font-light leading-relaxed text-gray-300">
-                  <li>1. Download the Linux executable.</li>
-                  <li>2. Mark it as executable in your terminal.</li>
-                  <li>3. Run the binary from the directory where it resides.</li>
-                </ol>
-              </CardContent>
-            </Card>
+              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#3ecfb9]">01 / Choose the honest path</p>
+              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white">One product.<br />Two valid entry points.</h2>
+              <p className="mt-4 max-w-md text-sm leading-6 text-[#94A3B8]">Use the browser Decision Lab for the guided product experience, or inspect and run the original desktop code locally.</p>
+            </div>
+            <div className="grid gap-px overflow-hidden border border-white/10 bg-white/10 sm:grid-cols-2">
+              <Link href="/dashboard" className="group flex min-h-64 flex-col justify-between bg-[#0A182A] p-6 transition-colors hover:bg-[#0D1D32]">
+                <div><span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#3ecfb9]">Recommended / Browser</span><h3 className="mt-5 text-xl font-semibold text-white">Open Decision Lab</h3><p className="mt-3 text-sm leading-6 text-[#94A3B8]">Observe a market, record a hypothesis, test it, and challenge the conclusion in one public session.</p></div>
+                <span className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-[#72dfcd]">Enter the lab <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
+              </Link>
+              <a href={repositoryUrl} target="_blank" rel="noopener noreferrer" className="group flex min-h-64 flex-col justify-between bg-[#0A182A] p-6 transition-colors hover:bg-[#0D1D32]">
+                <div><span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#64748B]">Technical / Source</span><h3 className="mt-5 text-xl font-semibold text-white">Inspect the desktop client</h3><p className="mt-3 text-sm leading-6 text-[#94A3B8]">Read the implementation, clone the repository, and run the original Python environment locally.</p></div>
+                <span className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-white">View repository <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></span>
+              </a>
+            </div>
           </div>
         </section>
 
-        {/* From Source */}
-        <section className="space-y-6">
-            <div>
-            <p className="text-xs font-medium uppercase tracking-normal text-gray-500">From source</p>
-            <h2 className="mt-2 text-lg font-medium text-gray-100">Running the Python project directly</h2>
-            <p className="mt-2 text-xs font-light leading-relaxed text-gray-400">
-              If you prefer to work with the codebase, clone the repository and run the simulator
-              from your local Python environment.
-            </p>
+        <section className="border-y border-white/10 bg-[#050D18]">
+          <div className="epsilon-shell grid gap-px bg-white/10 lg:grid-cols-2">
+            <div className="bg-[#050D18] py-12 pr-0 lg:pr-12">
+              <div className="flex h-10 w-10 items-center justify-center border border-[#3ecfb9]/30 text-[#3ecfb9]"><Check className="h-4 w-4" /></div>
+              <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.18em] text-[#3ecfb9]">02 / Verified record</p>
+              <h2 className="mt-3 text-2xl font-semibold text-white">A release exists.</h2>
+              <p className="mt-3 max-w-lg text-sm leading-6 text-[#94A3B8]">Version 1.0.0 provides a durable public record and release notes. It is the only page that should be trusted for future package assets.</p>
+              <a href={releaseUrl} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#72dfcd] hover:underline">View release record <ArrowUpRight className="h-4 w-4" /></a>
+            </div>
+            <div className="bg-[#050D18] py-12 pl-0 lg:pl-12">
+              <div className="flex h-10 w-10 items-center justify-center border border-[#FDE68A]/20 text-[#FDE68A]"><PackageX className="h-4 w-4" /></div>
+              <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.18em] text-[#FDE68A]">Boundary / No installer assets</p>
+              <h2 className="mt-3 text-2xl font-semibold text-white">A download does not—yet.</h2>
+              <p className="mt-3 max-w-lg text-sm leading-6 text-[#94A3B8]">No verified macOS, Windows, or Linux installer is published. This is a distribution boundary, not a broken button or hidden package.</p>
+            </div>
           </div>
+        </section>
 
-          <Card className="border-[#282828] bg-[#050505]">
-            <CardContent className="p-6">
-              <pre className="font-mono text-[11px] font-light leading-relaxed text-gray-300">
-                <code>{`# Clone the repository
-git clone https://github.com/DresdenGman/EPSILON-trading-simulator.git
-cd stock-trading-simulator
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the application
-python mock.py`}</code>
-              </pre>
-            </CardContent>
-          </Card>
+        <section id="run-from-source" className="epsilon-shell grid min-w-0 gap-8 py-14 sm:py-20 lg:grid-cols-[0.7fr_1.3fr] lg:items-start lg:gap-16">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#3ecfb9]">03 / Source runbook</p>
+            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white">Run the real project locally.</h2>
+            <p className="mt-4 text-sm leading-6 text-[#94A3B8]">Clone the repository and use your own Python environment. Review dependencies before installation.</p>
+          </div>
+          <div className="min-w-0 overflow-hidden border border-white/10 bg-[#030912]">
+            <div className="flex items-center justify-between border-b border-white/10 px-5 py-3"><span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[#64748B]"><Terminal className="h-3.5 w-3.5 text-[#3ecfb9]" />Source runbook</span><span className="font-mono text-[10px] text-[#475569]">bash</span></div>
+            <pre className="overflow-x-auto p-5 font-mono text-[12px] leading-7 text-[#CBD5E1]"><code>{sourceRunbook}</code></pre>
+          </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-[#303030] bg-black/80">
-        <div className="epsilon-shell flex flex-col items-start justify-between gap-3 py-6 text-[11px] font-light text-gray-500 md:flex-row md:items-center">
-          <span>© 2026 EPSILON LABS · Team Approcher</span>
-          <div className="flex gap-5">
-            <a
-              href="https://github.com/DresdenGman/EPSILON-trading-simulator"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors duration-280 ease-out-slow hover:text-gray-200"
-            >
-              GitHub
-            </a>
-          </div>
-        </div>
-      </footer>
+      <footer className="border-t border-white/10 bg-[#050D18]"><div className="epsilon-shell flex flex-col gap-3 py-6 font-mono text-[10px] uppercase tracking-[0.12em] text-[#64748B] sm:flex-row sm:items-center sm:justify-between"><span>EPSILON Decision Lab · Source-first distribution</span><a href={repositoryUrl} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#3ecfb9]">Repository ↗</a></div></footer>
     </div>
-  )
+  );
 }
