@@ -22,6 +22,15 @@ EPSILON is not a trading recommendation engine. Its purpose is to make assumptio
 
 Retired presentation and legacy URLs remain compatible without creating competing products: `/demo` redirects to `/dashboard/backtest`, `/simulator` redirects to `/dashboard`, and `/video` redirects to `/landing`.
 
+## Public launch assets
+
+The product is ready for a controlled public launch around one clear idea: **a market result is more useful when its assumptions and failure conditions remain visible.**
+
+- [Public launch kit](docs/PUBLIC_LAUNCH_KIT.md) — approved positioning, channel sequence, and ready-to-adapt copy
+- [GitHub social preview (1280 × 640)](website/public/social/epsilon-social-preview-v1.jpg) — upload in the repository's **Settings → Social preview**
+
+The launch kit deliberately separates claims that are demonstrated by the product from aspirations that still need user evidence. It should be used for authentic feedback and early-adopter conversations, not performance marketing or investment claims.
+
 ## The research loop
 
 ### 1. Market — Observe
