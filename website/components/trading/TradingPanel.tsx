@@ -84,20 +84,20 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
   }
 
   return (
-    <div className="card h-full border border-base-300/90 bg-base-200/65 shadow-[0_12px_32px_rgba(0,0,0,0.08)]">
+    <div className="lab-panel h-full">
       <div className="space-y-3 p-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <p className="product-kicker">Decision / execution</p>
           <h3 className="mt-1 font-mono text-lg font-semibold text-base-content">{stock.code}</h3>
-          <div className={`text-xs font-medium mt-0.5 ${stock.change_percent >= 0 ? "text-success" : "text-error"}`}>
+          <div className={`mt-0.5 font-mono text-2xs uppercase tracking-[0.12em] ${stock.change_percent >= 0 ? "text-success" : "text-error"}`}>
             {stock.change_percent >= 0 ? "+" : ""}{stock.change_percent.toFixed(2)}%
           </div>
         </div>
         <div className="text-right">
           <div className="font-mono text-2xl font-semibold tracking-tight text-base-content">${currentPrice.toFixed(2)}</div>
-          <div className="text-xs text-base-content/40 uppercase tracking-wide">Last Price</div>
+          <div className="font-mono text-2xs uppercase tracking-[0.12em] text-base-content/40">Last price</div>
         </div>
       </div>
 
@@ -125,11 +125,11 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
 
       {/* Order type */}
       <div>
-        <label className="text-2xs text-base-content/40 uppercase tracking-wide mb-0.5 block">Order Type</label>
+        <label className="lab-field-label">Order type</label>
         <select
           value={orderType}
           onChange={(e) => setOrderType(e.target.value)}
-          className="select select-bordered select-sm w-full bg-base-300/50"
+          className="lab-input"
         >
           <option value="market">Market</option>
           <option value="limit">Limit</option>
@@ -140,18 +140,18 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
 
       {/* Shares */}
       <div>
-        <label className="text-2xs text-base-content/40 uppercase tracking-wide mb-0.5 block">Shares</label>
+        <label className="lab-field-label">Shares</label>
         <input
           type="number" min={1} value={shares}
           onChange={(e) => setShares(Math.max(1, parseInt(e.target.value) || 1))}
-          className="input input-bordered input-sm w-full bg-base-300/50 font-mono"
+          className="lab-input font-mono"
         />
       </div>
 
       {/* Limit / Trigger price */}
       {isConditionalOrder && (
         <div>
-          <label className="text-xs text-base-content/40 uppercase tracking-wide mb-1.5 block">
+          <label className="lab-field-label">
             {targetLabel}
           </label>
           <input
@@ -162,9 +162,9 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
               else setLimitPrice(e.target.value);
             }}
             placeholder={currentPrice.toFixed(2)}
-            className="input input-bordered input-sm w-full bg-base-300/50 font-mono"
+            className="lab-input font-mono"
           />
-          <p className="mt-1 text-2xs text-base-content/40">
+          <p className="mt-2 text-2xs leading-4 text-base-content/40">
             This order is recorded as pending and can be cancelled. It does not auto-execute in the current simulator.
           </p>
         </div>
@@ -172,7 +172,7 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
 
       {/* Estimated total */}
       <div className="flex items-center justify-between rounded-lg border border-base-300/60 bg-base-100/35 px-3 py-2">
-        <span className="text-2xs text-base-content/40 uppercase tracking-wide">Estimated</span>
+        <span className="font-mono text-2xs uppercase tracking-[0.12em] text-base-content/40">Estimated</span>
         <span className="text-base-content font-mono font-semibold text-xs">${estimatedTotal.toLocaleString()}</span>
       </div>
 
@@ -181,7 +181,7 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
         type="button"
         onClick={handleTrade}
         disabled={loading || !isAuthenticated}
-        className={`w-full rounded-md border py-2.5 text-xs font-semibold transition-colors ${
+        className={`w-full rounded-md border py-2.5 text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
           side === "buy"
             ? "border-primary bg-primary text-primary-content hover:bg-primary/90"
             : "border-error/70 bg-error/10 text-error hover:bg-error/15"

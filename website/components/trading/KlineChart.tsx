@@ -96,8 +96,6 @@ export default function KlineChart({ data, loading, state = data?.dates.length ?
     };
   }, [data]);
 
-  const chartBg = "surface-card";
-
   if (loading) {
     return (
       <div className="surface-card w-full h-full flex items-center justify-center min-h-[280px]">
@@ -145,16 +143,16 @@ export default function KlineChart({ data, loading, state = data?.dates.length ?
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-white/[0.06] px-4 py-3">
         <div className="min-w-0">
           <div className="flex items-baseline gap-2">
-            <h3 className="font-mono text-sm font-semibold text-[#E5E7EB]">{data.code ?? "MARKET"}</h3>
-            <span className="truncate text-xs text-[#64748B]">{data.name ?? "Price evidence"}</span>
+            <h3 className="font-mono text-sm font-semibold text-base-content">{data.code ?? "MARKET"}</h3>
+            <span className="truncate text-xs text-base-content/45">{data.name ?? "Price evidence"}</span>
           </div>
-          <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-[#475569]">
+          <p className="mt-1 font-mono text-2xs uppercase tracking-[0.12em] text-base-content/35">
             {data.dates[0]} → {data.dates[data.dates.length - 1]}
           </p>
         </div>
-        <div className="ml-auto flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.12em]">
-          <span className="rounded border border-white/[0.08] px-2 py-1 text-[#64748B]">90D</span>
-          <span className="rounded border border-[#64FFDA]/15 bg-[#64FFDA]/[0.04] px-2 py-1 text-[#64FFDA]/70">Synthetic daily</span>
+        <div className="ml-auto flex items-center gap-2 font-mono text-2xs uppercase tracking-[0.12em]">
+          <span className="rounded border border-white/[0.08] px-2 py-1 text-base-content/45">90D</span>
+          <span className="rounded border border-primary/20 bg-primary/[0.04] px-2 py-1 text-primary/75">Synthetic daily</span>
         </div>
       </div>
       <div ref={chartRef} className="min-h-[240px] flex-1" />
