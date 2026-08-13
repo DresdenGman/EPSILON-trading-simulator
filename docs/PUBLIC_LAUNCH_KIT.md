@@ -35,10 +35,12 @@ Do not use these until real user evidence exists:
 
 ## Links
 
-- Product: `https://epsilon-git-codex-final-p0-release-dresdens-projects-1b80b5a8.vercel.app/landing`
-- Working product: `https://epsilon-git-codex-final-p0-release-dresdens-projects-1b80b5a8.vercel.app/dashboard`
+- Product: `https://epsilon-livid.vercel.app/landing`
+- Working product: `https://epsilon-livid.vercel.app/dashboard`
 - Repository: `https://github.com/DresdenGman/EPSILON-trading-simulator`
 - Social preview asset: `website/public/social/epsilon-social-preview-v1.jpg`
+- 30-second product video: `docs/media/epsilon-demo-30s/epsilon-decision-lab-30s.mp4`
+- Video poster: `docs/media/epsilon-demo-30s/epsilon-decision-lab-30s-poster.jpg`
 
 Before publishing, upload the preview asset through **Repository Settings → Social preview**. It is 1280 × 640 px and under 1 MB.
 
