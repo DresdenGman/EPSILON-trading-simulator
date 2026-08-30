@@ -1,6 +1,9 @@
 import type { BacktestResult } from "@/lib/api";
 
 export const EVIDENCE_FORMAT = "epsilon.evidence.v1" as const;
+const COMPRESSED_EVIDENCE_PREFIX = "g1.";
+const MAX_ENCODED_ARTIFACT_LENGTH = 64_000;
+const MAX_DECOMPRESSED_ARTIFACT_BYTES = 512_000;
 
 export type EvidenceConfiguration = {
   strategy: string;
@@ -148,18 +151,80 @@ export function isEvidenceArtifact(value: unknown): value is EvidenceArtifact {
 
 export function encodeEvidenceArtifact(artifact: EvidenceArtifact) {
   const bytes = new TextEncoder().encode(JSON.stringify(artifact));
+  return bytesToBase64Url(bytes);
+}
+
+export function decodeEvidenceArtifact(encoded: string): EvidenceArtifact | null {
+  if (!encoded || encoded.length > MAX_ENCODED_ARTIFACT_LENGTH) return null;
+  try {
+    const parsed = JSON.parse(new TextDecoder().decode(base64UrlToBytes(encoded)));
+    return isEvidenceArtifact(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function bytesToBase64Url(bytes: Uint8Array) {
   let binary = "";
   bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
   return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/g, "");
 }
 
-export function decodeEvidenceArtifact(encoded: string): EvidenceArtifact | null {
-  if (!encoded || encoded.length > 64_000) return null;
+function base64UrlToBytes(encoded: string) {
+  if (!/^[A-Za-z0-9_-]+$/.test(encoded)) throw new Error("Invalid base64url input");
+  const padded = encoded.replaceAll("-", "+").replaceAll("_", "/").padEnd(Math.ceil(encoded.length / 4) * 4, "=");
+  const binary = atob(padded);
+  return Uint8Array.from(binary, (character) => character.charCodeAt(0));
+}
+
+async function readStreamWithLimit(stream: ReadableStream<Uint8Array>, maxBytes: number) {
+  const reader = stream.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
   try {
-    const padded = encoded.replaceAll("-", "+").replaceAll("_", "/").padEnd(Math.ceil(encoded.length / 4) * 4, "=");
-    const binary = atob(padded);
-    const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
-    const parsed = JSON.parse(new TextDecoder().decode(bytes));
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) throw new Error("Decompressed artifact exceeds the allowed size");
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const output = new Uint8Array(total);
+  let offset = 0;
+  chunks.forEach((chunk) => { output.set(chunk, offset); offset += chunk.byteLength; });
+  return output;
+}
+
+export async function encodePortableEvidenceArtifact(artifact: EvidenceArtifact) {
+  const legacy = encodeEvidenceArtifact(artifact);
+  if (typeof CompressionStream === "undefined") return legacy;
+  try {
+    const source = new Blob([JSON.stringify(artifact)]).stream();
+    const compressed = await readStreamWithLimit(
+      source.pipeThrough(new CompressionStream("gzip")),
+      MAX_DECOMPRESSED_ARTIFACT_BYTES,
+    );
+    const encoded = `${COMPRESSED_EVIDENCE_PREFIX}${bytesToBase64Url(compressed)}`;
+    return encoded.length < legacy.length ? encoded : legacy;
+  } catch {
+    return legacy;
+  }
+}
+
+export async function decodePortableEvidenceArtifact(encoded: string): Promise<EvidenceArtifact | null> {
+  if (!encoded || encoded.length > MAX_ENCODED_ARTIFACT_LENGTH) return null;
+  if (!encoded.startsWith(COMPRESSED_EVIDENCE_PREFIX)) return decodeEvidenceArtifact(encoded);
+  if (typeof DecompressionStream === "undefined") return null;
+  try {
+    const compressed = base64UrlToBytes(encoded.slice(COMPRESSED_EVIDENCE_PREFIX.length));
+    const decompressed = await readStreamWithLimit(
+      new Blob([compressed]).stream().pipeThrough(new DecompressionStream("gzip")),
+      MAX_DECOMPRESSED_ARTIFACT_BYTES,
+    );
+    const parsed = JSON.parse(new TextDecoder().decode(decompressed));
     return isEvidenceArtifact(parsed) ? parsed : null;
   } catch {
     return null;

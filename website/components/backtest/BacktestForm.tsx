@@ -13,7 +13,7 @@ import {
 import EvidencePlate from "@/components/evidence/EvidencePlate";
 import {
   createEvidenceArtifact,
-  decodeEvidenceArtifact,
+  decodePortableEvidenceArtifact,
   snapshotBacktest,
   type EvidenceArtifact,
   type EvidenceObservation,
@@ -129,8 +129,11 @@ export default function BacktestForm() {
   React.useEffect(() => {
     if (!hydrated || restoredRef.current) return;
     restoredRef.current = true;
-    const imported = decodeEvidenceArtifact(searchParams.get("artifact") ?? "");
-    if (imported) {
+    let active = true;
+    const restore = async () => {
+      const imported = await decodePortableEvidenceArtifact(searchParams.get("artifact") ?? "");
+      if (!active) return;
+      if (imported) {
       setHypothesis(imported.claim);
       setFalsification(imported.falsifiedIf);
       setStrategy(imported.configuration.strategy);
@@ -143,9 +146,9 @@ export default function BacktestForm() {
       setSlippagePerShare(imported.configuration.slippagePerShare);
       setEvidenceArtifact(imported);
       return;
-    }
-    const transferred = normalizeStockCodes(searchParams.get("symbols") ?? "");
-    if (experiment.test) {
+      }
+      const transferred = normalizeStockCodes(searchParams.get("symbols") ?? "");
+      if (experiment.test) {
       const configuration = experiment.test.perturbationEvidence?.configuration;
       setStrategy(experiment.test.strategy);
       setStartDate(experiment.test.startDate);
@@ -184,8 +187,11 @@ export default function BacktestForm() {
           slippagePerShare: configuration?.slippagePerShare ?? 0.01,
         });
       }
-    } else if (transferred.length) setStockCodes(transferred.join(","));
-    else if (experiment.symbol) setStockCodes(experiment.symbol);
+      } else if (transferred.length) setStockCodes(transferred.join(","));
+      else if (experiment.symbol) setStockCodes(experiment.symbol);
+    };
+    void restore();
+    return () => { active = false; };
   }, [experiment.falsification, experiment.hypothesis, experiment.symbol, experiment.test, hydrated, searchParams, setFalsification, setHypothesis]);
 
   const currentConfiguration: SubmittedConfiguration = {

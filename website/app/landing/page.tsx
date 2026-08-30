@@ -33,9 +33,9 @@ export default function LandingPage() {
       <main>
         <section className="mx-auto max-w-[92rem] px-4 pb-20 pt-32 sm:px-6 lg:px-8 lg:pb-28 lg:pt-40">
           <div className="grid gap-10 border-b instrument-rule pb-12 lg:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)] lg:items-end">
-            <div>
+            <div className="min-w-0">
               <p className="instrument-label">Quantitative evidence instrument / public access</p>
-              <h1 className="mt-7 max-w-5xl text-balance text-[clamp(3.6rem,8.4vw,8.8rem)] font-semibold leading-[0.84] tracking-[-0.072em]">
+              <h1 className="mt-7 max-w-5xl text-balance text-[clamp(2.7rem,8.4vw,8.8rem)] font-semibold leading-[0.84] tracking-[-0.068em]">
                 Don’t trust the line.<br /><span className="text-base-content/32">Test its neighborhood.</span>
               </h1>
             </div>
@@ -103,7 +103,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t instrument-rule px-4 py-7 sm:px-6 lg:px-8"><div className="mx-auto flex max-w-[92rem] flex-col gap-3 text-xs text-base-content/38 sm:flex-row sm:items-center sm:justify-between"><span>© 2026 EPSILON · Quantitative evidence instrument by Dresden E. Goehner</span><div className="flex gap-5"><Link href="/download" className="hover:text-base-content">Reproducibility</Link><a href="mailto:dresdengoehner@gmail.com" className="hover:text-base-content">Contact</a></div></div></footer>
+      <footer className="border-t instrument-rule px-4 py-7 sm:px-6 lg:px-8"><div className="mx-auto flex max-w-[92rem] flex-col gap-3 text-xs text-base-content/38 sm:flex-row sm:items-center sm:justify-between"><span>© 2026 EPSILON · Quantitative evidence instrument by Dresden E. Goehner</span><div className="flex flex-wrap gap-5"><Link href="/methodology" className="hover:text-base-content">Methodology</Link><Link href="/privacy" className="hover:text-base-content">Privacy</Link><Link href="/terms" className="hover:text-base-content">Terms</Link><Link href="/status" className="hover:text-base-content">Status</Link><Link href="/download" className="hover:text-base-content">Source</Link><a href="mailto:dresdengoehner@gmail.com" className="hover:text-base-content">Contact</a></div></div></footer>
     </div>
   );
 }

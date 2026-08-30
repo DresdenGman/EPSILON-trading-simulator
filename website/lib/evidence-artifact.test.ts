@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import { ILLUSTRATIVE_EVIDENCE } from "@/lib/illustrative-evidence";
 import {
   decodeEvidenceArtifact,
+  decodePortableEvidenceArtifact,
   describeStability,
   encodeEvidenceArtifact,
+  encodePortableEvidenceArtifact,
   isEvidenceArtifact,
 } from "@/lib/evidence-artifact";
 
@@ -14,6 +16,21 @@ describe("evidence artifacts", () => {
     expect(decoded).toEqual(ILLUSTRATIVE_EVIDENCE);
     expect(decoded?.configuration.slippagePerShare).toBe(0.01);
     expect(decoded?.observations).toHaveLength(4);
+  });
+
+  it("compresses share links while preserving every evidence field", async () => {
+    const legacy = encodeEvidenceArtifact(ILLUSTRATIVE_EVIDENCE);
+    const encoded = await encodePortableEvidenceArtifact(ILLUSTRATIVE_EVIDENCE);
+    const decoded = await decodePortableEvidenceArtifact(encoded);
+
+    expect(encoded.startsWith("g1.")).toBe(true);
+    expect(encoded.length).toBeLessThan(legacy.length * 0.6);
+    expect(decoded).toEqual(ILLUSTRATIVE_EVIDENCE);
+  });
+
+  it("keeps existing uncompressed links readable", async () => {
+    const legacy = encodeEvidenceArtifact(ILLUSTRATIVE_EVIDENCE);
+    expect(await decodePortableEvidenceArtifact(legacy)).toEqual(ILLUSTRATIVE_EVIDENCE);
   });
 
   it("rejects malformed, oversized, and unsupported artifacts", () => {

@@ -8,6 +8,8 @@ import EpsilonMark from "@/components/brand/EpsilonMark";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { RotateCcw } from "lucide-react";
+import { CircleHelp } from "lucide-react";
+import OnboardingGuide from "@/components/onboarding/OnboardingGuide";
 
 const productNav = [
   { label: "Observe", detail: "Market", href: "/dashboard" },
@@ -20,6 +22,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
   const { experiment, resetExperiment } = useResearchExperiment();
   const pathname = usePathname();
   const [guestSessionRevision, setGuestSessionRevision] = React.useState(0);
+  const [guideRevision, setGuideRevision] = React.useState(0);
   const resetGuestWorkspace = () => {
     const confirmed = window.confirm("Reset this local workspace? This clears the simulated portfolio, trades, orders, hypothesis, and test artifact stored on this device.");
     if (!confirmed) return;
@@ -64,6 +67,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
         </div>
         <div className="navbar-end gap-2">
           <Link href="/impact" className="hidden px-2 py-2 font-mono text-2xs uppercase tracking-[0.13em] text-base-content/38 transition-colors hover:text-base-content lg:block">Public ledger</Link>
+          <button type="button" onClick={() => setGuideRevision((current) => current + 1)} aria-label="How EPSILON works" title="How EPSILON works" className="inline-flex h-8 w-8 items-center justify-center rounded border border-base-300 text-base-content/45 transition-colors hover:border-base-content/45 hover:text-base-content"><CircleHelp aria-hidden="true" size={14} /></button>
           {loading ? (
             <span className="skeleton h-8 w-24 rounded-btn" aria-label="Checking session" />
           ) : isGuest ? (
@@ -102,6 +106,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
       <main className="relative mx-auto max-w-[92rem] px-4 py-5 sm:px-6 sm:py-7 lg:px-8">
         <div key={guestSessionRevision} className="relative z-10">{protectedContent}</div>
       </main>
+      <OnboardingGuide forceOpenSignal={guideRevision} />
     </div>
   );
 }

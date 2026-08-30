@@ -111,7 +111,7 @@ describe("AIChatDialog", () => {
     mockAuthState.isGuest = true;
     render(<ResearchProvider><AIChatDialog /></ResearchProvider>);
 
-    expect(screen.getAllByText(/local heuristic · no live ai\/web/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/evidence-aware local critic/i).length).toBeGreaterThan(0);
     expect(screen.queryByRole("checkbox")).toBeNull();
     expect(screen.queryByText(/model assisted/i)).toBeNull();
     expect(screen.queryByText(/web evidence on/i)).toBeNull();
