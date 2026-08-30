@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/impact" },
 };
 
-type RepoSnapshot = { stargazers_count: number; forks_count: number };
-const fallbackRepo = { stargazers_count: 21, forks_count: 3 };
+type RepoSnapshot = { stars: number | null; forks: number | null };
+const unavailableRepo: RepoSnapshot = { stars: null, forks: null };
 
 async function getRepoSnapshot(): Promise<RepoSnapshot> {
   try {
@@ -16,10 +16,14 @@ async function getRepoSnapshot(): Promise<RepoSnapshot> {
       next: { revalidate: 3600 },
       headers: { Accept: "application/vnd.github+json" },
     });
-    if (!response.ok) return fallbackRepo;
-    return (await response.json()) as RepoSnapshot;
+    if (!response.ok) return unavailableRepo;
+    const payload = await response.json() as { stargazers_count?: unknown; forks_count?: unknown };
+    return {
+      stars: typeof payload.stargazers_count === "number" ? payload.stargazers_count : null,
+      forks: typeof payload.forks_count === "number" ? payload.forks_count : null,
+    };
   } catch {
-    return fallbackRepo;
+    return unavailableRepo;
   }
 }
 
@@ -73,8 +77,8 @@ export default async function ImpactPage() {
           <div className="mx-auto max-w-7xl">
             <div className="grid gap-px overflow-hidden border border-[#29485e] bg-[#29485e] sm:grid-cols-2 lg:grid-cols-3">
               {[
-                [repo.stargazers_count, "GitHub stars · live", "Public repository signal", "stargazers"],
-                [repo.forks_count, "GitHub forks · live", "Independent repository copies", "forks"],
+                [repo.stars ?? "—", repo.stars === null ? "GitHub stars" : "GitHub stars · live", repo.stars === null ? "Live count temporarily unavailable" : "Public repository signal", "stargazers"],
+                [repo.forks ?? "—", repo.forks === null ? "GitHub forks" : "GitHub forks · live", repo.forks === null ? "Live count temporarily unavailable" : "Independent repository copies", "forks"],
                 [2, "Public releases", "v1 history + v2 Decision Lab", "releases"],
               ].map(([value, label, detail, path]) => (
                 <article key={String(label)} className="bg-[#0a1b2e] p-6">

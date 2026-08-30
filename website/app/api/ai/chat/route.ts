@@ -65,7 +65,10 @@ function nullableNumber(value: unknown) {
 function jsonResponse(error: string, status: number) {
   return new Response(JSON.stringify({ error }), {
     status,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+    },
   });
 }
 
@@ -253,8 +256,9 @@ export async function POST(req: Request) {
 
     return result.toTextStreamResponse();
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Internal server error";
-    return jsonResponse(message, 500);
+    console.error("AI chat request failed", {
+      name: error instanceof Error ? error.name : "UnknownError",
+    });
+    return jsonResponse("Research critic could not complete this request. Please try again.", 500);
   }
 }

@@ -38,7 +38,7 @@ describe("product source of truth", () => {
       expect(source).not.toContain("epsilon-trading.com");
     }
     expect(metadata).toContain("SITE_URL");
-    expect(site).toContain("epsilon-git-codex-final-p0-release");
+    expect(site).toContain("https://epsilon-livid.vercel.app");
     expect(robots).toContain("/dashboard");
     expect(sitemap).not.toContain("/demo");
   });

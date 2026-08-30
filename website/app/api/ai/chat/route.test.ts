@@ -45,6 +45,7 @@ describe("POST /api/ai/chat", () => {
     const response = await POST(request());
 
     expect(response.status).toBe(401);
+    expect(response.headers.get("cache-control")).toBe("no-store");
     expect(fetch).not.toHaveBeenCalled();
     expect(mocks.streamText).not.toHaveBeenCalled();
   });
@@ -172,5 +173,22 @@ describe("POST /api/ai/chat", () => {
       expect([400, 413]).toContain(response.status);
     }
     expect(mocks.streamText).not.toHaveBeenCalled();
+  });
+
+  it("does not expose provider or server error details to the client", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify({ id: 1 }), { status: 200 }));
+    mocks.streamText.mockImplementationOnce(() => {
+      throw new Error("provider-secret-debug-detail");
+    });
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+
+    const response = await POST(request("epsilon_session=valid"));
+
+    expect(response.status).toBe(500);
+    await expect(response.json()).resolves.toEqual({
+      error: "Research critic could not complete this request. Please try again.",
+    });
+    expect(consoleError).toHaveBeenCalledWith("AI chat request failed", { name: "Error" });
+    consoleError.mockRestore();
   });
 });

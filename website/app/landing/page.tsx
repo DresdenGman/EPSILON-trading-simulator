@@ -152,7 +152,7 @@ export default function LandingPage() {
               <p className="mt-4 max-w-2xl text-sm leading-7 text-[#8ea4b5]">History is preserved. Public routing is simplified. Distribution claims remain limited to what can be verified.</p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row md:flex-col">
-              <Link href="/download" className="inline-flex min-h-11 items-center justify-center rounded-md border border-[#3ecfb9]/45 px-5 py-3 text-sm font-semibold text-[#72dfcd] hover:bg-[#3ecfb9]/10">Source & Distribution →</Link>
+              <Link href="/download" className="inline-flex min-h-11 items-center justify-center rounded-md border border-[#3ecfb9]/45 px-5 py-3 text-sm font-semibold text-[#72dfcd] hover:bg-[#3ecfb9]/10">Source & Reproducibility →</Link>
               <a href="https://github.com/DresdenGman/EPSILON-trading-simulator" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center rounded-md px-5 py-3 text-sm text-[#9db0be] hover:bg-white/5 hover:text-white">Open repository ↗</a>
             </div>
           </div>

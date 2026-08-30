@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { VideoPlayer } from '@/components/video-player'
 
 export default function VideoPage() {
@@ -34,12 +35,12 @@ export default function VideoPage() {
             © 2026 EPSILON LABS · Team Approcher
           </p>
           <div className="mt-5 flex justify-center gap-5 text-xs font-light">
-            <a
+            <Link
               href="/"
               className="text-gray-400 transition-colors duration-280 ease-out-slow hover:text-epsilon-gold"
             >
               Visit Main Site
-            </a>
+            </Link>
             <span className="text-gray-600">|</span>
             <a
               href="https://github.com/DresdenGman/EPSILON-trading-simulator"
