@@ -6,10 +6,11 @@ from typing import Any, Dict, List, Tuple
 class TradeManager:
     """Trading and portfolio management, extracted from mock.py for reuse."""
 
-    def __init__(self, initial_cash: float = 100000.0) -> None:
+    def __init__(self, initial_cash: float = 100000.0, persist: bool = True) -> None:
         # Get the directory of the current file
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
         self.data_file = os.path.join(self.base_dir, "trade_data.json")
+        self.persist = persist
         self.trade_records: List[Dict[str, Any]] = []
         self.pending_orders: List[Dict[str, Any]] = []
         # Allow customizable starting cash; this may be overridden by saved data in load_data().
@@ -27,7 +28,8 @@ class TradeManager:
         self.scale_step_pct: float = 0.0  # 分批加减仓触发阈值（盈利/亏损百分比）
         self.scale_fraction_pct: float = 0.0  # 触发时加减仓比例（占当前持仓的百分比）
 
-        self.load_data()
+        if self.persist:
+            self.load_data()
 
     def load_data(self) -> None:
         """Load trade data from file."""
@@ -57,6 +59,8 @@ class TradeManager:
 
     def save_data(self) -> None:
         """Save trade data to file."""
+        if not self.persist:
+            return
         try:
             data = {
                 "trade_records": self.trade_records,
@@ -169,5 +173,4 @@ class TradeManager:
         gross = exec_price * shares
         fee = max(self.min_fee, abs(gross) * self.fee_rate) if gross > 0 else 0.0
         return exec_price, gross, fee
-
 

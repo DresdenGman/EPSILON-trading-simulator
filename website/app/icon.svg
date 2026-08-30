@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="EPSILON">
+  <rect width="64" height="64" rx="14" fill="#071323"/>
+  <path d="M17 17h31v7H25v5h18v7H25v5h23v7H17V17Z" fill="#3ecfb9"/>
+  <path d="M17 17h31v7H25v5h18v7H25v5h23v7H17V17Z" fill="none" stroke="#e2e8f0" stroke-width="1.5" stroke-linejoin="round" opacity=".5"/>
+</svg>

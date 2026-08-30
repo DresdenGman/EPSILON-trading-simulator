@@ -4,11 +4,10 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || ''
   
-  // 检查是否是 video 子域名
+  // Keep the legacy video hostname compatible without exposing a second product homepage.
   if (hostname.startsWith('video.')) {
-    // 如果是根路径，重定向到 /video
     if (request.nextUrl.pathname === '/') {
-      return NextResponse.rewrite(new URL('/video', request.url))
+      return NextResponse.redirect(new URL('/landing', request.url), 308)
     }
   }
 

@@ -1,35 +1,38 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import { guestRequest } from "@/lib/guest-api";
+import { GUEST_MODE } from "@/lib/guest-mode";
 
-function getToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("epsilon_token");
-}
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+export const AUTH_FAILURE_EVENT = "epsilon:authentication-failed";
 
 async function request<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = getToken();
+  if (GUEST_MODE && typeof window !== "undefined") {
+    return guestRequest<T>(path, options);
+  }
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(options.headers as Record<string, string>),
   };
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers, credentials: "include" });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.detail || `Request failed: ${res.status}`);
+    if (res.status === 401 && typeof window !== "undefined") {
+      window.dispatchEvent(new Event(AUTH_FAILURE_EVENT));
+    }
+    const error = new Error(body.detail || `Request failed: ${res.status}`) as Error & { status?: number };
+    error.status = res.status;
+    throw error;
   }
+  if (res.status === 204) return undefined as T;
   return res.json();
 }
 
 export const api = {
   // Auth
   register: (data: { email: string; username: string; password: string }) =>
-    request<{ id: number; email: string; username: string }>("/api/register", {
+    request<{ id: number; email: string; username: string; created_at: string }>("/api/register", {
       method: "POST",
       body: JSON.stringify(data),
     }),
@@ -38,8 +41,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  logout: () =>
+    request<void>("/api/logout", { method: "POST" }),
   getMe: () =>
-    request<{ id: number; email: string; username: string }>("/api/me"),
+    request<{ id: number; email: string; username: string; created_at: string }>("/api/me"),
 
   // Account & Portfolio
   getAccount: () =>
@@ -54,12 +59,12 @@ export const api = {
     request<TradeRecord[]>("/api/trades/history"),
 
   // Trading
-  buy: (data: { stock_code: string; shares: number; price: number }) =>
+  buy: (data: { stock_code: string; shares: number }) =>
     request<{ success: boolean; message: string }>("/api/trade/buy", {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  sell: (data: { stock_code: string; shares: number; price: number }) =>
+  sell: (data: { stock_code: string; shares: number }) =>
     request<{ success: boolean; message: string }>("/api/trade/sell", {
       method: "POST",
       body: JSON.stringify(data),
@@ -183,6 +188,9 @@ export interface BacktestRequest {
   end_date: string;
   stock_codes?: string[];
   initial_cash?: number;
+  fee_rate?: number;
+  min_fee?: number;
+  slippage_per_share?: number;
 }
 
 export interface BacktestResult {
@@ -195,6 +203,14 @@ export interface BacktestResult {
     win_rate: number;
     profit_factor: number;
   };
-  trades: { date: string; stock_code: string; trade_type: string; shares: number; price: number }[];
+  trades: {
+    date: string;
+    stock_code: string;
+    stock_name: string;
+    trade_type: string;
+    shares: number;
+    price: number;
+    total_amount: number;
+  }[];
   equity_curve: { date: string; equity: number }[];
 }

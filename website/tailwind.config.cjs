@@ -9,8 +9,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        // Local system stacks keep production builds and the app usable offline.
+        sans: ['ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', 'monospace'],
       },
       fontSize: {
         '2xs': ['0.625rem', { lineHeight: '0.875rem', letterSpacing: '0.02em' }],
@@ -43,31 +44,31 @@ module.exports = {
       {
         'epsilon': {
           'color-scheme': 'dark',
-          // Brittany Chiang navy palette — professional trading aesthetic
-          'base-100': '#0A192F',   /* dark navy background */
-          'base-200': '#112240',   /* navy card surface */
-          'base-300': '#233554',   /* hover/raised surface */
-          'base-content': '#CCD6F6', /* primary text — light slate */
-          'primary': '#64FFDA',    /* mint accent — buy/CTA */
-          'primary-content': '#0A192F',
-          'secondary': '#57CBFF',  /* sky blue */
-          'secondary-content': '#0A192F',
-          'accent': '#F57DFF',     /* pink accent */
-          'accent-content': '#0A192F',
-          'neutral': '#233554',
-          'neutral-content': '#8892B0', /* slate text */
-          'info': '#57CBFF',
-          'info-content': '#0A192F',
-          'success': '#64FFDA',    /* mint green = profit */
-          'success-content': '#0A192F',
-          'warning': '#FFD700',
-          'warning-content': '#0A192F',
-          'error': '#F0616D',      /* red = loss */
+          // EPSILON instrument palette: monochrome by default; colour is evidence.
+          'base-100': '#08090C',
+          'base-200': '#101217',
+          'base-300': '#292C34',
+          'base-content': '#F0EFEA',
+          'primary': '#F0EFEA',
+          'primary-content': '#08090C',
+          'secondary': '#8BE9FD',
+          'secondary-content': '#08090C',
+          'accent': '#D6A2FF',
+          'accent-content': '#08090C',
+          'neutral': '#1A1C22',
+          'neutral-content': '#9B9DA5',
+          'info': '#8BE9FD',
+          'info-content': '#08090C',
+          'success': '#74E6A5',
+          'success-content': '#08090C',
+          'warning': '#F3C969',
+          'warning-content': '#08090C',
+          'error': '#FF7185',
           'error-content': '#FFFFFF',
-          '--rounded-box': '0.75rem',
-          '--rounded-btn': '0.5rem',
-          '--rounded-badge': '0.375rem',
-          '--tab-radius': '0.5rem',
+          '--rounded-box': '0.375rem',
+          '--rounded-btn': '0.25rem',
+          '--rounded-badge': '999px',
+          '--tab-radius': '0.25rem',
           '--border': '1px',
           '--depth': '1',
         },

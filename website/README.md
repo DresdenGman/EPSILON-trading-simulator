@@ -1,107 +1,45 @@
-# Stock Trading Simulator Website
+# EPSILON Web Laboratory
 
-This is the website for the Stock Trading Simulator project, built with Next.js.
+This directory contains the Next.js interface for EPSILON — Quantitative Decision Lab.
 
-## Getting Started
+The web product has one research path:
 
-First, install dependencies:
+`Market → Strategy Lab → Interrogate → Refine → Retest`
+
+Public visitors start at `/landing` and enter the working product at `/dashboard`. `/download` is a support surface for source, release history, and reproducibility; it is not a second product entry.
+
+## Development
 
 ```bash
 npm install
-# or
-yarn install
-# or
-pnpm install
-```
-
-Then, run the development server:
-
-```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). The root route redirects to `/landing`.
 
-## Building for Production
+The frontend expects the research API at `NEXT_PUBLIC_API_URL` (default local API: `http://127.0.0.1:8000`). Authentication and saved-account workflows may additionally require the configured database and auth environment variables.
 
-To build the website for production:
+## Verification
 
 ```bash
+npx tsc --noEmit
+npx vitest run
 npm run build
-npm start
 ```
 
-## Deployment
+Avoid running `next build` while a development server is actively using the same `.next` directory.
 
-This website can be deployed to various platforms:
+## Route roles
 
-- **Vercel**: Recommended for Next.js projects
-- **Netlify**: Also supports Next.js
-- **GitHub Pages**: Requires static export
-- **Docker**: Use the Dockerfile (if provided)
+| Route | Role |
+|---|---|
+| `/landing` | Canonical public explanation |
+| `/dashboard` | Market workspace |
+| `/dashboard/backtest` | Strategy Lab |
+| `/dashboard/ai` | Research interrogation |
+| `/download` | Source, release record, and reproducibility support |
+| `/demo` | Retired presentation URL redirected to `/dashboard/backtest` |
+| `/simulator` | Legacy URL redirected to `/dashboard` |
+| `/video` | Legacy URL redirected to `/landing` |
 
-### Deploy to Vercel
-
-The easiest way to deploy is using [Vercel](https://vercel.com):
-
-#### Option 1: Via Vercel Dashboard (Recommended)
-
-1. **Push your code to GitHub**:
-   ```bash
-   git add .
-   git commit -m "Deploy website"
-   git push origin main
-   ```
-
-2. **Connect to Vercel**:
-   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
-   - Click "Add New Project"
-   - Import your GitHub repository: `DresdenGman/EPSILON-trading-simulator`
-
-3. **Configure Project Settings**:
-   - **Root Directory**: `website` (important!)
-   - **Framework Preset**: Next.js (auto-detected)
-   - **Build Command**: `npm run build` (default)
-   - **Output Directory**: `.next` (default)
-   - **Install Command**: `npm install` (default)
-
-4. **Deploy**:
-   - Click "Deploy"
-   - Wait for build to complete (usually 1-2 minutes)
-   - Your site will be live at `your-project.vercel.app`
-
-5. **Automatic Deployments**:
-   - Every push to `main` branch triggers automatic deployment
-   - Preview deployments are created for pull requests
-
-#### Option 2: Via Vercel CLI
-
-```bash
-npm i -g vercel
-cd website
-vercel
-```
-
-Follow the prompts to deploy.
-
-#### Important Configuration
-
-Make sure to set the **Root Directory** to `website` in Vercel project settings, since the website is in a subdirectory of the repository.
-
-## Customization
-
-You can customize the website by editing:
-
-- `app/page.tsx` - Main homepage
-- `app/download/page.tsx` - Download page
-- `app/globals.css` - Global styles
-- `app/layout.tsx` - Root layout
-
-## Notes
-
-- The download links in `/download` page are placeholders. Update them with actual download URLs when releases are available.
-- You can integrate with GitHub Releases API to automatically fetch latest release information.
+The original repository and legacy source are intentionally retained. Public routing converges old entry points on the working product without deleting project history.

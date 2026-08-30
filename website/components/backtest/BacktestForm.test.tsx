@@ -1,0 +1,235 @@
+// @vitest-environment jsdom
+
+import React from "react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import BacktestForm from "./BacktestForm";
+import { createBacktestExport } from "@/lib/backtest-export";
+import { ResearchProvider, UNKNOWN_BACKTEST_PROVENANCE } from "@/components/research/ResearchContext";
+
+const mocks = vi.hoisted(() => ({ backtest: vi.fn() }));
+
+vi.mock("@/lib/api", () => ({ api: mocks }));
+vi.mock("next/navigation", () => ({ useSearchParams: () => new URLSearchParams() }));
+
+const successfulResult = {
+  strategy_name: "Momentum (2%)",
+  performance: { total_return: 1, cagr: 1, sharpe: 1, max_drawdown: -1, win_rate: 50, profit_factor: 1 },
+  trades: [],
+  equity_curve: [],
+};
+
+function renderBacktestForm() {
+  return render(React.createElement(ResearchProvider, null, React.createElement(BacktestForm)));
+}
+
+describe("BacktestForm", () => {
+  beforeEach(() => {
+    mocks.backtest.mockReset();
+    mocks.backtest.mockResolvedValue(successfulResult);
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+  });
+  afterEach(() => cleanup());
+
+  it("submits only one backtest while the current attempt is running", () => {
+    mocks.backtest.mockImplementation(() => new Promise(() => undefined));
+    renderBacktestForm();
+
+    const button = screen.getByRole("button", { name: "Run Backtest" });
+    fireEvent.click(button);
+    fireEvent.click(button);
+
+    expect(mocks.backtest).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects malformed stock codes before calling the service", async () => {
+    renderBacktestForm();
+    fireEvent.change(screen.getByDisplayValue("AAPL,MSFT,GOOGL"), { target: { value: "AAPL,<SCRIPT>" } });
+    fireEvent.click(screen.getByRole("button", { name: "Run Backtest" }));
+
+    expect(await screen.findByText(/Invalid stock code:/)).toBeTruthy();
+    expect(mocks.backtest).not.toHaveBeenCalled();
+  });
+
+  it("computes one baseline and four atomic perturbations", async () => {
+    renderBacktestForm();
+    fireEvent.click(screen.getByRole("button", { name: "Run Backtest" }));
+    await screen.findByText("Submitted configuration");
+
+    expect(mocks.backtest).toHaveBeenCalledTimes(5);
+    const [baseline, fee, slippage, window, universe] = mocks.backtest.mock.calls.map((call) => call[0]);
+    expect(fee).toEqual({ ...baseline, fee_rate: baseline.fee_rate * 5 });
+    expect(slippage).toEqual({ ...baseline, slippage_per_share: baseline.slippage_per_share * 5 });
+    expect(window).toEqual({ ...baseline, start_date: "2024-01-31" });
+    expect(universe).toEqual({ ...baseline, stock_codes: ["AAPL", "MSFT"] });
+  });
+
+  it("uses a real minimum-fee perturbation for a one-symbol universe", async () => {
+    renderBacktestForm();
+    fireEvent.change(screen.getByDisplayValue("AAPL,MSFT,GOOGL"), { target: { value: "AAPL" } });
+    fireEvent.click(screen.getByRole("button", { name: "Run Backtest" }));
+    await screen.findByText("Submitted configuration");
+
+    expect(mocks.backtest).toHaveBeenCalledTimes(5);
+    const [baseline, , , , minimumFee] = mocks.backtest.mock.calls.map((call) => call[0]);
+    expect(minimumFee).toEqual({ ...baseline, min_fee: baseline.min_fee * 5 });
+    expect(screen.getByText("Minimum fee ×5")).toBeTruthy();
+  });
+
+  it("retains the previous successful result after a later attempt fails", async () => {
+    renderBacktestForm();
+
+    fireEvent.click(screen.getByRole("button", { name: "Run Backtest" }));
+    await screen.findByText("Submitted configuration");
+    expect(screen.getByText("Profit Factor")).toBeTruthy();
+    expect(screen.getByText("1.00")).toBeTruthy();
+
+    fireEvent.change(screen.getByDisplayValue("AAPL,MSFT,GOOGL"), { target: { value: "MSFT" } });
+    mocks.backtest.mockRejectedValueOnce(new Error("Backtest service unavailable"));
+    fireEvent.click(screen.getByRole("button", { name: "Run Backtest" }));
+
+    await screen.findByText(/Latest attempt failed:/);
+    expect(screen.getByText(/Previous successful run/)).toBeTruthy();
+    expect(screen.getByText(/Displayed results belong to the previous successful run/)).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Export result artifact (JSON)" })).toBeTruthy();
+    expect(screen.getByText(/Displayed results belong to the previous successful run/)).toBeTruthy();
+  });
+
+  it("exports only the successful result and its submitted configuration", () => {
+    const configuration = {
+      strategy: "momentum",
+      startDate: "2024-01-01",
+      endDate: "2024-06-30",
+      stockCodes: ["AAPL", "MSFT"],
+      initialCash: 100000,
+    };
+
+    const exported = createBacktestExport(successfulResult, configuration);
+
+    expect(exported.filename).toBe("epsilon-backtest-2024-01-01-to-2024-06-30.json");
+    expect(JSON.parse(exported.content)).toEqual({
+      format: "epsilon.backtest-result.v1",
+      provenance: {
+        configuration,
+        resultOrigin: "backtest-service-response",
+        data: {
+          mode: "unknown",
+          source: null,
+          provider: null,
+          samplingInterval: null,
+          asOf: null,
+        },
+        executionAssumptions: {
+          feeRate: null,
+          minimumFee: null,
+          slippagePerShare: null,
+          fillModel: null,
+          benchmark: null,
+        },
+      },
+      result: successfulResult,
+    });
+  });
+
+  it("restores the last successful configuration for refine and retest", async () => {
+    window.sessionStorage.setItem("epsilon.research-experiment.v1", JSON.stringify({
+      symbol: "MSFT",
+      hypothesis: "Momentum weakens after volatility expands.",
+      updatedAt: "2026-08-10T19:00:00.000Z",
+      test: {
+        subjectSnapshot: "MSFT",
+        hypothesisSnapshot: "Momentum persists.",
+        method: "backtest",
+        strategy: "moving_average",
+        symbols: ["MSFT"],
+        startDate: "2023-01-01",
+        endDate: "2023-12-31",
+        initialCash: 75000,
+        totalReturn: 4,
+        sharpe: 0.8,
+        maxDrawdown: -6,
+        tradeCount: 12,
+        completedAt: "2026-08-10T19:00:00.000Z",
+        provenance: UNKNOWN_BACKTEST_PROVENANCE,
+      },
+    }));
+
+    renderBacktestForm();
+
+    expect(await screen.findByDisplayValue("Momentum weakens after volatility expands.")).toBeTruthy();
+    expect((screen.getByRole("combobox") as HTMLSelectElement).value).toBe("moving_average");
+    expect(screen.getByDisplayValue("2023-01-01")).toBeTruthy();
+    expect(screen.getByDisplayValue("2023-12-31")).toBeTruthy();
+    expect(screen.getByDisplayValue("MSFT")).toBeTruthy();
+    expect(screen.getByDisplayValue("75000")).toBeTruthy();
+    expect(screen.getByText(/Needs retest/)).toBeTruthy();
+  });
+
+  it("restores the inspectable result artifact after a reload", async () => {
+    window.localStorage.setItem("epsilon.research-experiment.v1", JSON.stringify({
+      symbol: "AAPL",
+      hypothesis: "Momentum persists.",
+      falsification: "Reject if return reverses.",
+      updatedAt: "2026-08-10T19:00:00.000Z",
+      test: {
+        subjectSnapshot: "AAPL",
+        hypothesisSnapshot: "Momentum persists.",
+        falsificationSnapshot: "Reject if return reverses.",
+        method: "backtest",
+        strategy: "momentum",
+        symbols: ["AAPL"],
+        startDate: "2024-01-01",
+        endDate: "2024-06-30",
+        initialCash: 100000,
+        totalReturn: 1,
+        sharpe: 1,
+        maxDrawdown: -1,
+        tradeCount: 0,
+        completedAt: "2026-08-10T19:00:00.000Z",
+        result: successfulResult,
+        provenance: UNKNOWN_BACKTEST_PROVENANCE,
+      },
+    }));
+
+    renderBacktestForm();
+
+    expect(await screen.findByText("Submitted configuration")).toBeTruthy();
+    expect(screen.getByText("Profit Factor")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Export result artifact (JSON)" })).toBeTruthy();
+  });
+
+  it("uses the active experiment subject for the first test universe", async () => {
+    window.localStorage.setItem("epsilon.research-experiment.v1", JSON.stringify({
+      symbol: "NVDA",
+      hypothesis: "NVDA momentum survives realistic costs.",
+      falsification: "The return reverses after higher costs.",
+      test: null,
+      updatedAt: "2026-08-12T20:00:00.000Z",
+    }));
+
+    renderBacktestForm();
+
+    expect(await screen.findByDisplayValue("NVDA")).toBeTruthy();
+  });
+
+  it("renders the full server trade ledger without truncating entries after 100", async () => {
+    const trades = Array.from({ length: 101 }, (_, index) => ({
+      date: "2024-02-01",
+      stock_code: `T${index + 1}`,
+      stock_name: `Test Company ${index + 1}`,
+      trade_type: "Buy",
+      shares: index + 1,
+      price: index + 0.5,
+      total_amount: index + 100.25,
+    }));
+    mocks.backtest.mockResolvedValue({ ...successfulResult, trades });
+    renderBacktestForm();
+
+    fireEvent.click(screen.getByRole("button", { name: "Run Backtest" }));
+
+    await screen.findByText("Trade Results (101 trades)");
+    expect(screen.getByText("Test Company 101")).toBeTruthy();
+    expect(screen.getByText("$200.25")).toBeTruthy();
+  });
+});

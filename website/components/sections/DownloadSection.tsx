@@ -7,10 +7,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import styles from './DownloadSection.module.css'
 
 const features = [
-  { title: 'Real-time Trading', description: 'Experience real-time market data and trading simulation with institutional-grade tools. Access live market feeds, execute trades, and analyze performance in real-time.' },
-  { title: 'Risk Management', description: 'Learn to manage risk with advanced analytics and automated risk scoring. Monitor portfolio exposure, set stop-loss limits, and optimize risk-return ratios.' },
-  { title: 'Quantitative Analysis', description: 'Leverage powerful quantitative tools to analyze market trends, identify patterns, and develop data-driven trading strategies.' },
-  { title: 'Educational Resources', description: 'Access comprehensive educational materials, tutorials, and interactive guides to master the art of quantitative trading.' },
+  { title: 'Explicit hypotheses', description: 'Record the claim a strategy test is meant to challenge before treating a result as evidence.' },
+  { title: 'Controlled tests', description: 'Submit a defined strategy, universe, window, and capital configuration to the backtest service.' },
+  { title: 'Visible evidence gaps', description: 'Keep missing data source, sampling, fee, slippage, fill, and benchmark details visible.' },
+  { title: 'Refine and retest', description: 'Mark prior evidence stale when the subject or hypothesis changes, then run a new atomic test.' },
 ]
 
 const downloads = [
@@ -103,7 +103,7 @@ export default function DownloadSection() {
               <h3 className={styles.featureTitle}>Intuitive Design</h3>
               <p className={styles.featureDesc}>
                 EPSILON features a clean, intuitive interface designed for both beginners and experienced traders.
-                Navigate seamlessly through real-time data, charts, and analytics.
+                Move from market observation to a controlled strategy test and an explicit challenge step.
               </p>
               <p className={styles.featureDesc}>
                 Our interface prioritizes clarity and efficiency, allowing you to focus on what matters most:

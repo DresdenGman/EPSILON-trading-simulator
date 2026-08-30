@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --epsilon-font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --epsilon-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --epsilon-void: #08090c;
+  --epsilon-panel: #101217;
+  --epsilon-raised: #17191f;
+  --epsilon-line: #292c34;
+  --epsilon-chalk: #f0efea;
+  --epsilon-muted: #92949d;
+  --epsilon-cyan: #8be9fd;
+  --epsilon-violet: #d6a2ff;
+  --epsilon-coral: #ff8d7a;
+  --epsilon-lime: #b7f171;
+}
+
 @layer base {
   html {
     @apply antialiased scroll-smooth;
@@ -10,8 +25,15 @@
     color-scheme: dark;
   }
 
-  ::selection { background: rgba(0, 208, 156, 0.2); color: #D8DEE9; }
-  :focus-visible { @apply outline-2 outline-offset-2 outline-primary/50; }
+  body { font-family: var(--epsilon-font-sans); }
+
+  body {
+    font-family: var(--epsilon-font-sans);
+    background: var(--epsilon-void);
+  }
+
+  ::selection { background: rgba(139, 233, 253, 0.22); color: var(--epsilon-chalk); }
+  :focus-visible { outline: 2px solid var(--epsilon-cyan); outline-offset: 3px; }
 
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -19,14 +41,95 @@
   ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
   @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto !important; }
     *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 }
 
 @layer components {
-  .surface-card {
-    @apply card bg-base-200 border border-base-300 shadow-sm;
+  .surface-card { @apply card bg-base-200 border border-base-300; }
+
+  /* Shared migration vocabulary for the unified EPSILON product shell. */
+  .product-surface { @apply min-h-screen bg-base-100 text-base-content; }
+  .product-panel { @apply rounded-box border border-base-300 bg-base-200; }
+  .product-panel-muted { @apply rounded-box border border-base-300/70 bg-base-200/60; }
+  .product-kicker { @apply font-mono text-2xs uppercase tracking-[0.18em] text-base-content/50; }
+  .product-title { @apply font-semibold tracking-tight text-base-content; }
+  .product-description { @apply text-sm leading-6 text-base-content/60; }
+  .metric-label { @apply font-mono text-2xs uppercase tracking-[0.14em] text-base-content/45; }
+  .metric-value { @apply font-mono text-base-content; }
+  .lab-page-header { @apply border-b border-base-300/80 pb-6; }
+  .lab-page-kicker { @apply font-mono text-2xs uppercase tracking-[0.2em] text-base-content/50; }
+  .lab-page-title { @apply mt-2 text-3xl font-semibold tracking-[-0.03em] text-base-content; }
+  .lab-page-description { @apply mt-2 max-w-2xl text-sm leading-6 text-base-content/55; }
+  .lab-outline-action { @apply rounded border border-base-300 bg-base-200/45 px-4 py-2 text-sm text-base-content/60 transition-colors hover:border-base-content/50 hover:text-base-content; }
+  .lab-panel { @apply rounded-md border border-base-300/90 bg-base-200/75; }
+  .lab-input { @apply w-full rounded border border-base-300 bg-base-100/60 px-3 py-2 text-sm text-base-content outline-none placeholder:text-base-content/30 focus:border-secondary/70; }
+  .lab-field-label { @apply mb-1 block font-mono text-2xs uppercase tracking-[0.12em] text-base-content/45; }
+  .lab-section-kicker { @apply font-mono text-2xs uppercase tracking-[0.2em] text-base-content/50; }
+  .lab-muted-copy { @apply text-sm leading-6 text-base-content/55; }
+  .lab-status-note { @apply rounded-lg border border-base-300/80 bg-base-100/35 p-3 text-sm text-base-content/65; }
+  .lab-tab { @apply border-b-2 px-5 py-4 text-left transition-colors; }
+  .status-ready { @apply text-info; }
+  .status-warning { @apply text-warning; }
+  .status-invalid { @apply text-error; }
+  .research-accent { @apply border-primary/30 bg-primary/5; }
+
+  .instrument-shell {
+    background:
+      radial-gradient(circle at 84% 8%, rgba(139, 233, 253, 0.055), transparent 26rem),
+      radial-gradient(circle at 8% 62%, rgba(214, 162, 255, 0.035), transparent 30rem),
+      var(--epsilon-void);
   }
+
+  .instrument-panel {
+    border: 1px solid var(--epsilon-line);
+    border-radius: 6px;
+    background: rgba(16, 18, 23, 0.86);
+  }
+
+  .instrument-label {
+    font-family: var(--epsilon-font-mono);
+    font-size: 0.625rem;
+    line-height: 0.875rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(240, 239, 234, 0.44);
+  }
+
+  .instrument-rule { border-color: rgba(240, 239, 234, 0.13); }
+
+  .instrument-button {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--epsilon-chalk);
+    border-radius: 3px;
+    padding: 0.7rem 1rem;
+    background: var(--epsilon-chalk);
+    color: var(--epsilon-void);
+    font-size: 0.8125rem;
+    font-weight: 650;
+    transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+
+  .instrument-button:hover { background: transparent; color: var(--epsilon-chalk); transform: translateY(-1px); }
+
+  .instrument-button-secondary {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--epsilon-line);
+    border-radius: 3px;
+    padding: 0.7rem 1rem;
+    color: rgba(240, 239, 234, 0.68);
+    font-size: 0.8125rem;
+    transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+  }
+
+  .instrument-button-secondary:hover { border-color: rgba(240, 239, 234, 0.5); background: rgba(240, 239, 234, 0.035); color: var(--epsilon-chalk); }
 }
 
 @layer utilities {
@@ -42,14 +145,16 @@
   /* ─── Background Patterns ─── */
   .bg-grid-subtle {
     background-image:
-      linear-gradient(to right, rgba(100,255,218,0.03) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(100,255,218,0.03) 1px, transparent 1px);
-    background-size: 80px 80px;
+      linear-gradient(to right, rgba(240,239,234,0.022) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(240,239,234,0.022) 1px, transparent 1px);
+    background-size: 96px 96px;
   }
+
+  .text-balance { text-wrap: balance; }
 
   /* ─── Offset Shadow (Brittany Chiang style) ─── */
   .btn-offset-buy {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--epsilon-font-mono);
     font-size: 0.75rem;
     padding: 1.25rem 1.75rem;
     border-radius: 0.5rem;
@@ -63,7 +168,7 @@
     box-shadow: 4px 4px 0 0 #64FFDA;
   }
   .btn-offset-sell {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--epsilon-font-mono);
     font-size: 0.75rem;
     padding: 1.25rem 1.75rem;
     border-radius: 0.5rem;
@@ -77,7 +182,7 @@
     box-shadow: 4px 4px 0 0 #F0616D;
   }
   .btn-offset-primary {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--epsilon-font-mono);
     font-size: 0.75rem;
     padding: 1.25rem 1.75rem;
     border-radius: 0.5rem;

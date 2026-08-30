@@ -9,9 +9,9 @@ import styles from './AboutSection.module.css'
 const aboutContent = [
   { type: 'name', text: 'Dresden E. Goehner', strong: true },
   { type: 'text', text: 'Creator of EPSILON Stock Trading Simulator' },
-  { type: 'text', text: 'EPSILON embodies a central promise. A promise which, in reality, is a declaration of intent: to provide only the most valuable, the most promising and the most resilient trading education experience.' },
-  { type: 'text', text: 'EPSILON is a privacy-first, institutional-grade trading simulator built for the next generation of quants. Our platform combines real-time market data, advanced analytics, and comprehensive risk management tools to create an unparalleled educational experience.' },
-  { type: 'text', text: 'By focusing on companies and technologies transforming the digital landscape, EPSILON identifies solutions capable of addressing contemporary challenges and generating significant and sustainable returns.' },
+  { type: 'text', text: 'EPSILON is a quantitative decision lab for turning a market idea into an explicit, falsifiable experiment.' },
+  { type: 'text', text: 'The product keeps hypotheses, submitted configurations, computed evidence, provenance gaps, and retest state visible instead of presenting a simulation as proof.' },
+  { type: 'text', text: 'It is an educational research environment using simulated or explicitly identified evidence. It does not promise returns or provide financial advice.' },
 ]
 
 export default function AboutSection() {

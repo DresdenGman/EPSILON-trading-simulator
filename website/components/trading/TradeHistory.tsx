@@ -6,9 +6,10 @@ import { TradeRecord } from "@/lib/api";
 interface TradeHistoryProps {
   trades: TradeRecord[];
   loading?: boolean;
+  state?: "idle" | "loading" | "ready" | "empty" | "error";
 }
 
-export default function TradeHistory({ trades, loading }: TradeHistoryProps) {
+export default function TradeHistory({ trades, loading, state = trades.length > 0 ? "ready" : "empty" }: TradeHistoryProps) {
   if (loading) {
     return (
       <div className="surface-card p-6 space-y-3">
@@ -30,11 +31,14 @@ export default function TradeHistory({ trades, loading }: TradeHistoryProps) {
     <div className="surface-card overflow-hidden">
       <div className="px-4 py-3.5 border-b border-white/5">
         <h3 className="text-text-primary text-sm font-semibold">Trade History</h3>
+        <p className="text-2xs text-muted mt-1">Execution record underlying the account review.</p>
       </div>
-      {trades.length === 0 ? (
+      {state === "error" ? (
+        <div className="p-8 text-center text-warning text-sm">Trade history is unavailable. No execution record is shown.</div>
+      ) : trades.length === 0 ? (
         <div className="p-8 text-center text-muted text-sm">
           <div className="text-2xl mb-2">📋</div>
-          No trades yet. Execute your first trade to see history.
+          No confirmed trades yet. Execute a simulated trade to create the review record.
         </div>
       ) : (
         <div className="overflow-x-auto max-h-[360px] overflow-y-auto">
