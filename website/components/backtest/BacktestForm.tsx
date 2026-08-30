@@ -53,11 +53,24 @@ export default function BacktestForm() {
     restoredConfigurationRef.current = true;
     const selectedSymbols = normalizeStockCodes(transferredSymbols ?? "");
     if (experiment.test) {
+      const restoredConfiguration = {
+        strategy: experiment.test.strategy,
+        startDate: experiment.test.startDate,
+        endDate: experiment.test.endDate,
+        stockCodes: experiment.test.symbols,
+        initialCash: experiment.test.initialCash,
+      };
       setStrategy(experiment.test.strategy);
       setStartDate(experiment.test.startDate);
       setEndDate(experiment.test.endDate);
       setInitialCash(experiment.test.initialCash);
       setStockCodes((selectedSymbols.length > 0 ? selectedSymbols : experiment.test.symbols).join(","));
+      if (experiment.test.result) {
+        setResult(experiment.test.result);
+        setSuccessfulConfiguration(restoredConfiguration);
+        setLatestAttemptConfiguration(restoredConfiguration);
+        setLatestAttemptStatus("succeeded");
+      }
       setValidationError("");
     } else if (selectedSymbols.length > 0) {
       setStockCodes(selectedSymbols.join(","));
@@ -121,6 +134,7 @@ export default function BacktestForm() {
         maxDrawdown: data.performance.max_drawdown,
         tradeCount: data.trades.length,
         completedAt: new Date().toISOString(),
+        result: data,
         provenance: GUEST_MODE ? GUEST_BACKTEST_PROVENANCE : UNKNOWN_BACKTEST_PROVENANCE,
       });
       setLatestAttemptStatus("succeeded");
@@ -133,9 +147,9 @@ export default function BacktestForm() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,0.36fr)_minmax(0,1fr)]">
-      <section className="lab-panel p-5 lg:p-6" aria-label="Experiment setup">
+    <div className="min-w-0 space-y-6">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,0.36fr)_minmax(0,1fr)]">
+      <section className="lab-panel min-w-0 p-5 lg:p-6" aria-label="Experiment setup">
         <div className="mb-6 border-b border-base-300/70 pb-5">
           <p className="lab-section-kicker">01 / Define</p>
           <h3 className="mt-2 text-lg font-semibold text-base-content">Experiment setup</h3>
@@ -162,8 +176,9 @@ export default function BacktestForm() {
         </div>
         <div className="space-y-4">
           <div>
-            <label className="lab-field-label">Strategy</label>
+            <label htmlFor="backtest-strategy" className="lab-field-label">Strategy</label>
             <select
+              id="backtest-strategy"
               value={strategy}
               onChange={(e) => setStrategy(e.target.value)}
               className="lab-input"
@@ -173,10 +188,11 @@ export default function BacktestForm() {
               <option value="momentum">Momentum (2%)</option>
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
           <div>
-            <label className="lab-field-label">Start date</label>
+            <label htmlFor="backtest-start-date" className="lab-field-label">Start date</label>
             <input
+              id="backtest-start-date"
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
@@ -184,8 +200,9 @@ export default function BacktestForm() {
             />
           </div>
           <div>
-            <label className="lab-field-label">End date</label>
+            <label htmlFor="backtest-end-date" className="lab-field-label">End date</label>
             <input
+              id="backtest-end-date"
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
@@ -194,8 +211,9 @@ export default function BacktestForm() {
           </div>
           </div>
           <div>
-            <label className="lab-field-label">Universe (comma-separated stock codes)</label>
+            <label htmlFor="backtest-universe" className="lab-field-label">Universe (comma-separated stock codes)</label>
             <input
+              id="backtest-universe"
               type="text"
               value={stockCodes}
               onChange={(e) => setStockCodes(e.target.value)}
@@ -203,8 +221,9 @@ export default function BacktestForm() {
             />
           </div>
           <div>
-            <label className="lab-field-label">Initial cash</label>
+            <label htmlFor="backtest-initial-cash" className="lab-field-label">Initial cash</label>
             <input
+              id="backtest-initial-cash"
               type="number"
               value={initialCash}
               onChange={(e) => setInitialCash(Number(e.target.value))}
@@ -236,7 +255,7 @@ export default function BacktestForm() {
         {latestAttemptStatus === "succeeded" && <p role="status" aria-live="polite" className="sr-only">Backtest complete. Result evidence is available for review.</p>}
       </section>
 
-      <section className="lab-panel p-5 lg:p-6" aria-label="Experiment evidence">
+      <section className="lab-panel min-w-0 p-5 lg:p-6" aria-label="Experiment evidence">
         {!result && <div className="flex min-h-[360px] flex-col justify-between">
           <div>
             <p className="lab-section-kicker">02 / Run & inspect</p>
@@ -271,15 +290,15 @@ export default function BacktestForm() {
           )}
           {successfulConfiguration && (
             <section className="border-b border-base-300/70 pb-5" aria-label="Submitted backtest configuration">
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between">
                 <h4 className="font-semibold text-base-content">{configurationChanged || latestAttemptStatus === "running" || latestAttemptStatus === "failed" ? "Previous successful run" : "Submitted configuration"}</h4>
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
                   <span className="font-mono text-2xs uppercase tracking-[0.14em] text-primary/75">Inputs sent to the backtest service</span>
                   <button
                     type="button"
                     onClick={() => downloadBacktestResult(result, successfulConfiguration)}
                     disabled={latestAttemptStatus === "running"}
-                    className="text-xs font-medium text-primary transition-colors hover:text-primary/75 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="w-fit text-left text-xs font-medium text-primary transition-colors hover:text-primary/75 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Export result artifact (JSON)
                   </button>

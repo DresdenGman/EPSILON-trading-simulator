@@ -125,8 +125,9 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
 
       {/* Order type */}
       <div>
-        <label className="lab-field-label">Order type</label>
+        <label htmlFor="trade-order-type" className="lab-field-label">Order type</label>
         <select
+          id="trade-order-type"
           value={orderType}
           onChange={(e) => setOrderType(e.target.value)}
           className="lab-input"
@@ -140,8 +141,9 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
 
       {/* Shares */}
       <div>
-        <label className="lab-field-label">Shares</label>
+        <label htmlFor="trade-shares" className="lab-field-label">Shares</label>
         <input
+          id="trade-shares"
           type="number" min={1} value={shares}
           onChange={(e) => setShares(Math.max(1, parseInt(e.target.value) || 1))}
           className="lab-input font-mono"
@@ -151,10 +153,11 @@ export default function TradingPanel({ stock, onTradeExecuted }: TradingPanelPro
       {/* Limit / Trigger price */}
       {isConditionalOrder && (
         <div>
-          <label className="lab-field-label">
+          <label htmlFor="trade-trigger-price" className="lab-field-label">
             {targetLabel}
           </label>
           <input
+            id="trade-trigger-price"
             type="number" min="0.01" step="0.01" required
             value={requiresTrigger ? triggerPrice : limitPrice}
             onChange={(e) => {

@@ -63,7 +63,7 @@ EPSILON is not a trading recommendation engine. Its purpose is to make assumptio
 | `/dashboard` | Enter the research product: Market → Strategy Lab → Interrogate |
 | `/dashboard/backtest` | Test a claim and inspect its evidence boundary |
 | `/dashboard/ai` | Interrogate the current result and refine the question |
-| `/download` | Review source and desktop distribution status |
+| `/download` | Open the source, release record, and reproducibility runbook |
 
 Retired presentation and legacy URLs remain compatible without creating competing products: `/demo` redirects to `/dashboard/backtest`, `/simulator` redirects to `/dashboard`, and `/video` redirects to `/landing`.
 
@@ -144,7 +144,7 @@ Public understanding        Research product
                                 ↓
                               Retest
 
-Next.js 14 / React / TypeScript
+Next.js 15 / React / TypeScript
               ↓ REST
 FastAPI / Python research and simulation services
               ↓

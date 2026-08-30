@@ -134,6 +134,39 @@ describe("BacktestForm", () => {
     expect(screen.getByText(/Needs retest/)).toBeTruthy();
   });
 
+  it("restores the inspectable result artifact after a reload", async () => {
+    window.localStorage.setItem("epsilon.research-experiment.v1", JSON.stringify({
+      symbol: "AAPL",
+      hypothesis: "Momentum persists.",
+      falsification: "Reject if return reverses.",
+      updatedAt: "2026-08-10T19:00:00.000Z",
+      test: {
+        subjectSnapshot: "AAPL",
+        hypothesisSnapshot: "Momentum persists.",
+        falsificationSnapshot: "Reject if return reverses.",
+        method: "backtest",
+        strategy: "momentum",
+        symbols: ["AAPL"],
+        startDate: "2024-01-01",
+        endDate: "2024-06-30",
+        initialCash: 100000,
+        totalReturn: 1,
+        sharpe: 1,
+        maxDrawdown: -1,
+        tradeCount: 0,
+        completedAt: "2026-08-10T19:00:00.000Z",
+        result: successfulResult,
+        provenance: UNKNOWN_BACKTEST_PROVENANCE,
+      },
+    }));
+
+    renderBacktestForm();
+
+    expect(await screen.findByText("Submitted configuration")).toBeTruthy();
+    expect(screen.getByText("Profit Factor")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Export result artifact (JSON)" })).toBeTruthy();
+  });
+
   it("uses the active experiment subject for the first test universe", async () => {
     window.localStorage.setItem("epsilon.research-experiment.v1", JSON.stringify({
       symbol: "NVDA",

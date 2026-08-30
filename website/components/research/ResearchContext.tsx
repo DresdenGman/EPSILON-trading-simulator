@@ -2,6 +2,7 @@
 
 import React from "react";
 import { readWorkspaceItem, removeWorkspaceItem, writeWorkspaceItem } from "@/lib/browser-workspace-storage";
+import type { BacktestResult } from "@/lib/api";
 
 export type ResearchTestArtifact = {
   subjectSnapshot: string | null;
@@ -18,6 +19,7 @@ export type ResearchTestArtifact = {
   maxDrawdown: number;
   tradeCount: number;
   completedAt: string;
+  result: BacktestResult | null;
   provenance: {
     resultOrigin: "backtest-service-response" | "guest-simulation";
     dataMode: "unknown" | "controlled-synthetic";
@@ -33,7 +35,9 @@ export type ResearchTestArtifact = {
   };
 };
 
-export type ResearchTestInput = Omit<ResearchTestArtifact, "subjectSnapshot" | "hypothesisSnapshot" | "falsificationSnapshot">;
+export type ResearchTestInput = Omit<ResearchTestArtifact, "subjectSnapshot" | "hypothesisSnapshot" | "falsificationSnapshot" | "result"> & {
+  result?: BacktestResult | null;
+};
 export type ResearchTestState = "empty" | "current" | "stale";
 
 export const UNKNOWN_BACKTEST_PROVENANCE: ResearchTestArtifact["provenance"] = {
@@ -98,6 +102,41 @@ function normalizeHypothesis(value: string) {
   return value.trim().replace(/\s+/g, " ");
 }
 
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function isStoredBacktestResult(value: unknown): value is BacktestResult {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const candidate = value as Partial<BacktestResult>;
+  const performance = candidate.performance as Partial<BacktestResult["performance"]> | undefined;
+  if (
+    typeof candidate.strategy_name !== "string" ||
+    !performance ||
+    !isFiniteNumber(performance.total_return) ||
+    !isFiniteNumber(performance.cagr) ||
+    !isFiniteNumber(performance.sharpe) ||
+    !isFiniteNumber(performance.max_drawdown) ||
+    !isFiniteNumber(performance.win_rate) ||
+    !isFiniteNumber(performance.profit_factor) ||
+    !Array.isArray(candidate.trades) ||
+    !Array.isArray(candidate.equity_curve)
+  ) return false;
+
+  return candidate.trades.every((trade) => (
+    trade &&
+    typeof trade.date === "string" &&
+    typeof trade.stock_code === "string" &&
+    typeof trade.stock_name === "string" &&
+    typeof trade.trade_type === "string" &&
+    isFiniteNumber(trade.shares) &&
+    isFiniteNumber(trade.price) &&
+    isFiniteNumber(trade.total_amount)
+  )) && candidate.equity_curve.every((point) => (
+    point && typeof point.date === "string" && isFiniteNumber(point.equity)
+  ));
+}
+
 export function testMatchesExperiment(experiment: ResearchExperiment) {
   if (!experiment.test) return false;
   return (
@@ -112,23 +151,25 @@ function readStoredExperiment(): ResearchExperiment {
     const stored = readWorkspaceItem(STORAGE_KEY);
     if (!stored) return EMPTY_EXPERIMENT;
     const parsed = JSON.parse(stored) as Partial<ResearchExperiment>;
+    const storedTest = parsed.test as Partial<ResearchTestArtifact> | null | undefined;
     return {
       symbol: typeof parsed.symbol === "string" ? parsed.symbol : null,
       hypothesis: typeof parsed.hypothesis === "string" ? parsed.hypothesis : "",
       falsification: typeof parsed.falsification === "string" ? parsed.falsification : "",
-      test: parsed.test && typeof parsed.test === "object"
+      test: storedTest && typeof storedTest === "object"
         ? {
-            ...parsed.test as ResearchTestArtifact,
-            subjectSnapshot: typeof (parsed.test as Partial<ResearchTestArtifact>).subjectSnapshot === "string"
-              ? (parsed.test as ResearchTestArtifact).subjectSnapshot
+            ...storedTest as ResearchTestArtifact,
+            subjectSnapshot: typeof storedTest.subjectSnapshot === "string"
+              ? storedTest.subjectSnapshot
               : null,
-            hypothesisSnapshot: typeof (parsed.test as Partial<ResearchTestArtifact>).hypothesisSnapshot === "string"
-              ? (parsed.test as ResearchTestArtifact).hypothesisSnapshot
+            hypothesisSnapshot: typeof storedTest.hypothesisSnapshot === "string"
+              ? storedTest.hypothesisSnapshot
               : "",
-            falsificationSnapshot: typeof (parsed.test as Partial<ResearchTestArtifact>).falsificationSnapshot === "string"
-              ? (parsed.test as ResearchTestArtifact).falsificationSnapshot
+            falsificationSnapshot: typeof storedTest.falsificationSnapshot === "string"
+              ? storedTest.falsificationSnapshot
               : "",
-            provenance: { ...UNKNOWN_BACKTEST_PROVENANCE, ...(parsed.test as Partial<ResearchTestArtifact>).provenance },
+            result: isStoredBacktestResult(storedTest.result) ? storedTest.result : null,
+            provenance: { ...UNKNOWN_BACKTEST_PROVENANCE, ...storedTest.provenance },
           }
         : null,
       updatedAt: typeof parsed.updatedAt === "string" ? parsed.updatedAt : null,
@@ -171,6 +212,7 @@ export function ResearchProvider({ children }: { children: React.ReactNode }) {
         : artifact.symbols[0] ?? current.symbol;
       const test: ResearchTestArtifact = {
         ...artifact,
+        result: artifact.result ?? null,
         subjectSnapshot: symbol,
         hypothesisSnapshot: normalizeHypothesis(current.hypothesis),
         falsificationSnapshot: normalizeHypothesis(current.falsification),
