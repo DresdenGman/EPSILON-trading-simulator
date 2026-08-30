@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useResearchExperiment } from "@/components/research/ResearchContext";
+import { createLocalCritique } from "@/lib/local-critic";
 
 interface Message {
   role: "user" | "assistant";
@@ -60,20 +61,12 @@ export default function AIChatDialog() {
     try {
       if (isGuest) {
         await new Promise((resolve) => window.setTimeout(resolve, 280));
-        const evidenceState = activeTest
-          ? `The current guest artifact reports ${activeTest.totalReturn.toFixed(2)}% total return across ${activeTest.tradeCount} simulated trades.`
-          : "There is no current test artifact, so the claim cannot yet be evaluated against a result.";
-        const response = [
-          "Guest critic · local heuristic",
-          "",
-          `Question under review: ${question}`,
-          "",
-          evidenceState,
-          "",
-          "Challenge the conclusion by separating the claim, the assumptions built into the synthetic path, and the evidence that would reverse your decision. A stable next test changes one assumption only—such as execution friction, sample window, or universe—while preserving the falsification rule.",
-          "",
-          "This response is generated locally for the public guest experience. It is not live AI analysis, web research, market evidence, or financial advice.",
-        ].join("\n");
+        const response = createLocalCritique({
+          question,
+          hypothesis: experiment.hypothesis,
+          falsification: experiment.falsification,
+          test: activeTest,
+        });
         setMessages((prev) => [...prev, { role: "assistant", content: response, kind: "response" }]);
         return;
       }
@@ -177,8 +170,8 @@ export default function AIChatDialog() {
         <div className="mt-6 border-y instrument-rule py-4">
           {isGuest ? (
             <div aria-label="Guest critic capability">
-              <span className="instrument-label block">Local heuristic · no live AI/web</span>
-              <span className="mt-1 block text-xs leading-5 text-base-content/38">The public sandbox generates a fixed local critique and performs no web retrieval.</span>
+              <span className="instrument-label block">Evidence-aware local critic</span>
+              <span className="mt-1 block text-xs leading-5 text-base-content/38">The public instrument reads the attached perturbation results and generates a deterministic local examination. It performs no web retrieval.</span>
             </div>
           ) : (
             <label className="flex cursor-pointer items-start gap-3">
@@ -206,7 +199,7 @@ export default function AIChatDialog() {
       </span>
       <div className="flex items-center justify-between border-b instrument-rule px-5 py-4 lg:px-6">
         <div><p className="instrument-label">02 / Interrogate</p><h3 className="mt-1 text-sm font-semibold text-base-content">Research transcript</h3></div>
-        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-base-content/35">{isGuest ? "Local heuristic · no live AI/web" : searchEnabled ? "Web evidence on" : "Model assisted"}</span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-base-content/35">{isGuest ? "Evidence-aware local critic" : searchEnabled ? "Web evidence on" : "Model assisted"}</span>
       </div>
 
       <div className={`flex-1 overflow-y-auto p-5 lg:p-6 ${messages.length === 0 ? "flex" : "space-y-5"}`}>

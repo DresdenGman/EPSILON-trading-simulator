@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Check, Copy, Download, Share2 } from "lucide-react";
 import PerturbationField from "@/components/evidence/PerturbationField";
-import { describeStability, encodeEvidenceArtifact, type EvidenceArtifact } from "@/lib/evidence-artifact";
+import { describeStability, encodePortableEvidenceArtifact, type EvidenceArtifact } from "@/lib/evidence-artifact";
 
 function xmlEscape(value: string) {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&apos;");
@@ -30,11 +30,16 @@ export default function EvidencePlate({ artifact, actions = true, compact = fals
   const [copied, setCopied] = React.useState(false);
   const stability = describeStability(artifact);
   const [encoded, setEncoded] = React.useState("");
-  React.useEffect(() => { setEncoded(encodeEvidenceArtifact(artifact)); }, [artifact]);
+  React.useEffect(() => {
+    let active = true;
+    void encodePortableEvidenceArtifact(artifact).then((value) => { if (active) setEncoded(value); });
+    return () => { active = false; };
+  }, [artifact]);
   const evidencePath = `/evidence?artifact=${encoded}`;
   const forkPath = `/dashboard/backtest?artifact=${encoded}`;
 
   const copyShareLink = async () => {
+    if (!encoded) return;
     const url = `${window.location.origin}${evidencePath}`;
     await navigator.clipboard.writeText(url);
     setCopied(true);
@@ -42,6 +47,7 @@ export default function EvidencePlate({ artifact, actions = true, compact = fals
   };
 
   const share = async () => {
+    if (!encoded) return;
     const url = `${window.location.origin}${evidencePath}`;
     if (navigator.share) {
       await navigator.share({ title: "EPSILON Evidence Plate", text: artifact.claim || "Challenge this quantitative claim.", url });
@@ -103,10 +109,10 @@ export default function EvidencePlate({ artifact, actions = true, compact = fals
         </div>
         {actions && (
           <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={copyShareLink} className="instrument-button-secondary gap-2">{copied ? <Check size={14} /> : <Copy size={14} />}{copied ? "Copied" : "Copy link"}</button>
-            <button type="button" onClick={share} className="instrument-button-secondary gap-2"><Share2 size={14} />Share</button>
+            <button type="button" onClick={copyShareLink} disabled={!encoded} className="instrument-button-secondary gap-2 disabled:cursor-wait disabled:opacity-40">{copied ? <Check size={14} /> : <Copy size={14} />}{copied ? "Copied" : encoded ? "Copy link" : "Preparing link"}</button>
+            <button type="button" onClick={share} disabled={!encoded} className="instrument-button-secondary gap-2 disabled:cursor-wait disabled:opacity-40"><Share2 size={14} />Share</button>
             <button type="button" onClick={download} className="instrument-button-secondary gap-2"><Download size={14} />SVG</button>
-            <Link href={forkPath} className="instrument-button">Challenge / Fork →</Link>
+            {encoded ? <Link href={forkPath} className="instrument-button">Challenge / Fork →</Link> : <span className="instrument-button cursor-wait opacity-40">Challenge / Fork →</span>}
           </div>
         )}
       </footer>

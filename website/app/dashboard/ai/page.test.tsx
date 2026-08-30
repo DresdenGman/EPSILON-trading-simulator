@@ -13,8 +13,8 @@ describe("AIPage", () => {
   it("describes the guest critic honestly while preserving the server-backed boundary", () => {
     const { container } = render(React.createElement(ResearchProvider, null, React.createElement(AIPage)));
 
-    expect(screen.getByText(/local heuristic · no live ai\/web/i)).toBeTruthy();
-    expect(screen.getByText(/browser-local workspaces use a clearly labeled local heuristic/i)).toBeTruthy();
+    expect(screen.getByText(/evidence-aware local critic/i)).toBeTruthy();
+    expect(screen.getByText(/browser-local workspaces calculate a deterministic critique from the attached perturbation field/i)).toBeTruthy();
     expect(container.textContent).not.toMatch(/Ollama|never leaves your machine/i);
   });
 });

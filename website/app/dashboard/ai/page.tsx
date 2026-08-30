@@ -28,7 +28,7 @@ export default function AIPage() {
         </div>
         <div className="mt-5 flex flex-wrap gap-x-8 gap-y-3 border-t border-base-300/70 pt-4 font-mono text-2xs uppercase tracking-[0.16em] text-base-content/40">
           <span>Role <strong className="ml-2 font-medium text-base-content">Interrogate reasoning</strong></span>
-          <span>Workspace <strong className="ml-2 font-medium text-base-content">Local heuristic · no live AI/web</strong></span>
+          <span>Workspace <strong className="ml-2 font-medium text-base-content">Evidence-aware local critic</strong></span>
           <span>Use <strong className="ml-2 font-medium text-base-content">Challenge before trust</strong></span>
         </div>
       </div>
@@ -65,7 +65,7 @@ export default function AIPage() {
         </div>
         <div className="p-5">
           <p className="product-kicker">03 / Verify</p>
-          <p className="mt-2 text-sm leading-6 text-base-content/55">Browser-local workspaces use a clearly labeled local heuristic. A configured deployment may use EPSILON&apos;s server-side model integration. Treat either critique as research support, not financial advice.</p>
+          <p className="mt-2 text-sm leading-6 text-base-content/55">Browser-local workspaces calculate a deterministic critique from the attached perturbation field. A configured account may use EPSILON&apos;s server-side model integration. Treat either critique as research support, not financial advice.</p>
         </div>
       </section>
     </div>

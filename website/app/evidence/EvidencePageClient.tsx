@@ -4,12 +4,25 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import EpsilonMark from "@/components/brand/EpsilonMark";
 import EvidencePlate from "@/components/evidence/EvidencePlate";
-import { decodeEvidenceArtifact } from "@/lib/evidence-artifact";
+import React from "react";
+import { decodePortableEvidenceArtifact, type EvidenceArtifact } from "@/lib/evidence-artifact";
 
 export default function EvidencePageClient() {
   const searchParams = useSearchParams();
   const encoded = searchParams.get("artifact") ?? "";
-  const artifact = decodeEvidenceArtifact(encoded);
+  const [artifact, setArtifact] = React.useState<EvidenceArtifact | null>(null);
+  const [reading, setReading] = React.useState(Boolean(encoded));
+
+  React.useEffect(() => {
+    let active = true;
+    setReading(Boolean(encoded));
+    void decodePortableEvidenceArtifact(encoded).then((value) => {
+      if (!active) return;
+      setArtifact(value);
+      setReading(false);
+    });
+    return () => { active = false; };
+  }, [encoded]);
 
   return (
     <div className="instrument-shell min-h-screen text-base-content">
@@ -20,7 +33,9 @@ export default function EvidencePageClient() {
         </div>
       </header>
       <main className="mx-auto max-w-[92rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
-        {artifact ? (
+        {reading ? (
+          <section className="instrument-panel mx-auto max-w-3xl p-7 sm:p-10" role="status"><p className="instrument-label">Evidence plate / reading</p><h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em]">Restoring the portable research object…</h1></section>
+        ) : artifact ? (
           <>
             <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div><p className="instrument-label">Public research object</p><h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] sm:text-5xl">Inspect it. Challenge it. Fork it.</h1></div>
