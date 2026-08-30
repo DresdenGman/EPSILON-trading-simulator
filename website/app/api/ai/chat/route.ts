@@ -5,6 +5,8 @@ import { tavilySearch, formatSearchResults } from "@/lib/search/tavily";
 export const maxDuration = 60;
 const AI_CHAT_UPSTREAM_TIMEOUT_MS = 45_000;
 const AI_CHAT_MAX_OUTPUT_TOKENS = 1_024;
+const AI_CHAT_RATE_LIMIT = { requests: 12, windowMs: 60_000 } as const;
+const aiChatWindows = new Map<string, { count: number; resetAt: number }>();
 const AI_CHAT_REQUEST_BUDGET = {
   maxBodyBytes: 32 * 1024,
   maxMessages: 40,
@@ -40,7 +42,7 @@ type ExperimentContext = {
     completedAt: string;
     provenance: {
       resultOrigin: "backtest-service-response";
-      dataMode: "real-historical" | "delayed" | "simulated" | "user-supplied" | "unknown";
+      dataMode: "real-historical" | "delayed" | "simulated" | "controlled-synthetic" | "user-supplied" | "unknown";
       dataSource: string | null;
       dataProvider: string | null;
       samplingInterval: string | null;
@@ -129,7 +131,7 @@ async function parseChatRequest(request: Request): Promise<ChatRequest | Respons
   const rawExperiment = experiment as Partial<ExperimentContext> | undefined;
   const rawTest = rawExperiment?.test;
   const rawProvenance = rawTest?.provenance;
-  const allowedDataModes = new Set(["real-historical", "delayed", "simulated", "user-supplied", "unknown"]);
+  const allowedDataModes = new Set(["real-historical", "delayed", "simulated", "controlled-synthetic", "user-supplied", "unknown"]);
   const experimentContext: ExperimentContext | null = rawExperiment
     ? {
         subject: typeof rawExperiment.subject === "string" ? rawExperiment.subject.slice(0, 32) : null,
@@ -176,6 +178,21 @@ function sessionCookie(request: Request) {
     .find((cookie) => cookie.startsWith("epsilon_session="));
 }
 
+function consumeChatBudget(request: Request) {
+  const key = sessionCookie(request) ?? "anonymous";
+  const now = Date.now();
+  const existing = aiChatWindows.get(key);
+  if (!existing || existing.resetAt <= now) {
+    aiChatWindows.set(key, { count: 1, resetAt: now + AI_CHAT_RATE_LIMIT.windowMs });
+    return null;
+  }
+  if (existing.count >= AI_CHAT_RATE_LIMIT.requests) {
+    return Math.max(1, Math.ceil((existing.resetAt - now) / 1000));
+  }
+  existing.count += 1;
+  return null;
+}
+
 async function verifyEpsilonSession(request: Request) {
   const cookie = sessionCookie(request);
   if (!cookie) return "unauthenticated" as const;
@@ -199,6 +216,12 @@ export async function POST(req: Request) {
   }
   if (sessionStatus === "unavailable") {
     return jsonResponse("Authentication service unavailable", 503);
+  }
+  const retryAfter = consumeChatBudget(req);
+  if (retryAfter !== null) {
+    const response = jsonResponse("Too many research critic requests. Please wait and try again.", 429);
+    response.headers.set("Retry-After", String(retryAfter));
+    return response;
   }
 
   try {

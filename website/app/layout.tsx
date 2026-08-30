@@ -5,13 +5,13 @@ import { SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  applicationName: 'EPSILON Quantitative Decision Lab',
+  applicationName: 'EPSILON Quantitative Evidence Instrument',
   title: {
-    default: 'EPSILON | Quantitative Decision Laboratory',
+    default: 'EPSILON | Quantitative Evidence Instrument',
     template: '%s | EPSILON',
   },
   description:
-    'Build a market idea, test it, and try to break it. EPSILON is a quantitative decision lab for falsifiable hypotheses, transparent evidence, and disciplined retesting.',
+    'Do not trust one backtest line. EPSILON maps how a quantitative claim behaves when costs, timing, and universe assumptions are perturbed independently.',
   keywords: ['quantitative research', 'decision science', 'backtesting', 'market simulation', 'falsifiable hypothesis', 'research reproducibility', 'data provenance'],
   authors: [{ name: 'Dresden E. Goehner' }],
   creator: 'Dresden E. Goehner',
@@ -22,13 +22,13 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: SITE_URL,
     siteName: 'EPSILON',
-    title: 'EPSILON | Quantitative Decision Laboratory',
-    description: 'Build a market idea, test it, and try to break it through one transparent research cycle.',
+    title: 'EPSILON | Quantitative Evidence Instrument',
+    description: 'Do not trust the line. Test its neighborhood through transparent, falsifiable perturbation evidence.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'EPSILON | Quantitative Decision Laboratory',
-    description: 'Build a market idea, test it, and try to break it through one transparent research cycle.',
+    title: 'EPSILON | Quantitative Evidence Instrument',
+    description: 'Do not trust the line. Test its neighborhood through transparent, falsifiable perturbation evidence.',
   },
   robots: {
     index: true,
@@ -48,9 +48,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           position="bottom-right"
           toastOptions={{
             style: {
-              background: '#111620',
+              background: '#101217',
               border: '1px solid rgba(255,255,255,0.08)',
-              color: '#D8DEE9',
+              color: '#F0EFEA',
               fontSize: '13px',
             },
           }}

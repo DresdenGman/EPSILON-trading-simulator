@@ -176,12 +176,17 @@ export function useSplitTextAnimation() {
 
       if (splitType?.includes('words')) {
         const words = element.textContent?.split(' ') || []
-        element.innerHTML = words
-          .map(
-            (word, i) =>
-              `<span class="word" style="opacity: 0; transform: translateY(20px);">${word}</span>`
-          )
-          .join(' ')
+        const fragment = document.createDocumentFragment()
+        words.forEach((word, index) => {
+          if (index > 0) fragment.append(document.createTextNode(' '))
+          const span = document.createElement('span')
+          span.className = 'word'
+          span.style.opacity = '0'
+          span.style.transform = 'translateY(20px)'
+          span.textContent = word
+          fragment.append(span)
+        })
+        element.replaceChildren(fragment)
 
         const wordElements = element.querySelectorAll('.word')
         wordElements.forEach((wordEl, i) => {

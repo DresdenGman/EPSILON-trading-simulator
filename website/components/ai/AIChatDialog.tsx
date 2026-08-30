@@ -156,29 +156,29 @@ export default function AIChatDialog() {
   };
 
   return (
-    <div className="grid border border-[#1E293B] bg-[#0F172A] lg:grid-cols-[minmax(0,0.3fr)_minmax(0,1fr)]">
-      <aside className="border-b border-white/10 p-5 lg:border-b-0 lg:border-r lg:p-6" aria-label="Research frame">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#00D09C]">01 / Frame</p>
-        <h2 className="mt-2 text-lg font-semibold text-white">Set the question.</h2>
-        <p className="mt-2 text-sm leading-6 text-[#94A3B8]">This workspace interrogates the active experiment. It only receives the research context and {isGuest ? "browser-local research artifact" : "completed service-response artifact"} shown below.</p>
-        <div className="mt-5 border-y border-white/10 py-4 text-xs leading-5 text-[#94A3B8]">
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#E2E8F0]">Active experiment</p>
-          <p className="mt-2">Subject: <span className="text-white">{experiment.symbol ?? "Not selected"}</span></p>
-          <p className="mt-1">Hypothesis: <span className="text-white">{experiment.hypothesis || "Not recorded"}</span></p>
-          <p className="mt-1">Test artifact: <span className={testState === "stale" ? "text-[#FDE68A]" : "text-white"}>{activeTest ? `${activeTest.strategy.replaceAll("_", " ")} · ${activeTest.tradeCount} trades` : testState === "stale" ? "Previous result · Needs retest" : "No completed backtest"}</span></p>
-          {activeTest && <p className="mt-1">Data provenance: <span className="text-[#FDE68A]">{activeTest.provenance.dataSource ?? "Source not provided"}</span></p>}
+    <div className="instrument-panel grid overflow-hidden lg:grid-cols-[minmax(0,0.3fr)_minmax(0,1fr)]">
+      <aside className="border-b instrument-rule p-5 lg:border-b-0 lg:border-r lg:p-6" aria-label="Research frame">
+        <p className="instrument-label">01 / Frame</p>
+        <h2 className="mt-2 text-lg font-semibold text-base-content">Set the question.</h2>
+        <p className="mt-2 text-sm leading-6 text-base-content/50">This workspace interrogates the active experiment. It only receives the research context and {isGuest ? "browser-local research artifact" : "completed service-response artifact"} shown below.</p>
+        <div className="mt-5 border-y instrument-rule py-4 text-xs leading-5 text-base-content/50">
+          <p className="instrument-label">Active experiment</p>
+          <p className="mt-2">Subject: <span className="text-base-content">{experiment.symbol ?? "Not selected"}</span></p>
+          <p className="mt-1">Hypothesis: <span className="text-base-content">{experiment.hypothesis || "Not recorded"}</span></p>
+          <p className="mt-1">Test artifact: <span className={testState === "stale" ? "text-warning" : "text-base-content"}>{activeTest ? `${activeTest.strategy.replaceAll("_", " ")} · ${activeTest.tradeCount} trades` : testState === "stale" ? "Previous result · Needs retest" : "No completed backtest"}</span></p>
+          {activeTest && <p className="mt-1">Data provenance: <span className="text-warning">{activeTest.provenance.dataSource ?? "Source not provided"}</span></p>}
         </div>
         <Link
           href={experiment.symbol ? `/dashboard/backtest?symbols=${encodeURIComponent(experiment.symbol)}` : "/dashboard/backtest"}
-          className="mt-4 inline-flex w-full items-center justify-center border border-[#00D09C]/40 px-3 py-2 text-xs font-semibold text-[#00D09C] transition-colors hover:bg-[#00D09C]/10"
+          className="instrument-button-secondary mt-4 w-full"
         >
           {testState === "stale" ? "Refine & retest →" : "Open Strategy Lab →"}
         </Link>
-        <div className="mt-6 border-y border-white/10 py-4">
+        <div className="mt-6 border-y instrument-rule py-4">
           {isGuest ? (
             <div aria-label="Guest critic capability">
-              <span className="block font-mono text-[10px] uppercase tracking-[0.16em] text-[#E2E8F0]">Local heuristic · no live AI/web</span>
-              <span className="mt-1 block text-xs leading-5 text-[#64748B]">The public sandbox generates a fixed local critique and performs no web retrieval.</span>
+              <span className="instrument-label block">Local heuristic · no live AI/web</span>
+              <span className="mt-1 block text-xs leading-5 text-base-content/38">The public sandbox generates a fixed local critique and performs no web retrieval.</span>
             </div>
           ) : (
             <label className="flex cursor-pointer items-start gap-3">
@@ -187,13 +187,13 @@ export default function AIChatDialog() {
                 checked={searchEnabled}
                 onChange={(event) => setSearchEnabled(event.target.checked)}
                 disabled={loading}
-                className="mt-0.5 h-4 w-4 accent-[#00D09C] disabled:opacity-50"
+                className="mt-0.5 h-4 w-4 accent-[#8BE9FD] disabled:opacity-50"
               />
-              <span><span className="block font-mono text-[10px] uppercase tracking-[0.16em] text-[#E2E8F0]">Web evidence {searchEnabled ? "on" : "off"}</span><span className="mt-1 block text-xs leading-5 text-[#64748B]">When enabled, the service may retrieve web results for your latest question.</span></span>
+              <span><span className="instrument-label block">Web evidence {searchEnabled ? "on" : "off"}</span><span className="mt-1 block text-xs leading-5 text-base-content/38">When enabled, the service may retrieve web results for your latest question.</span></span>
             </label>
           )}
         </div>
-        <div className="mt-6 space-y-3 text-sm leading-6 text-[#94A3B8]">
+        <div className="mt-6 space-y-3 text-sm leading-6 text-base-content/48">
           <p>What assumption is carrying this conclusion?</p>
           <p>What evidence would falsify it?</p>
           <p>Which interpretation is most fragile?</p>
@@ -204,49 +204,49 @@ export default function AIChatDialog() {
       <span className="sr-only" role="status" aria-live="polite">
         {loading ? "Research critic running." : messages.length > 0 ? messages[messages.length - 1].kind === "error" ? "Research critic failed." : "Research critic complete." : ""}
       </span>
-      <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 lg:px-6">
-        <div><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#00D09C]">02 / Interrogate</p><h3 className="mt-1 text-sm font-semibold text-white">Research transcript</h3></div>
-        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#64748B]">{isGuest ? "Local heuristic · no live AI/web" : searchEnabled ? "Web evidence on" : "Model assisted"}</span>
+      <div className="flex items-center justify-between border-b instrument-rule px-5 py-4 lg:px-6">
+        <div><p className="instrument-label">02 / Interrogate</p><h3 className="mt-1 text-sm font-semibold text-base-content">Research transcript</h3></div>
+        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-base-content/35">{isGuest ? "Local heuristic · no live AI/web" : searchEnabled ? "Web evidence on" : "Model assisted"}</span>
       </div>
 
       <div className={`flex-1 overflow-y-auto p-5 lg:p-6 ${messages.length === 0 ? "flex" : "space-y-5"}`}>
         {messages.length === 0 && (
           <div className="my-auto w-full">
             <div className="max-w-2xl">
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#00D09C]">Ready / Begin with doubt</p>
-              <h4 className="mt-3 max-w-xl text-xl font-semibold tracking-tight text-white sm:text-2xl">Do not ask for a prediction. Ask what could make the model wrong.</h4>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-[#94A3B8]">{activeTest ? "The active backtest artifact is attached. Choose a line of inquiry or write your own question to expose assumptions, sample risks, and evidence gaps." : testState === "stale" ? "The previous result no longer matches the current subject or hypothesis. You can frame the critique now, but retest before treating the result as current evidence." : "Record a hypothesis or complete a backtest to attach stronger evidence. You can still begin by defining what would falsify the claim."}</p>
+              <p className="instrument-label">Ready / Begin with doubt</p>
+              <h4 className="mt-3 max-w-xl text-xl font-semibold tracking-tight text-base-content sm:text-2xl">Do not ask for a prediction. Ask what could make the model wrong.</h4>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-base-content/50">{activeTest ? "The active backtest artifact is attached. Choose a line of inquiry or write your own question to expose assumptions, sample risks, and evidence gaps." : testState === "stale" ? "The previous result no longer matches the current subject or hypothesis. You can frame the critique now, but retest before treating the result as current evidence." : "Record a hypothesis or complete a backtest to attach stronger evidence. You can still begin by defining what would falsify the claim."}</p>
             </div>
-            <div className="mt-7 grid gap-px overflow-hidden border border-white/10 bg-white/10 sm:grid-cols-3" aria-label="Suggested research questions">
+            <div className="mt-7 grid gap-px overflow-hidden border border-base-300 bg-base-300 sm:grid-cols-3" aria-label="Suggested research questions">
               {promptStarters.map((starter, index) => (
                 <button
                   key={starter.label}
                   type="button"
                   onClick={() => setInput(starter.prompt)}
-                  className="group bg-[#0B1628] p-4 text-left transition-colors hover:bg-[#111F34] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#00D09C]"
+                  className="group bg-base-100 p-4 text-left transition-colors hover:bg-base-200"
                 >
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#00D09C]">0{index + 1}</span>
-                  <span className="mt-3 block text-sm font-semibold text-white group-hover:text-[#A7F3D0]">{starter.label}</span>
-                  <span className="mt-2 block text-xs leading-5 text-[#64748B]">{starter.detail}</span>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-secondary">0{index + 1}</span>
+                  <span className="mt-3 block text-sm font-semibold text-base-content group-hover:text-secondary">{starter.label}</span>
+                  <span className="mt-2 block text-xs leading-5 text-base-content/38">{starter.detail}</span>
                 </button>
               ))}
             </div>
-            <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.14em] text-[#475569]">Select a prompt to edit it below · nothing is sent automatically</p>
+            <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.14em] text-base-content/28">Select a prompt to edit it below · nothing is sent automatically</p>
           </div>
         )}
         {messages.map((msg, i) => (
           <div
             key={i}
-            className="border-b border-white/5 pb-5 last:border-b-0"
+            className="border-b instrument-rule pb-5 last:border-b-0"
           >
             <div
               className={`max-w-3xl text-sm ${
                 msg.role === "user"
-                  ? "text-[#E2E8F0]"
-                  : "text-white"
+                  ? "text-base-content/75"
+                  : "text-base-content"
               }`}
             >
-              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[#00D09C]">{msg.role === "user" ? "You / hypothesis" : "EPSILON / examination"}</p>
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-secondary">{msg.role === "user" ? "You / hypothesis" : "EPSILON / examination"}</p>
               {msg.kind === "error" && (
                 <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[#FCA5A5]">Critic unavailable / no conclusion generated</p>
               )}
@@ -255,7 +255,7 @@ export default function AIChatDialog() {
           </div>
         ))}
         {loading && (
-          <div className="border-l border-[#00D09C] pl-4">
+        <div className="border-l border-secondary pl-4">
             <div className="text-sm">
               <div className="flex items-center gap-1.5">
                 <div className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse-soft" />
@@ -268,8 +268,8 @@ export default function AIChatDialog() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="border-t border-white/10 p-5 lg:p-6">
-        <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-[#64748B]">Continue / Add the next question</p>
+      <div className="border-t instrument-rule p-5 lg:p-6">
+        <p className="instrument-label mb-3">Continue / Add the next question</p>
         <div className="flex gap-2">
           <input
             type="text"
@@ -283,13 +283,13 @@ export default function AIChatDialog() {
                 : "Research session unavailable..."
             }
             disabled={loading}
-            className="flex-1 border border-[#334155] bg-[#1E293B] px-3 py-3 text-sm text-white outline-none transition-colors placeholder:text-[#64748B] focus:border-[#00D09C] disabled:opacity-40"
+            className="flex-1 border border-base-300 bg-base-100 px-3 py-3 text-sm text-base-content outline-none transition-colors placeholder:text-base-content/28 focus:border-secondary disabled:opacity-40"
           />
           {loading ? (
             <button
               onClick={handleStop}
               aria-label="Stop response"
-              className="bg-[#F0616D] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#FB7185]"
+              className="bg-error px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-error/80"
             >
               Stop
             </button>
@@ -298,7 +298,7 @@ export default function AIChatDialog() {
               onClick={handleSend}
               aria-label="Send research question"
               disabled={!input.trim()}
-              className="bg-[#00D09C] px-4 py-3 text-sm font-semibold text-black transition-colors hover:bg-[#37E8B8] disabled:opacity-40"
+              className="instrument-button min-w-20 disabled:opacity-40"
             >
               Send
             </button>

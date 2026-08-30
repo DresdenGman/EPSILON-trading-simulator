@@ -6,6 +6,9 @@ export interface BacktestExportConfiguration {
   endDate: string;
   stockCodes: string[];
   initialCash: number;
+  feeRate?: number;
+  minimumFee?: number;
+  slippagePerShare?: number;
 }
 
 export function createBacktestExport(result: BacktestResult, configuration: BacktestExportConfiguration) {
@@ -23,10 +26,12 @@ export function createBacktestExport(result: BacktestResult, configuration: Back
         asOf: null,
       },
       executionAssumptions: {
-        feeRate: null,
-        minimumFee: null,
-        slippagePerShare: null,
-        fillModel: null,
+        feeRate: configuration.feeRate ?? null,
+        minimumFee: configuration.minimumFee ?? null,
+        slippagePerShare: configuration.slippagePerShare ?? null,
+        fillModel: configuration.feeRate !== undefined || configuration.minimumFee !== undefined || configuration.slippagePerShare !== undefined
+          ? "Controlled synthetic execution model"
+          : null,
         benchmark: null,
       },
     },

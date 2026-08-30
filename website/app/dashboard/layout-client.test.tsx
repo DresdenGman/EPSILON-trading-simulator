@@ -52,10 +52,10 @@ describe("DashboardClientLayout", () => {
 
     expect(screen.getByText("Restoring workspace…")).toBeTruthy();
     expect(screen.queryByText("Protected workspace")).toBeNull();
-    expect(screen.getByRole("link", { name: "Market" })).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Strategy Lab" })).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Interrogate" })).toBeTruthy();
-    expect(screen.queryByRole("link", { name: /download|simulator|research/i })).toBeNull();
+    expect(screen.getAllByRole("link", { name: /Observe/ }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: /Perturb/ }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: /Challenge/ }).length).toBeGreaterThan(0);
+    expect(screen.queryByRole("link", { name: /download|simulator/i })).toBeNull();
   });
 
   it("keeps the public workspace available without an account session", () => {
@@ -122,7 +122,7 @@ describe("DashboardClientLayout", () => {
 
     renderLayout();
 
-    await waitFor(() => expect(screen.getByRole("link", { name: "Strategy Lab" }).getAttribute("href"))
-      .toBe("/dashboard/backtest?symbols=NVDA"));
+    await waitFor(() => expect(screen.getAllByRole("link", { name: /Perturb/ })
+      .some((link) => link.getAttribute("href") === "/dashboard/backtest?symbols=NVDA")).toBe(true));
   });
 });

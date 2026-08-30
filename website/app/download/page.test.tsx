@@ -10,7 +10,7 @@ describe("DownloadPage", () => {
     const { container } = render(React.createElement(DownloadPage));
 
     expect(screen.getByText(/EPSILON has one public product/i)).toBeTruthy();
-    expect(screen.getAllByRole("link", { name: /Open Decision Lab/i })[0].getAttribute("href")).toBe("/dashboard");
+    expect(screen.getAllByRole("link", { name: /Open EPSILON/i })[0].getAttribute("href")).toBe("/dashboard");
     expect(screen.getByRole("link", { name: /View release record/i }).getAttribute("href")).toContain("/v2.0.0");
     expect(screen.queryByText(/python mock\.py/i)).toBeNull();
     expect(container.querySelectorAll('a[href="#"]')).toHaveLength(0);

@@ -3,6 +3,7 @@
 import React from "react";
 import { readWorkspaceItem, removeWorkspaceItem, writeWorkspaceItem } from "@/lib/browser-workspace-storage";
 import type { BacktestResult } from "@/lib/api";
+import { isEvidenceArtifact, type EvidenceArtifact } from "@/lib/evidence-artifact";
 
 export type ResearchTestArtifact = {
   subjectSnapshot: string | null;
@@ -20,6 +21,7 @@ export type ResearchTestArtifact = {
   tradeCount: number;
   completedAt: string;
   result: BacktestResult | null;
+  perturbationEvidence?: EvidenceArtifact | null;
   provenance: {
     resultOrigin: "backtest-service-response" | "guest-simulation";
     dataMode: "unknown" | "controlled-synthetic";
@@ -65,6 +67,20 @@ export const GUEST_BACKTEST_PROVENANCE: ResearchTestArtifact["provenance"] = {
   minimumFee: null,
   slippagePerShare: null,
   fillModel: "Browser-local windowed execution model",
+  benchmark: null,
+};
+
+export const SERVICE_BACKTEST_PROVENANCE: ResearchTestArtifact["provenance"] = {
+  resultOrigin: "backtest-service-response",
+  dataMode: "controlled-synthetic",
+  dataSource: "Window-aware controlled synthetic path",
+  dataProvider: "EPSILON backtest service",
+  samplingInterval: "Synthetic daily observations",
+  dataAsOf: null,
+  feeRate: null,
+  minimumFee: null,
+  slippagePerShare: null,
+  fillModel: "Service-side controlled synthetic execution model",
   benchmark: null,
 };
 
@@ -169,6 +185,9 @@ function readStoredExperiment(): ResearchExperiment {
               ? storedTest.falsificationSnapshot
               : "",
             result: isStoredBacktestResult(storedTest.result) ? storedTest.result : null,
+            perturbationEvidence: isEvidenceArtifact(storedTest.perturbationEvidence)
+              ? storedTest.perturbationEvidence
+              : null,
             provenance: { ...UNKNOWN_BACKTEST_PROVENANCE, ...storedTest.provenance },
           }
         : null,

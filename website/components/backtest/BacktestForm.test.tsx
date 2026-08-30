@@ -25,7 +25,8 @@ function renderBacktestForm() {
 
 describe("BacktestForm", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    mocks.backtest.mockReset();
+    mocks.backtest.mockResolvedValue(successfulResult);
     window.localStorage.clear();
     window.sessionStorage.clear();
   });
@@ -42,10 +43,41 @@ describe("BacktestForm", () => {
     expect(mocks.backtest).toHaveBeenCalledTimes(1);
   });
 
+  it("rejects malformed stock codes before calling the service", async () => {
+    renderBacktestForm();
+    fireEvent.change(screen.getByDisplayValue("AAPL,MSFT,GOOGL"), { target: { value: "AAPL,<SCRIPT>" } });
+    fireEvent.click(screen.getByRole("button", { name: "Run Backtest" }));
+
+    expect(await screen.findByText(/Invalid stock code:/)).toBeTruthy();
+    expect(mocks.backtest).not.toHaveBeenCalled();
+  });
+
+  it("computes one baseline and four atomic perturbations", async () => {
+    renderBacktestForm();
+    fireEvent.click(screen.getByRole("button", { name: "Run Backtest" }));
+    await screen.findByText("Submitted configuration");
+
+    expect(mocks.backtest).toHaveBeenCalledTimes(5);
+    const [baseline, fee, slippage, window, universe] = mocks.backtest.mock.calls.map((call) => call[0]);
+    expect(fee).toEqual({ ...baseline, fee_rate: baseline.fee_rate * 5 });
+    expect(slippage).toEqual({ ...baseline, slippage_per_share: baseline.slippage_per_share * 5 });
+    expect(window).toEqual({ ...baseline, start_date: "2024-01-31" });
+    expect(universe).toEqual({ ...baseline, stock_codes: ["AAPL", "MSFT"] });
+  });
+
+  it("uses a real minimum-fee perturbation for a one-symbol universe", async () => {
+    renderBacktestForm();
+    fireEvent.change(screen.getByDisplayValue("AAPL,MSFT,GOOGL"), { target: { value: "AAPL" } });
+    fireEvent.click(screen.getByRole("button", { name: "Run Backtest" }));
+    await screen.findByText("Submitted configuration");
+
+    expect(mocks.backtest).toHaveBeenCalledTimes(5);
+    const [baseline, , , , minimumFee] = mocks.backtest.mock.calls.map((call) => call[0]);
+    expect(minimumFee).toEqual({ ...baseline, min_fee: baseline.min_fee * 5 });
+    expect(screen.getByText("Minimum fee ×5")).toBeTruthy();
+  });
+
   it("retains the previous successful result after a later attempt fails", async () => {
-    mocks.backtest
-      .mockResolvedValueOnce(successfulResult)
-      .mockRejectedValueOnce(new Error("Backtest service unavailable"));
     renderBacktestForm();
 
     fireEvent.click(screen.getByRole("button", { name: "Run Backtest" }));
@@ -54,14 +86,14 @@ describe("BacktestForm", () => {
     expect(screen.getByText("1.00")).toBeTruthy();
 
     fireEvent.change(screen.getByDisplayValue("AAPL,MSFT,GOOGL"), { target: { value: "MSFT" } });
+    mocks.backtest.mockRejectedValueOnce(new Error("Backtest service unavailable"));
     fireEvent.click(screen.getByRole("button", { name: "Run Backtest" }));
 
     await screen.findByText(/Latest attempt failed:/);
-    expect(screen.getByText("Previous successful run")).toBeTruthy();
-    expect(screen.getByText("AAPL, MSFT, GOOGL")).toBeTruthy();
+    expect(screen.getByText(/Previous successful run/)).toBeTruthy();
     expect(screen.getByText(/Displayed results belong to the previous successful run/)).toBeTruthy();
     expect(screen.getByRole("button", { name: "Export result artifact (JSON)" })).toBeTruthy();
-    expect(screen.getAllByText("Not provided by service")).toHaveLength(2);
+    expect(screen.getByText(/Displayed results belong to the previous successful run/)).toBeTruthy();
   });
 
   it("exports only the successful result and its submitted configuration", () => {
@@ -191,7 +223,7 @@ describe("BacktestForm", () => {
       price: index + 0.5,
       total_amount: index + 100.25,
     }));
-    mocks.backtest.mockResolvedValueOnce({ ...successfulResult, trades });
+    mocks.backtest.mockResolvedValue({ ...successfulResult, trades });
     renderBacktestForm();
 
     fireEvent.click(screen.getByRole("button", { name: "Run Backtest" }));

@@ -2,17 +2,17 @@
 
 import React from "react";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
-import ThemeToggle from "@/components/layout/ThemeToggle";
 import { ResearchProvider, useResearchExperiment } from "@/components/research/ResearchContext";
 import ActiveExperimentBar from "@/components/research/ActiveExperimentBar";
+import EpsilonMark from "@/components/brand/EpsilonMark";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { RotateCcw } from "lucide-react";
 
 const productNav = [
-  { label: "Market", detail: "Observe", href: "/dashboard" },
-  { label: "Strategy Lab", detail: "Test", href: "/dashboard/backtest" },
-  { label: "Interrogate", detail: "Challenge", href: "/dashboard/ai" },
+  { label: "Observe", detail: "Market", href: "/dashboard" },
+  { label: "Perturb", detail: "Evidence field", href: "/dashboard/backtest" },
+  { label: "Challenge", detail: "Research critic", href: "/dashboard/ai" },
 ];
 
 function DashboardInner({ children }: { children: React.ReactNode }) {
@@ -34,15 +34,13 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
   ) : children;
 
   return (
-    <div className="min-h-screen bg-base-100">
-      <div className="navbar sticky top-0 z-50 border-b border-base-300 bg-base-100/90 px-5 backdrop-blur-xl">
+    <div className="instrument-shell min-h-screen bg-base-100">
+      <div className="navbar sticky top-0 z-50 min-h-16 border-b border-base-300 bg-base-100/88 px-4 backdrop-blur-xl sm:px-6">
         <div className="navbar-start">
-          <Link href="/" className="group flex items-center gap-3">
-            <span className="text-lg font-bold tracking-tight">
-              <span className="text-base-content">EPS</span>
-              <span className="text-primary">ILON</span>
-            </span>
-            <span className="hidden border-l border-base-300 pl-3 font-mono text-2xs uppercase tracking-[0.18em] text-base-content/40 transition-colors group-hover:text-primary/75 lg:block">Decision Lab</span>
+          <Link href="/landing" className="group flex items-center gap-3">
+            <EpsilonMark className="h-6 w-10 text-base-content" />
+            <span className="text-sm font-semibold tracking-[0.15em] text-base-content">EPSILON</span>
+            <span className="hidden border-l border-base-300 pl-3 font-mono text-2xs uppercase tracking-[0.18em] text-base-content/35 lg:block">Evidence instrument</span>
           </Link>
         </div>
         <div className="navbar-center hidden md:flex items-center gap-1">
@@ -56,7 +54,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
                 key={item.href}
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={`group rounded-md border px-3 py-2 text-left transition-colors ${active ? "border-primary/20 bg-primary/[0.06] text-primary" : "border-transparent text-base-content/60 hover:border-base-300 hover:bg-base-200/60 hover:text-base-content"}`}
+                className={`group border-b px-3 py-2 text-left transition-colors ${active ? "border-base-content text-base-content" : "border-transparent text-base-content/48 hover:border-base-content/30 hover:text-base-content"}`}
               >
                 <span className="block text-xs font-semibold leading-none">{item.label}</span>
                 <span className="mt-1 hidden text-2xs font-mono uppercase tracking-[0.12em] text-base-content/40 lg:block">{item.detail}</span>
@@ -64,8 +62,8 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
             );
           })}
         </div>
-        <div className="navbar-end gap-1">
-          <ThemeToggle />
+        <div className="navbar-end gap-2">
+          <Link href="/impact" className="hidden px-2 py-2 font-mono text-2xs uppercase tracking-[0.13em] text-base-content/38 transition-colors hover:text-base-content lg:block">Public ledger</Link>
           {loading ? (
             <span className="skeleton h-8 w-24 rounded-btn" aria-label="Checking session" />
           ) : isGuest ? (
@@ -74,7 +72,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
               onClick={resetGuestWorkspace}
               aria-label="Reset local workspace data"
               title="Reset the workspace data stored on this device"
-              className="inline-flex h-8 items-center gap-2 rounded-md border border-base-300 px-2.5 font-mono text-2xs uppercase tracking-[0.11em] text-base-content/45 transition-colors hover:border-primary/30 hover:text-primary"
+              className="inline-flex h-8 items-center gap-2 rounded border border-base-300 px-2.5 font-mono text-2xs uppercase tracking-[0.11em] text-base-content/45 transition-colors hover:border-base-content/45 hover:text-base-content"
             >
               <span className="hidden sm:inline">Local</span>
               <span className="hidden h-3 w-px bg-base-300 sm:block" />
@@ -87,22 +85,21 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <div className="border-b border-base-300/70 bg-base-200/30 px-5 py-2 md:hidden">
+      <div className="border-b border-base-300/70 bg-base-200/30 px-4 py-2 md:hidden">
         <nav aria-label="Product navigation" className="flex gap-2 overflow-x-auto pb-1">
           {productNav.map((item) => {
             const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`));
             const href = item.href === "/dashboard/backtest" && experiment.symbol
               ? `/dashboard/backtest?symbols=${encodeURIComponent(experiment.symbol)}`
               : item.href;
-            return <Link key={item.href} href={href} aria-current={active ? "page" : undefined} className={`whitespace-nowrap rounded-md border px-3 py-1.5 text-xs font-medium ${active ? "border-primary/20 bg-primary/[0.06] text-primary" : "border-transparent text-base-content/60"}`}>{item.label}</Link>;
+            return <Link key={item.href} href={href} aria-current={active ? "page" : undefined} className={`whitespace-nowrap border-b px-3 py-1.5 text-xs font-medium ${active ? "border-base-content text-base-content" : "border-transparent text-base-content/50"}`}>{item.label}</Link>;
           })}
         </nav>
       </div>
 
       {!loading && isAuthenticated && pathname.startsWith("/dashboard/backtest") && <ActiveExperimentBar />}
 
-      <main className="relative mx-auto max-w-7xl px-4 py-5 sm:px-5 sm:py-6">
-        <div className="fixed inset-0 opacity-[0.02] pointer-events-none bg-grid-subtle" />
+      <main className="relative mx-auto max-w-[92rem] px-4 py-5 sm:px-6 sm:py-7 lg:px-8">
         <div key={guestSessionRevision} className="relative z-10">{protectedContent}</div>
       </main>
     </div>
