@@ -1,6 +1,7 @@
 import { runBacktest, stripLedger, type BacktestConfig, type Bar, type RunConfig, type Strategy } from "../../../../lib/backtest";
 import { describeRule, evidenceDigest, EPSILON_SOFTWARE_REVISION, evaluateEvidence, type FalsificationRule } from "../../../../lib/evidence-contract";
 import { checkRateLimit } from "../../../../lib/rate-limit";
+import { consumeProviderBudget } from "../../../../lib/provider-budget";
 
 export const runtime = "edge";
 
@@ -102,6 +103,9 @@ export async function POST(request: Request) {
     ];
     const fetchFrom = isoShift(input.start, -45);
     const fetchTo = shiftedEnd;
+    if (!(await consumeProviderBudget(universe.length))) {
+      return response({ error: "The shared historical-data budget is busy. Try again after the next minute, or use the deterministic mode." }, 429, { "Retry-After": "60" });
+    }
     const loaded = await Promise.all(universe.map(async (symbol) => [symbol, await loadSymbol(symbol, fetchFrom, fetchTo, apiKey)] as const));
     const series = Object.fromEntries(loaded);
     const computed = runs.map((run) => runBacktest(run, series));
