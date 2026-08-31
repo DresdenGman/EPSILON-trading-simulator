@@ -1,0 +1,51 @@
+name: Methodological challenge
+description: Challenge one assumption, evidence boundary, decision rule, or interpretation.
+title: "[CHALLENGE]: "
+labels: ["methodology", "external-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        EPSILON is improved by specific objections, not endorsements. Substantive challenges receive a public disposition.
+  - type: input
+    id: claim
+    attributes:
+      label: Claim or behavior challenged
+      description: Quote or link the exact result, rule, interface behavior, or document.
+    validations:
+      required: true
+  - type: textarea
+    id: assumption
+    attributes:
+      label: Assumption or evidence gap
+      description: Identify the specific assumption, missing provenance, interpretation risk, or product weakness.
+    validations:
+      required: true
+  - type: textarea
+    id: importance
+    attributes:
+      label: Why it matters
+      description: Explain how this issue could change the conclusion or make it easier to misread.
+    validations:
+      required: true
+  - type: textarea
+    id: test
+    attributes:
+      label: Evidence or experiment that could resolve it
+      description: Describe a falsifying observation, comparison, or test when possible.
+    validations:
+      required: true
+  - type: textarea
+    id: change_view
+    attributes:
+      label: What outcome would change your view?
+      description: State the condition under which you would withdraw or revise this objection.
+    validations:
+      required: true
+  - type: checkboxes
+    id: disclosure
+    attributes:
+      label: Public record
+      options:
+        - label: I understand this challenge and its disposition will remain publicly linkable unless I request removal of personal information.
+          required: true

@@ -61,7 +61,7 @@ Features:
 
 The original version was a Python/Tkinter desktop app. Rewrote everything as a web app to make it accessible from any device.
 
-Live demo: https://epsilon-livid.vercel.app
+Live demo: https://epsilonfield.space
 Source: https://github.com/DresdenGman/EPSILON-trading-simulator
 
 Would love feedback on the UX and what features would make this genuinely useful for learning trading.
@@ -81,7 +81,7 @@ Started as a Tkinter desktop app (7646 lines in mock.py!), migrated to Next.js +
 - Prisma + PostgreSQL instead of SQLite (proper auth, relations)
 - DeepSeek API for AI instead of local Ollama (no user install needed)
 
-Live: https://epsilon-livid.vercel.app | Source in comments.
+Live: https://epsilonfield.space | Source in comments.
 
 ### r/nextjs
 **Title:** Production Next.js 14 app — trading simulator with daisyUI, Framer Motion, and FastAPI backend
@@ -98,7 +98,7 @@ Cool UI features I'm proud of:
 - Offset shadow buttons (lift on hover for satisfying click)
 - Staggered entrance animations for dashboard widgets
 
-Would love feedback: https://epsilon-livid.vercel.app
+Would love feedback: https://epsilonfield.space
 
 ---
 
@@ -113,7 +113,7 @@ Would love feedback: https://epsilon-livid.vercel.app
 • 4 order types, portfolio tracking
 • Backtesting engine, spectral analysis
 
-Live → epsilon-livid.vercel.app
+Live → epsilonfield.space
 Source → github.com/DresdenGman/EPSILON-trading-simulator
 
 #nextjs #trading #fintech #opensource
@@ -128,7 +128,7 @@ After: Next.js + FastAPI (works everywhere, zero install)
 
 The entire trading engine runs in the browser now.
 
-Live demo: epsilon-livid.vercel.app
+Live demo: epsilonfield.space
 
 #webdev #python #react
 ```
@@ -165,7 +165,7 @@ Key features:
 ✅ Professional charts and analytics
 ✅ MIT licensed — 100% open source
 
-Try it free: https://epsilon-livid.vercel.app
+Try it free: https://epsilonfield.space
 GitHub: https://github.com/DresdenGman/EPSILON-trading-simulator
 
 I'd love to connect with anyone interested in fintech, developer tools, or trading education!
@@ -184,7 +184,7 @@ I'd love to connect with anyone interested in fintech, developer tools, or tradi
 ### Hacker News Show HN
 1. Go to https://news.ycombinator.com/submit
 2. Title: start with "Show HN:"
-3. URL: https://epsilon-livid.vercel.app
+3. URL: https://epsilonfield.space
 4. Text: paste the body above
 5. Post on weekday mornings (9-11am EST) for best visibility
 

@@ -97,10 +97,10 @@ Public copy may state that EPSILON:
 
 Every public claim should be demonstrable through one of these links:
 
-- Product: https://epsilon-livid.vercel.app/landing
-- Workspace: https://epsilon-livid.vercel.app/dashboard
-- Strategy Lab: https://epsilon-livid.vercel.app/dashboard/backtest
-- Interrogate: https://epsilon-livid.vercel.app/dashboard/ai
+- Product: https://epsilonfield.space
+- Workspace: https://epsilonfield.space/lab
+- Strategy Lab: https://epsilonfield.space/lab
+- Interrogate: https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8
 - Source: https://github.com/DresdenGman/EPSILON-trading-simulator
 - v2.0 release: https://github.com/DresdenGman/EPSILON-trading-simulator/releases/tag/v2.0.0
 - Product film: https://github.com/DresdenGman/EPSILON-trading-simulator/releases/download/v2.0.0/epsilon-decision-lab-30s.mp4
@@ -115,7 +115,7 @@ Every public claim should be demonstrable through one of these links:
 >
 > It is open source, and the guest workspace is available without an account. I would value criticism of the research workflow—especially the assumption you would challenge first.
 >
-> Product: https://epsilon-livid.vercel.app/landing
+> Product: https://epsilonfield.space
 > Source: https://github.com/DresdenGman/EPSILON-trading-simulator
 
 ### Short Chinese post
@@ -126,7 +126,7 @@ Every public claim should be demonstrable through one of these links:
 >
 > 项目已经开源，访客无需注册即可体验。我最希望得到的不是一句“做得不错”，而是：**你会首先质疑这个研究流程中的哪一个假设？**
 >
-> 产品：https://epsilon-livid.vercel.app/landing
+> 产品：https://epsilonfield.space
 > 源码：https://github.com/DresdenGman/EPSILON-trading-simulator
 
 ## 5. Technical community version
@@ -143,7 +143,7 @@ Every public claim should be demonstrable through one of these links:
 >
 > I would especially value methodological criticism: where does this workflow still make it too easy to over-interpret a result?
 >
-> Live product: https://epsilon-livid.vercel.app/landing
+> Live product: https://epsilonfield.space
 > Source: https://github.com/DresdenGman/EPSILON-trading-simulator
 
 ### Five-post technical thread
@@ -162,7 +162,7 @@ Guest mode uses controlled browser-local simulation. That demonstrates the workf
 
 **5/5**
 EPSILON v2.0 is open source. I am looking for methodological objections, not applause: what assumption would you challenge first?
-https://epsilon-livid.vercel.app/landing
+https://epsilonfield.space
 https://github.com/DresdenGman/EPSILON-trading-simulator
 
 ## 6. Founder and investor version
@@ -221,7 +221,7 @@ This framing makes EPSILON one piece of a repeatable intellectual pattern across
 >
 > Would you be willing to spend five minutes on the guest workflow and tell me the first assumption you would challenge? I am looking for a concrete objection, not a compliment.
 >
-> https://epsilon-livid.vercel.app/landing
+> https://epsilonfield.space
 
 ### Chinese tester invitation
 
@@ -229,7 +229,7 @@ This framing makes EPSILON one piece of a repeatable intellectual pattern across
 >
 > 如果你愿意花五分钟体验访客流程，我只想请你回答一个问题：**你最先会质疑哪一个假设？** 我更需要具体反对意见，而不是一句表扬。
 >
-> https://epsilon-livid.vercel.app/landing
+> https://epsilonfield.space
 
 ### Follow-up after feedback
 

@@ -1,0 +1,63 @@
+name: Independent reproduction report
+description: Record an external attempt to reproduce a fixed EPSILON release or experiment.
+title: "[REPRODUCTION]: "
+labels: ["reproduction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A mismatch, partial result, or inability to complete the procedure is valuable evidence. Do not include secrets or personal data.
+  - type: input
+    id: revision
+    attributes:
+      label: Release, tag, or commit SHA
+      description: Identify the exact source state you tested.
+      placeholder: v2.0.0 or a full commit SHA
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, Python/Node versions, browser if relevant, and hardware only when it affects the result.
+    validations:
+      required: true
+  - type: textarea
+    id: procedure
+    attributes:
+      label: Procedure followed
+      description: Link the protocol or list the exact commands and steps.
+    validations:
+      required: true
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: Outcome
+      options:
+        - Matched the documented result
+        - Did not match the documented result
+        - Could not complete the procedure
+        - Partially reproduced
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and artifact identifiers
+      description: Include logs, output hashes, exported receipt names, or public links. Remove credentials and personal information.
+    validations:
+      required: true
+  - type: textarea
+    id: interpretation
+    attributes:
+      label: What should change, if anything?
+      description: State the first undocumented dependency, nondeterminism, provenance gap, or interpretation risk you found.
+    validations:
+      required: true
+  - type: checkboxes
+    id: independence
+    attributes:
+      label: Independence statement
+      options:
+        - label: I am not the project author and I am reporting what I observed, including unfavorable or inconclusive results.
+          required: true

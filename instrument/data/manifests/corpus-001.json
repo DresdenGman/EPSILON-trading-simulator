@@ -1,0 +1,18 @@
+{
+  "dataset_id": "epsilon-corpus-001",
+  "name": "EPSILON Open Historical Corpus 001",
+  "source": "Pending rights-audited public corpus",
+  "license": "UNAPPROVED",
+  "license_url": "",
+  "provenance": "No public dataset is approved until upstream provenance and redistribution rights are independently verified.",
+  "coverage_start": null,
+  "coverage_end": null,
+  "universe_definition": "Not yet defined",
+  "adjustment_policy": "Not yet defined",
+  "limitations": [
+    "This manifest is a gate, not a data release.",
+    "The production engine must reject this corpus while approved_for_public_use is false."
+  ],
+  "sha256": null,
+  "approved_for_public_use": false
+}

@@ -1,19 +1,19 @@
 # EPSILON — Quantitative Decision Lab
 
 <p align="center">
-  <a href="https://epsilon-livid.vercel.app/landing">
+  <a href="https://epsilonfield.space">
     <img src="website/public/social/epsilon-social-preview-v1.jpg" alt="EPSILON — Quantitative Decision Lab" width="100%">
   </a>
 </p>
 
 <p align="center">
-  <a href="https://epsilon-livid.vercel.app/dashboard"><strong>Open Decision Lab</strong></a>
+  <a href="https://epsilonfield.space/lab"><strong>Open Decision Lab</strong></a>
   &nbsp;·&nbsp;
   <a href="https://github.com/DresdenGman/EPSILON-trading-simulator/releases/download/v2.0.0/epsilon-decision-lab-30s.mp4"><strong>Watch the 30-second film</strong></a>
   &nbsp;·&nbsp;
   <a href="https://github.com/DresdenGman/EPSILON-trading-simulator/releases/tag/v2.0.0"><strong>Explore v2.0</strong></a>
   &nbsp;·&nbsp;
-  <a href="https://epsilon-livid.vercel.app/impact"><strong>Public impact ledger</strong></a>
+  <a href="https://epsilonfield.space/impact"><strong>Public impact ledger</strong></a>
 </p>
 
 > Build a market idea. Test it. Then try to break it.
@@ -39,12 +39,12 @@ EPSILON is not a trading recommendation engine. Its purpose is to make assumptio
 <table>
   <tr>
     <td width="50%">
-      <a href="https://epsilon-livid.vercel.app/landing">
+      <a href="https://epsilonfield.space">
         <img src="docs/screenshots/landing.png" alt="EPSILON public landing page">
       </a>
     </td>
     <td width="50%">
-      <a href="https://epsilon-livid.vercel.app/dashboard/backtest">
+      <a href="https://epsilonfield.space/lab">
         <img src="docs/screenshots/strategy-lab.png" alt="EPSILON Strategy Lab">
       </a>
     </td>
@@ -59,13 +59,11 @@ EPSILON is not a trading recommendation engine. Its purpose is to make assumptio
 
 | Surface | Purpose |
 |---|---|
-| `/landing` | Understand what EPSILON is and why it exists |
-| `/dashboard` | Enter the research product: Market → Strategy Lab → Interrogate |
-| `/dashboard/backtest` | Test a claim and inspect its evidence boundary |
-| `/dashboard/ai` | Interrogate the current result and refine the question |
-| `/download` | Open the source, release record, and reproducibility runbook |
-
-Retired presentation and legacy URLs remain compatible without creating competing products: `/demo` redirects to `/dashboard/backtest`, `/simulator` redirects to `/dashboard`, and `/video` redirects to `/landing`.
+| [`/`](https://epsilonfield.space) | Understand the perturbation method and enter the instrument |
+| [`/lab`](https://epsilonfield.space/lab) | Define a claim and rejection rule, run six nearby experiments, and export evidence |
+| [`/impact`](https://epsilonfield.space/impact) | Separate anonymous reach, use, external challenge, and feedback-led change |
+| [`/status`](https://epsilonfield.space/status) | Inspect data mode, provenance boundaries, method, and limitations |
+| [GitHub repository](https://github.com/DresdenGman/EPSILON-trading-simulator) | Reproduce, challenge, cite, or contribute to the research software |
 
 ## Public launch assets
 
@@ -81,21 +79,21 @@ The launch kit deliberately separates claims that are demonstrated by the produc
 
 ## The research loop
 
-### 1. Market — Observe
+### 1. Define
 
-Choose a market subject, inspect the available state, and frame a hypothesis. A hypothesis is stored as a claim, never as an observation.
+Write a falsifiable market claim and a machine-readable rejection rule before computing the answer.
 
-### 2. Strategy Lab — Test
+### 2. Perturb
 
-Run a backtest or inspect the structure of a series. Submitted inputs, computed outputs, and evidence provenance are shown separately. Missing provider, sampling, fee, slippage, fill, or benchmark information remains `unknown`/`null`; the interface does not invent it.
+Run one baseline, four atomic stresses, and one joint stress. Each run keeps the changed input visible.
 
-### 3. Interrogate — Challenge
+### 3. Challenge
 
-Ask a research critic to identify assumptions, regime risk, parameter sensitivity, alternative explanations, and missing evidence. Public guest sessions use a clearly labeled local heuristic with no live AI or web retrieval; configured deployments may use the server-side model integration. Neither mode is an advisor, and neither receives stale test artifacts.
+Inspect exact metrics, provenance, limitations, and the nearest failure. Export the complete evidence artifact with cryptographic fingerprints.
 
-### 4. Refine and retest
+### 4. Revise and reproduce
 
-Changing the subject or hypothesis makes the previous successful result stale without deleting it. A failed retest cannot overwrite the last successful artifact. Only a successful retest matching the current experiment becomes current evidence.
+Start a revised experiment or submit an external methodological challenge. Reproduction mismatches, rejected claims, and inconclusive results remain valid evidence.
 
 ## Integrated sensitivity validation
 
@@ -132,49 +130,31 @@ EPSILON does not convert a hypothesis into a fact, a metric into a forecast, or 
 ## Architecture
 
 ```text
-Public understanding        Research product
+epsilonfield.space
+      │
+      ├── /lab       claim → rejection rule → six runs → evidence artifact
+      ├── /impact    anonymous use → external challenge → public disposition
+      └── /status    data mode → provenance → limitations
 
-/landing ─────────────────→ /dashboard
-                                │
-                           Market / hypothesis
-                                ↓
-                         Strategy Lab / test
-                                ↓
-                         Interrogate / refine
-                                ↓
-                              Retest
-
-Next.js 15 / React / TypeScript
-              ↓ REST
-FastAPI / Python research and simulation services
-              ↓
-SQLite or PostgreSQL for account-dependent workflows
+React / TypeScript / Vinext on OpenAI Sites
+      ├── deterministic browser-local demonstration
+      ├── optional server-side historical-data adapter
+      └── privacy-minimizing first-party impact ledger
 ```
 
-The original Python desktop application remains in this repository as part of EPSILON's development history and source distribution. It is not a second public web product.
+The original Python desktop application and earlier Next.js/FastAPI surfaces remain in this repository as development history and source distribution. They are not competing public products.
 
 ## Run locally
 
-Prerequisites: Python 3.11+, Node.js 18+, and npm.
-
-Start the API:
+Prerequisites: Node.js 22.13+ and npm.
 
 ```bash
-python3 -m venv backend/venv
-backend/venv/bin/pip install -r backend/requirements.txt
-backend/venv/bin/uvicorn backend.main:app --host 127.0.0.1 --port 8000
+cd instrument
+npm install
+npm run dev
 ```
 
-Start the website in another terminal:
-
-```bash
-cd website
-NEXT_PUBLIC_API_URL=http://127.0.0.1:8000 npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000). The root route converges on `/landing`.
-
-Guest research surfaces can run without PostgreSQL. Authentication and saved-account workflows remain database-dependent.
+The public evidence workflow requires no account. Historical-data mode requires the documented server-side provider configuration; otherwise the instrument remains explicitly labeled as a deterministic demonstration.
 
 ## Verification
 

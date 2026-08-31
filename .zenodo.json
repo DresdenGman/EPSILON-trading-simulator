@@ -1,0 +1,27 @@
+{
+  "title": "EPSILON: A Quantitative Evidence Instrument",
+  "description": "Open-source quantitative research software for testing whether market conclusions survive nearby changes in execution costs, timing, sampling windows, and universe assumptions. EPSILON preserves the claim, rejection rule, provenance, perturbations, outcomes, and limitations as one inspectable evidence artifact.",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Goehner, Dresden E."
+    }
+  ],
+  "keywords": [
+    "quantitative research",
+    "sensitivity analysis",
+    "reproducible research",
+    "falsifiability",
+    "backtesting",
+    "decision science"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://epsilonfield.space",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

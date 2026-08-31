@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use EPSILON in research, teaching, or a reproducibility exercise, please cite this software."
+title: "EPSILON: A Quantitative Evidence Instrument"
+type: software
+version: 2.0.0
+date-released: 2026-08-13
+authors:
+  - family-names: "Goehner"
+    given-names: "Dresden E."
+abstract: >-
+  EPSILON is an open-source quantitative evidence instrument for testing whether
+  a market conclusion survives nearby changes in execution costs, timing,
+  sampling windows, and universe assumptions. It keeps claims, rejection rules,
+  provenance, perturbations, outcomes, and limitations attached to each result.
+repository-code: "https://github.com/DresdenGman/EPSILON-trading-simulator"
+url: "https://epsilonfield.space"
+license: MIT
+keywords:
+  - quantitative research
+  - sensitivity analysis
+  - reproducible research
+  - falsifiability
+  - backtesting
+  - decision science
