@@ -18,11 +18,12 @@ EPSILON keeps those boundaries attached to the work. A changed question makes pr
 
 Only use these statements without additional qualification:
 
-- The public web product has one research path: **Market → Strategy Lab → Interrogate**.
-- A user can record a hypothesis and falsification condition before a backtest.
-- A submitted result retains its configuration, metrics, trade ledger, and known/unknown provenance boundaries.
-- Changing the subject, hypothesis, or rejection rule marks the prior artifact stale instead of silently replacing it.
-- Guest sessions run browser-local simulations and clearly label them as controlled synthetic evidence.
+- The public product has one research path: **Define → Perturb → Challenge → Revise**.
+- A user records a claim and machine-readable rejection rule before computation.
+- One baseline, four atomic perturbations, and one joint stress remain visible together.
+- Every completed run can be exported as a JSON evidence artifact with configuration, provenance, exact outcomes, limitations, and SHA-256 fingerprints.
+- The public instrument requires no login and clearly distinguishes deterministic demonstration evidence from configured historical evaluation.
+- Anonymous impact measurement records workflow events only; it does not store names, emails, claims, portfolio information, or IP-derived affiliation.
 - EPSILON is open source and its original desktop history remains in this repository.
 
 ## Claims that require evidence first
@@ -37,8 +38,8 @@ Do not use these until real user evidence exists:
 
 ## Links
 
-- Product: `https://epsilon-livid.vercel.app/landing`
-- Working product: `https://epsilon-livid.vercel.app/dashboard`
+- Product: `https://epsilonfield.space`
+- Working product: `https://epsilonfield.space/lab`
 - Repository: `https://github.com/DresdenGman/EPSILON-trading-simulator`
 - Social preview asset: `website/public/social/epsilon-social-preview-v1.jpg`
 - 30-second product video: `docs/media/epsilon-demo-30s/epsilon-decision-lab-30s.mp4`
@@ -52,8 +53,8 @@ Before publishing, upload the preview asset through **Repository Settings → So
 
 1. Upload the GitHub social preview image.
 2. Pin this repository on the author profile.
-3. Confirm the landing page and dashboard links open in an incognito browser.
-4. Record a baseline: GitHub stars, unique visitors, sign-ups (if any), qualitative feedback, and the number of people who complete one research loop.
+3. Confirm the root, laboratory, impact, and disclosure links open in an incognito browser.
+4. Preserve the source-backed baseline in `docs/metrics/` before distribution.
 
 ### Days 1–3 — earn feedback before announcing a launch
 
@@ -61,7 +62,7 @@ Share one short build note with people who can give concrete feedback: quantitat
 
 Ask one question only:
 
-> Where does the research loop become unclear, incomplete, or too easy to misread?
+> Which assumption is still too easy for the instrument to hide?
 
 Do not ask for stars, upvotes, or shares. Ask for a five-minute use and an honest reply.
 
@@ -71,7 +72,7 @@ Publish a concise post explaining the narrow problem:
 
 > A backtest can produce a number while hiding the conditions under which that number stops meaning what you think it means.
 
-Link to the live workspace and repository. Include one short screen recording of the flow from hypothesis to stale evidence after a question changes.
+Link to the live instrument and repository. Include one short screen recording from pre-specified rejection rule to exported evidence artifact.
 
 ### Days 6–7 — select the launch channel
 
@@ -119,11 +120,12 @@ Use feedback to decide whether the next step is a community post, a Show HN subm
 Do not submit a major public launch until all are true:
 
 - The public homepage has one primary call to action: open the workspace.
-- The three product surfaces can be used without a required account.
+- The public laboratory can be used and its evidence exported without an account.
 - The latest production deployment has passed the test suite and production build.
 - The launch post links to a real working product, not a prototype route.
 - A new visitor can explain in one sentence what EPSILON does and what it does **not** claim.
 - At least five people outside the build process have given honest feedback or tried the product.
+- At least two outsiders completed an evidence field and one substantive external challenge remains publicly linkable.
 
 ## Official platform references
 

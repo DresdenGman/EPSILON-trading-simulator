@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: EPSILON Falsification Challenge
+    url: https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8
+    about: Discuss broader assumptions, evidence gaps, and interpretation risks.
+  - name: Run the public evidence instrument
+    url: https://epsilonfield.space/lab
+    about: Generate and export a machine-readable evidence artifact before reporting a challenge.

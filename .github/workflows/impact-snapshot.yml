@@ -1,0 +1,41 @@
+name: Public impact snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 06 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect source-backed metrics
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          mkdir -p docs/metrics
+          gh api "repos/${REPOSITORY}/traffic/views" > /tmp/views.json
+          gh api "repos/${REPOSITORY}/traffic/clones" > /tmp/clones.json
+          gh api "repos/${REPOSITORY}" > /tmp/repository.json
+          curl --fail --silent --show-error "https://epsilonfield.space/api/impact/summary" > /tmp/site.json
+          jq -cn \
+            --arg captured_at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --slurpfile views /tmp/views.json \
+            --slurpfile clones /tmp/clones.json \
+            --slurpfile repository /tmp/repository.json \
+            --slurpfile site /tmp/site.json \
+            '{captured_at:$captured_at, repository:{stars:$repository[0].stargazers_count,forks:$repository[0].forks_count,views_14d:$views[0].count,unique_visitors_14d:$views[0].uniques,clones_14d:$clones[0].count,unique_cloners_14d:$clones[0].uniques},site:$site[0]}' > docs/metrics/latest.json
+          jq -c . docs/metrics/latest.json >> docs/metrics/history.ndjson
+      - name: Preserve changed snapshot
+        run: |
+          if git diff --quiet -- docs/metrics; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/metrics
+          git commit -m "chore(metrics): snapshot public impact"
+          git push
