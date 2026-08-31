@@ -5,6 +5,7 @@ import { useEffect } from "react";
 export type ImpactEvent = "site_visit" | "lab_opened" | "evidence_completed" | "evidence_exported" | "summary_copied" | "challenge_opened" | "reproduce_opened";
 
 const SESSION_KEY = "epsilon_impact_session_v1";
+const SOURCE_KEY = "epsilon_impact_source_v1";
 
 function sessionId() {
   const existing = window.sessionStorage.getItem(SESSION_KEY);
@@ -15,14 +16,25 @@ function sessionId() {
 }
 
 function sourceLabel() {
+  const existing = window.sessionStorage.getItem(SOURCE_KEY);
+  if (existing) return existing;
   const query = new URLSearchParams(window.location.search);
   const campaignSource = query.get("utm_source")?.slice(0, 48);
-  if (campaignSource) return campaignSource;
-  if (!document.referrer) return "direct";
+  if (campaignSource) {
+    window.sessionStorage.setItem(SOURCE_KEY, campaignSource);
+    return campaignSource;
+  }
+  if (!document.referrer) {
+    window.sessionStorage.setItem(SOURCE_KEY, "direct");
+    return "direct";
+  }
   try {
     const hostname = new URL(document.referrer).hostname;
-    return hostname === window.location.hostname ? "internal" : hostname.slice(0, 80);
+    const source = hostname === window.location.hostname ? "internal" : hostname.slice(0, 80);
+    window.sessionStorage.setItem(SOURCE_KEY, source);
+    return source;
   } catch {
+    window.sessionStorage.setItem(SOURCE_KEY, "unknown");
     return "unknown";
   }
 }
