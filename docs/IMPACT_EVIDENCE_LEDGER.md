@@ -40,7 +40,7 @@ No primary impact record has been verified yet. The first real record must be ad
 
 | Date | Record | Status | Identifier |
 |---|---|---|---|
-| 2026-08-31 | Software Heritage Save Code Now request | Accepted; archival task pending | Request `2459169` |
+| 2026-08-31 | Software Heritage archival snapshot | Successfully archived with a complete visit | Request `2459169`; snapshot `swh:1:snp:ee045df2843943938c9de7bd6ea22d567dcbaadc` |
 | — | Zenodo software release | Not yet connected | DOI pending a meaningful release and account authorization |
 | — | OSF preregistration | Not yet created | DOI pending a frozen historical protocol and account authorization |
 
