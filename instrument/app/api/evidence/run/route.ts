@@ -1,7 +1,10 @@
 import { runBacktest, stripLedger, type BacktestConfig, type Bar, type RunConfig, type Strategy } from "../../../../lib/backtest";
-import { describeRule, evidenceDigest, EPSILON_SOFTWARE_REVISION, evaluateEvidence, type FalsificationRule } from "../../../../lib/evidence-contract";
+import { createEvidenceArtifact, describeRule, evidenceDigest, EVIDENCE_LIMITATIONS, EPSILON_SOFTWARE_REVISION, evaluateEvidence, type FalsificationRule } from "../../../../lib/evidence-contract";
 import { checkRateLimit } from "../../../../lib/rate-limit";
 import { consumeProviderBudget } from "../../../../lib/provider-budget";
+import { missingProviderSymbols } from "../../../../lib/provider-cache";
+import { readBoundedJson, RequestBodyError } from "../../../../lib/http";
+import { recordVerifiedHistoricalRun } from "../../../../lib/impact";
 
 export const runtime = "edge";
 
@@ -33,8 +36,6 @@ function pruneCache() {
 
 async function loadSymbol(symbol: string, from: string, to: string, apiKey: string) {
   const cacheKey = `${symbol}:${from}:${to}`;
-  const cached = marketCache.get(cacheKey);
-  if (cached && cached.expiresAt > Date.now()) return cached.bars;
   const url = new URL(`https://api.massive.com/v2/aggs/ticker/${encodeURIComponent(symbol)}/range/1/day/${from}/${to}`);
   url.searchParams.set("adjusted", "true");
   url.searchParams.set("sort", "asc");
@@ -53,6 +54,11 @@ async function loadSymbol(symbol: string, from: string, to: string, apiKey: stri
   return bars;
 }
 
+function cachedSymbol(symbol: string, from: string, to: string) {
+  const cached = marketCache.get(`${symbol}:${from}:${to}`);
+  return cached && cached.expiresAt > Date.now() ? cached.bars : null;
+}
+
 function validRule(value: unknown): value is FalsificationRule {
   if (!value || typeof value !== "object") return false;
   const rule = value as Record<string, unknown>;
@@ -64,13 +70,15 @@ export async function POST(request: Request) {
   const apiKey = process.env.MASSIVE_API_KEY;
   if (!apiKey) return response({ error: "Historical data is not configured." }, 503);
   if (!request.headers.get("content-type")?.toLowerCase().includes("application/json")) return response({ error: "Content-Type must be application/json." }, 415);
-  if (Number(request.headers.get("content-length") ?? 0) > 20_000) return response({ error: "Request body is too large." }, 413);
   const limit = checkRateLimit(request, "evidence-run", 6);
   if (limit.limited) return response({ error: "Historical evidence limit reached. Try again shortly." }, 429, { "Retry-After": String(limit.retryAfter) });
 
   let input: Partial<BacktestConfig> & { claim?: string; falsificationRule?: unknown };
-  try { input = await request.json() as typeof input; }
-  catch { return response({ error: "Request body must be valid JSON." }, 400); }
+  try { input = await readBoundedJson<typeof input>(request, 20_000); }
+  catch (error) {
+    if (error instanceof RequestBodyError) return response({ error: error.message }, error.status);
+    return response({ error: "Request body must be valid JSON." }, 400);
+  }
 
   const claim = String(input.claim ?? "").trim();
   const universe = Array.isArray(input.universe) ? [...new Set(input.universe.map((item) => String(item).trim().toUpperCase()))] : [];
@@ -103,10 +111,12 @@ export async function POST(request: Request) {
     ];
     const fetchFrom = isoShift(input.start, -45);
     const fetchTo = shiftedEnd;
-    if (!(await consumeProviderBudget(universe.length))) {
+    const cached = new Map(universe.map((symbol) => [symbol, cachedSymbol(symbol, fetchFrom, fetchTo)]));
+    const misses = missingProviderSymbols(universe, (symbol) => cached.get(symbol));
+    if (misses.length && !(await consumeProviderBudget(misses.length))) {
       return response({ error: "The shared historical-data budget is busy. Try again after the next minute, or use the deterministic mode." }, 429, { "Retry-After": "60" });
     }
-    const loaded = await Promise.all(universe.map(async (symbol) => [symbol, await loadSymbol(symbol, fetchFrom, fetchTo, apiKey)] as const));
+    const loaded = await Promise.all(universe.map(async (symbol) => [symbol, cached.get(symbol) ?? await loadSymbol(symbol, fetchFrom, fetchTo, apiKey)] as const));
     const series = Object.fromEntries(loaded);
     const computed = runs.map((run) => runBacktest(run, series));
     const baselineLedger = computed[0].ledger;
@@ -124,8 +134,11 @@ export async function POST(request: Request) {
       verdict: evaluateEvidence(evidenceRuns, rule),
       runs: evidenceRuns,
       baselineLedger,
+      limitations: [...EVIDENCE_LIMITATIONS],
     };
-    return response({ ...core, generatedAt: new Date().toISOString(), artifactHash: await evidenceDigest(core) });
+    const artifact = await createEvidenceArtifact(core);
+    await recordVerifiedHistoricalRun(artifact.evidenceId, artifact.artifactHash, artifact.generatedAt).catch(() => undefined);
+    return response(artifact);
   } catch (error) {
     const message = error instanceof Error ? error.message : "historical_evidence_failed";
     if (message === "provider_access_window") return response({ error: "This historical window is outside the currently available data range. Choose more recent dates." }, 422);

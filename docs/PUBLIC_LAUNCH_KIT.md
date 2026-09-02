@@ -22,8 +22,9 @@ Only use these statements without additional qualification:
 - A user records a claim and machine-readable rejection rule before computation.
 - One baseline, four atomic perturbations, and one joint stress remain visible together.
 - Every completed run can be exported as a JSON evidence artifact with configuration, provenance, exact outcomes, limitations, and SHA-256 fingerprints.
-- The public instrument requires no login and clearly distinguishes deterministic demonstration evidence from configured historical evaluation.
-- Anonymous impact measurement records workflow events only; it does not store names, emails, claims, portfolio information, or IP-derived affiliation.
+- Historical evaluation uses adjusted daily bars from the server-side Massive adapter; deterministic demonstration remains a separate, labeled mode.
+- The public instrument requires no login.
+- Public measurement separates anonymous browser signals from server-verified historical experiments and stores no account identifiers.
 - EPSILON is open source and its original desktop history remains in this repository.
 
 ## Claims that require evidence first
@@ -32,9 +33,9 @@ Do not use these until real user evidence exists:
 
 - “Improves investment performance” or “finds alpha”
 - “AI-powered investment advice”
-- “Live market data” or “institutional-grade data”
+- “Real-time market data,” “institutional-grade data,” or unrestricted market-data coverage
 - Any user, traffic, accuracy, profitability, or adoption number
-- Any statement implying a result is historical validation, statistical significance, or general robustness
+- Any statement implying one historical result establishes statistical significance, profitability, or general robustness
 
 ## Links
 
@@ -100,9 +101,9 @@ Use feedback to decide whether the next step is a community post, a Show HN subm
 
 > Hi HN — I originally built EPSILON as a trading simulator. I rebuilt the web product around a narrower problem: backtests often show a result without making it clear which assumptions, missing data, and rejection conditions still bound that result.
 >
-> EPSILON has one workflow: choose a market subject, write a hypothesis and falsification condition, run a controlled test, inspect the stored configuration and provenance, then challenge the interpretation. If the subject or question changes, the earlier artifact becomes stale rather than being overwritten.
+> EPSILON has one workflow: write a claim and falsification condition, choose historical symbols and a window, run one baseline plus five nearby perturbations, inspect the exact configuration and provenance, then challenge the interpretation.
 >
-> The guest mode uses a clearly labeled browser-local synthetic simulation. It does not claim live data, historical validity, profitability, or investment advice.
+> Historical mode uses adjusted daily bars from Massive. The artifact records a source-data fingerprint and checksum, but it does not model intraday liquidity, market impact, taxes, borrow constraints, or partial fills. It makes no claim of profitability or investment advice.
 >
 > I would especially value feedback from people who build or use backtesting tools: where does this evidence workflow still fail to make the limits of a result clear?
 >

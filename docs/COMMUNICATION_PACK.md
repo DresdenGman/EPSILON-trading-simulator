@@ -86,13 +86,13 @@ Avoid:
 
 Public copy may state that EPSILON:
 
-- has one web workflow: **Market → Strategy Lab → Interrogate**;
-- allows a hypothesis and rejection condition to be recorded before testing;
-- keeps submitted inputs, metrics, trade evidence, and known/unknown provenance boundaries together;
-- marks evidence stale when the subject, hypothesis, or rejection condition changes;
-- preserves the last successful artifact when a later run fails;
-- provides a guest path without requiring an account;
-- labels guest-mode evidence as controlled synthetic simulation;
+- has one public workflow: **Define → Perturb → Challenge**;
+- requires a claim and machine-readable rejection rule before computation;
+- can run adjusted daily historical market data through a server-side Massive adapter;
+- computes one baseline, four atomic perturbations, and one joint stress;
+- exports an evidence artifact containing the configuration, exact outcomes, limitations, provider provenance, source-data fingerprint, stable evidence ID, and full-artifact checksum;
+- provides a deterministic demonstration mode alongside historical evaluation;
+- requires no account for the public laboratory;
 - is open source and preserves its original desktop history in the same repository.
 
 Every public claim should be demonstrable through one of these links:
@@ -111,11 +111,11 @@ Every public claim should be demonstrable through one of these links:
 
 > I built EPSILON around a question that bothered me: when a backtest looks convincing, what would have to be true for it to deserve our trust?
 >
-> EPSILON turns a market idea into a falsifiable loop—observe, define, test, challenge, and retest. The question, configuration, evidence boundaries, and failure condition stay attached to the result.
+> EPSILON turns a market idea into a falsifiable loop. It runs one baseline and five nearby stresses against real historical data, then keeps the rejection rule, assumptions, provenance, failures, and limitations attached to the result.
 >
-> It is open source, and the guest workspace is available without an account. I would value criticism of the research workflow—especially the assumption you would challenge first.
+> It is open source and available without an account. I am looking for one concrete methodological objection: which assumption would you challenge first?
 >
-> Product: https://epsilonfield.space
+> Laboratory: https://epsilonfield.space/lab
 > Source: https://github.com/DresdenGman/EPSILON-trading-simulator
 
 ### Short Chinese post
@@ -137,9 +137,9 @@ Every public claim should be demonstrable through one of these links:
 
 > Hi HN — I originally built EPSILON as a desktop trading simulator. While working on it, I became less interested in producing another performance number and more interested in a harder problem: how quickly a clean result can become detached from the assumptions that produced it.
 >
-> I rebuilt the web product around the lifecycle of a claim. A user selects a market subject, writes a hypothesis and rejection condition, runs a controlled test, and inspects the submitted configuration, result, trade evidence, and known/unknown provenance together. If the question changes, the previous artifact becomes stale rather than being silently reused. A failed run cannot erase the last successful artifact.
+> I rebuilt the web product around the lifecycle of a claim. A user writes a falsifiable claim and rejection condition, chooses historical symbols and a window, and runs one baseline plus five nearby perturbations. The exported artifact keeps the configuration, exact outcomes, limitations, provider provenance, source-data fingerprint, and content checksum together.
 >
-> The public guest path uses clearly labeled browser-local synthetic evidence. It does not claim live data, historical validation, profitability, or investment advice.
+> Historical mode uses adjusted daily bars from Massive. It does not model intraday liquidity, market impact, taxes, borrow constraints, or partial fills, and it makes no claim of profitability or investment advice. A separate deterministic mode remains available for learning the workflow.
 >
 > I would especially value methodological criticism: where does this workflow still make it too easy to over-interpret a result?
 >
@@ -158,7 +158,7 @@ The workflow is simple: Observe → Define → Test → Challenge → Retest. Th
 Missing provenance is not filled with a plausible story. If the provider, sampling, fees, slippage, fill model, or benchmark is unknown, the interface keeps it unknown.
 
 **4/5**
-Guest mode uses controlled browser-local simulation. That demonstrates the workflow; it does not establish historical validity, robustness, profitability, or investment advice.
+Historical mode tests adjusted daily market data. A completed run is evidence for that exact configuration and window, not proof of general robustness, profitability, or investment advice.
 
 **5/5**
 EPSILON v2.0 is open source. I am looking for methodological objections, not applause: what assumption would you challenge first?
@@ -187,7 +187,7 @@ Research-minded students, technical users, and quantitative builders who want an
 Not broader market coverage. The wedge is evidence discipline: the research question, configuration, provenance, output, and challenge history remain connected.
 
 **What is not yet proven?**
-Market demand, retention, real historical validation, and any performance benefit. Early distribution should test whether users value the workflow—not imply those outcomes already exist.
+Market demand, retention, independent reproducibility, general robustness, and any performance benefit. Early distribution should test whether users value and can challenge the workflow—not imply those outcomes already exist.
 
 ## 7. Builder narrative
 
@@ -217,11 +217,11 @@ This framing makes EPSILON one piece of a repeatable intellectual pattern across
 
 ### English tester invitation
 
-> I have just released EPSILON v2.0, an open-source quantitative decision lab. I am testing one narrow idea: whether keeping the question, failure condition, test configuration, and evidence boundaries together makes a market result harder to misread.
+> I have just released a real-data version of EPSILON, an open-source quantitative evidence instrument. I am testing one narrow idea: whether showing a baseline beside nearby changes in costs, window, and universe makes a market conclusion harder to overstate.
 >
-> Would you be willing to spend five minutes on the guest workflow and tell me the first assumption you would challenge? I am looking for a concrete objection, not a compliment.
+> Would you be willing to spend five minutes running one historical experiment and tell me the first assumption you would challenge? I am looking for a concrete objection, not a compliment.
 >
-> https://epsilonfield.space
+> https://epsilonfield.space/lab
 
 ### Chinese tester invitation
 

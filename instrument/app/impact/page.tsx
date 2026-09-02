@@ -32,21 +32,21 @@ export default function ImpactPage() {
 
       <section className="impact-intro">
         <div><p className="eyebrow">Public impact record / measured conservatively</p><h1>Reach is visible.<br /><span>Impact must be earned.</span></h1></div>
-        <p>EPSILON separates anonymous product activity from independently reviewable contribution. A page view is reach. A completed evidence field is use. A substantive external challenge is impact only after it remains publicly inspectable.</p>
+        <p>EPSILON separates anonymous browser signals from server-verified research use and independently reviewable contribution. A page view is unverified reach. A historical evidence run is counted only after the server completes it. A substantive external challenge becomes impact only when it remains publicly inspectable.</p>
       </section>
 
       <section className="impact-scorecard" aria-label="Anonymous product activity">
-        <article><span>Anonymous research sessions</span><strong>{value(summary, "lab_opened")}</strong><p>Distinct browser sessions that opened the instrument.</p></article>
-        <article><span>Evidence fields completed</span><strong>{value(summary, "evidence_completed", "events")}</strong><p>Deduplicated machine-readable artifacts generated.</p></article>
-        <article><span>Artifacts exported</span><strong>{value(summary, "evidence_exported", "events")}</strong><p>Evidence files downloaded for inspection or reuse.</p></article>
-        <article><span>Method challenges opened</span><strong>{value(summary, "challenge_opened")}</strong><p>Sessions that continued to the external review channel.</p></article>
+        <article><span>Anonymous lab signals</span><strong>{value(summary, "lab_opened")}</strong><p>Deduplicated, unverified browser sessions that opened the instrument.</p></article>
+        <article><span>Verified historical experiments</span><strong>{value(summary, "verified_historical_run", "events")}</strong><p>Unique real-data evidence configurations completed and recorded by the server.</p></article>
+        <article><span>Challenge-link signals</span><strong>{value(summary, "challenge_opened")}</strong><p>Unverified sessions that opened the external review channel.</p></article>
+        <article><span>Public reproductions</span><strong>0</strong><p>Reserved for independently linkable reproduction records, never browser clicks.</p></article>
       </section>
 
       <section className="impact-layers">
         <div><p className="eyebrow">Evidence hierarchy</p><h2>Not every number means the same thing.</h2></div>
         <ol>
           <li><span>01 / Reach</span><div><h3>Someone encountered the work.</h3><p>Visits, impressions, and video views are useful distribution diagnostics. They are not counted as adoption or educational impact.</p></div></li>
-          <li><span>02 / Use</span><div><h3>Someone completed a research action.</h3><p>Opening the laboratory, completing an evidence field, and exporting an artifact are measured as distinct anonymous actions.</p></div></li>
+          <li><span>02 / Use</span><div><h3>The server completed a research action.</h3><p>Only completed historical-data evidence runs are shown as verified product use. Browser openings and link clicks remain explicitly unverified signals.</p></div></li>
           <li><span>03 / External challenge</span><div><h3>Someone tested the method itself.</h3><p>A review counts only when a real person identifies a specific assumption, evidence gap, interpretation risk, or product weakness in a publicly linkable record.</p></div></li>
           <li><span>04 / Change</span><div><h3>The criticism altered the work.</h3><p>Accepted challenges link to the resulting experiment, issue, correction, or product change. Unfavorable findings remain visible.</p></div></li>
         </ol>
@@ -54,7 +54,7 @@ export default function ImpactPage() {
 
       <section className="impact-challenge">
         <div><p className="eyebrow">Falsification challenge / open</p><h2>Find the assumption<br />we failed to expose.</h2></div>
-        <div><p>The most valuable contribution is not praise. Run one evidence field, identify one weakness, and leave a challenge another person can inspect.</p><div className="impact-action-stack"><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8" target="_blank" rel="noreferrer" className="primary-button" onClick={() => void recordImpactEvent("challenge_opened")}>Open the challenge protocol <span>↗</span></a><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/issues/new?template=reproduction-report.yml" target="_blank" rel="noreferrer" className="text-link" onClick={() => void recordImpactEvent("reproduce_opened")}>File an independent reproduction →</a></div><p className="impact-integrity">No purchased traffic · no coordinated votes · no investment claims · no personal data collected · session identifiers are temporary and anonymous.</p></div>
+        <div><p>The most valuable contribution is not praise. Run one evidence field, identify one weakness, and leave a challenge another person can inspect.</p><div className="impact-action-stack"><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8" target="_blank" rel="noreferrer" className="primary-button" onClick={() => void recordImpactEvent("challenge_opened")}>Open the challenge protocol <span>↗</span></a><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/issues/new?template=reproduction-report.yml" target="_blank" rel="noreferrer" className="text-link" onClick={() => void recordImpactEvent("reproduce_opened")}>File an independent reproduction →</a></div><p className="impact-integrity">No purchased traffic · no coordinated votes · no investment claims · no account identifiers · coarse source categories only · rolling 90-day measurement window.</p></div>
       </section>
 
       <footer><span>{summary.status === "live" ? "Measurement live" : "Measurement initializing"}{summary.updatedAt ? ` · ${new Date(summary.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}` : ""}</span><div><Link href="/">Home →</Link><Link href="/lab">Run an evidence field →</Link></div></footer>

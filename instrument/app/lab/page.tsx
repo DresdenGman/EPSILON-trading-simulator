@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { stripLedger, type LedgerEntry, type Strategy } from "../../lib/backtest";
-import { describeRule, evidenceDigest, EPSILON_SOFTWARE_REVISION, evaluateEvidence, type EvidenceRun, type EvidenceVerdict, type FalsificationRule, type Metric, type Operator } from "../../lib/evidence-contract";
+import { createEvidenceArtifact, describeRule, evidenceDigest, EVIDENCE_LIMITATIONS, EPSILON_SOFTWARE_REVISION, evaluateEvidence, type EvidenceRun, type EvidenceVerdict, type FalsificationRule, type Metric, type Operator } from "../../lib/evidence-contract";
 import { makeSyntheticRuns } from "../../lib/synthetic";
 import { recordImpactEvent } from "../../components/impact-tracker";
 
@@ -11,6 +11,8 @@ type Evidence = {
   format: "epsilon.evidence.v2";
   generatedAt: string;
   artifactHash: string;
+  evidenceId: string;
+  integrity: { algorithm: "SHA-256"; scope: string; authenticity: string };
   softwareRevision: string;
   claim: string;
   falsification: string;
@@ -21,6 +23,7 @@ type Evidence = {
   verdict: EvidenceVerdict;
   runs: EvidenceRun[];
   baselineLedger: LedgerEntry[];
+  limitations: string[];
 };
 
 const metricLabels: Record<Metric, string> = { net_return: "Net total return", max_drawdown: "Maximum drawdown", sharpe: "Annualized Sharpe" };
@@ -106,10 +109,9 @@ export default function LabPage() {
           verdict: evaluateEvidence(runs, rule),
           runs,
           baselineLedger,
+          limitations: [...EVIDENCE_LIMITATIONS],
         };
-        const artifactHash = await evidenceDigest(core);
-        setEvidence({ ...core, generatedAt: new Date().toISOString(), artifactHash });
-        void recordImpactEvent("evidence_completed", { artifactHash, mode: "controlled-synthetic" });
+        setEvidence(await createEvidenceArtifact(core));
         setLocked(true);
         setStatus("Evidence field complete / six controlled computations");
         return;
@@ -119,7 +121,6 @@ export default function LabPage() {
       const payload = await result.json() as Evidence & { error?: string };
       if (!result.ok) throw new Error(payload.error ?? "Historical evidence failed.");
       setEvidence(payload);
-      void recordImpactEvent("evidence_completed", { artifactHash: payload.artifactHash, mode: "historical-market-data" });
       setLocked(true);
       setStatus("Historical evidence complete / six server-side computations");
     } catch (error) {
@@ -138,14 +139,12 @@ export default function LabPage() {
     anchor.download = `epsilon-${evidence.artifactHash.slice(0, 12)}.json`;
     anchor.click();
     URL.revokeObjectURL(url);
-    void recordImpactEvent("evidence_exported", { artifactHash: evidence.artifactHash, mode: evidence.mode });
   }
 
   async function copySummary() {
     if (!evidence) return;
     await navigator.clipboard.writeText(`EPSILON ${evidence.verdict.verdict.toUpperCase()} · ${evidence.verdict.survivalCount}/${evidence.verdict.testedCount} perturbations survived · ${metricLabels[evidence.falsificationRule.metric]} worst case ${displayMetric(evidence.verdict.worstCase, evidence.falsificationRule.metric)} · artifact ${evidence.artifactHash.slice(0, 12)}`);
     setCopied(true);
-    void recordImpactEvent("summary_copied", { artifactHash: evidence.artifactHash, mode: evidence.mode });
   }
 
   function editExperiment() {
@@ -170,7 +169,7 @@ export default function LabPage() {
 
       <div className="lab-grid" id="experiment">
         <section className="setup-panel" aria-label="Experiment setup">
-          <div className="panel-title"><div><p className="eyebrow">01 / Define</p><h2>One claim. One rejection rule.</h2></div><span className={`mode-pill ${dataMode === "historical" ? "mode-live" : ""}`}>{dataMode === "synthetic" ? "Demonstration" : "Historical / live"}</span></div>
+          <div className="panel-title"><div><p className="eyebrow">01 / Define</p><h2>One claim. One rejection rule.</h2></div><span className={`mode-pill ${dataMode === "historical" ? "mode-live" : ""}`}>{dataMode === "synthetic" ? "Demonstration" : "Historical / real data"}</span></div>
           <label>Data mode<select disabled={controlsDisabled} value={dataMode} onChange={(event) => setDataMode(event.target.value as "synthetic" | "historical")}><option value="historical" disabled={!historicalAvailable}>Historical market data{historicalAvailable ? " · available" : " · unavailable"}</option><option value="synthetic">Deterministic demonstration</option></select></label>
           <p className="field-note">{dataMode === "historical" ? "Adjusted daily bars are fetched server-side; the provider credential never enters the browser." : "A transparent deterministic sample for learning the workflow—not empirical market evidence."}</p>
           <label>Falsifiable claim<textarea disabled={controlsDisabled} maxLength={240} value={claim} onChange={(event) => setClaim(event.target.value)} rows={3} /></label>
@@ -204,8 +203,8 @@ export default function LabPage() {
               <figure className="lab-chart"><figcaption><span>Atomic and joint stresses, visible consequences.</span><span>Normalized equity</span></figcaption><svg viewBox="0 0 640 210" aria-labelledby="lab-chart-title"><title id="lab-chart-title">Normalized baseline and perturbation equity paths</title>{[40,90,140,190].map((y) => <line key={y} x1="0" y1={y} x2="640" y2={y} className="grid-line" />)}{evidence.runs.map((run) => <polyline key={run.id} points={polyline(run.path)} fill="none" stroke={run.color} strokeWidth={run.id === "baseline" ? 2.5 : 1.5} vectorEffect="non-scaling-stroke" />)}</svg></figure>
               <div className="table-scroll"><table className="result-table"><caption className="sr-only">Exact baseline and perturbation outcomes</caption><thead><tr><th>Run</th><th>Changed input</th><th>Return</th><th>Sharpe</th><th>Drawdown</th><th>Cost</th></tr></thead><tbody>{evidence.runs.map((run) => <tr key={run.id}><th scope="row"><i style={{ background: run.color }} />{run.label}</th><td>{run.changed}</td><td><strong>{displayMetric(run.returnPct, "net_return")}</strong></td><td>{run.sharpe.toFixed(3)}</td><td>{run.drawdown.toFixed(2)}%</td><td>{run.costPct.toFixed(3)}%</td></tr>)}</tbody></table></div>
               <div className="evidence-metrics"><div><span>Worst tested {metricLabels[evidence.falsificationRule.metric]}</span><strong>{displayMetric(evidence.verdict.worstCase, evidence.falsificationRule.metric)}</strong></div><div><span>Worst threshold margin</span><strong>{displayMetric(evidence.verdict.worstMargin, evidence.falsificationRule.metric)}</strong></div><div><span>Largest sensitivity</span><strong>{evidence.verdict.largestSensitivity ? `${evidence.verdict.largestSensitivity.label} ${evidence.verdict.largestSensitivity.delta > 0 ? "+" : ""}${evidence.verdict.largestSensitivity.delta.toFixed(2)}` : "—"}</strong></div><div><span>Baseline observations</span><strong>{evidence.runs[0].observations}</strong></div></div>
-              <div className="artifact-proof"><div><span>Artifact fingerprint</span><code>{evidence.artifactHash.slice(0, 24)}</code></div><div><span>Data fingerprint</span><code>{evidence.provenance.dataFingerprint.slice(0, 24)}</code></div><p>{evidence.provenance.timing}</p></div>
-              <div className="artifact-actions"><p>{evidence.mode === "historical-market-data" ? `Adjusted daily bars · ${evidence.provenance.provider} · ${evidence.provenance.symbols.join(", ")}` : "Deterministic demonstration arithmetic"} · research use only · not investment advice</p><div><button onClick={copySummary}>{copied ? "Copied ✓" : "Copy summary"}</button><button onClick={downloadEvidence}>Download evidence ↓</button><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8" target="_blank" rel="noreferrer" onClick={() => void recordImpactEvent("challenge_opened", { artifactHash: evidence.artifactHash, mode: evidence.mode })}>Challenge the method ↗</a></div></div>
+              <div className="artifact-proof"><div><span>Artifact checksum</span><code>{evidence.artifactHash.slice(0, 24)}</code></div><div><span>Data fingerprint</span><code>{evidence.provenance.dataFingerprint.slice(0, 24)}</code></div><p>{evidence.provenance.timing} Checksum is not a digital signature.</p></div>
+              <div className="artifact-actions"><p>{evidence.mode === "historical-market-data" ? `Adjusted daily bars · ${evidence.provenance.provider} · ${evidence.provenance.symbols.join(", ")}` : "Deterministic demonstration arithmetic"} · research use only · not investment advice</p><div><button onClick={copySummary}>{copied ? "Copied ✓" : "Copy summary"}</button><button onClick={downloadEvidence}>Download evidence ↓</button><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8" target="_blank" rel="noreferrer" onClick={() => void recordImpactEvent("challenge_opened")}>Challenge the method ↗</a></div></div>
             </article>
           )}
         </section>
