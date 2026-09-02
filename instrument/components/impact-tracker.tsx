@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-export type ImpactEvent = "site_visit" | "lab_opened" | "evidence_completed" | "evidence_exported" | "summary_copied" | "challenge_opened" | "reproduce_opened";
+export type ImpactEvent = "site_visit" | "lab_opened" | "challenge_opened" | "reproduce_opened";
 
 const SESSION_KEY = "epsilon_impact_session_v1";
 const SOURCE_KEY = "epsilon_impact_source_v1";
@@ -19,10 +19,12 @@ function sourceLabel() {
   const existing = window.sessionStorage.getItem(SOURCE_KEY);
   if (existing) return existing;
   const query = new URLSearchParams(window.location.search);
-  const campaignSource = query.get("utm_source")?.slice(0, 48);
+  const aliases: Record<string, string> = { twitter: "x", x: "x", github: "github", stocktwits: "stocktwits", linkedin: "linkedin", reddit: "reddit", youtube: "youtube", producthunt: "producthunt", substack: "substack", email: "email", school: "school" };
+  const campaignSource = query.get("utm_source")?.trim().toLowerCase();
   if (campaignSource) {
-    window.sessionStorage.setItem(SOURCE_KEY, campaignSource);
-    return campaignSource;
+    const source = aliases[campaignSource] ?? "other";
+    window.sessionStorage.setItem(SOURCE_KEY, source);
+    return source;
   }
   if (!document.referrer) {
     window.sessionStorage.setItem(SOURCE_KEY, "direct");
@@ -30,7 +32,7 @@ function sourceLabel() {
   }
   try {
     const hostname = new URL(document.referrer).hostname;
-    const source = hostname === window.location.hostname ? "internal" : hostname.slice(0, 80);
+    const source = hostname === window.location.hostname ? "internal" : hostname.endsWith("github.com") ? "github" : hostname.endsWith("stocktwits.com") ? "stocktwits" : hostname.endsWith("linkedin.com") ? "linkedin" : hostname.endsWith("reddit.com") ? "reddit" : hostname.endsWith("youtube.com") || hostname.endsWith("youtu.be") ? "youtube" : "other";
     window.sessionStorage.setItem(SOURCE_KEY, source);
     return source;
   } catch {
@@ -41,7 +43,6 @@ function sourceLabel() {
 
 export async function recordImpactEvent(
   event: ImpactEvent,
-  details: { artifactHash?: string; mode?: string } = {},
 ) {
   if (typeof window === "undefined") return;
   const payload = {
@@ -49,8 +50,6 @@ export async function recordImpactEvent(
     sessionId: sessionId(),
     source: sourceLabel(),
     path: window.location.pathname.slice(0, 120),
-    artifactHash: details.artifactHash?.slice(0, 64),
-    mode: details.mode?.slice(0, 32),
   };
   try {
     await fetch("/api/impact/events", {

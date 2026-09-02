@@ -3,7 +3,7 @@ import Link from "next/link";
 const checks = [
   ["Evidence engine", "Operational", "Baseline + four atomic perturbations + one joint execution stress"],
   ["Rejection rule", "Operational", "Machine-evaluable metric, operator, threshold, and required scope"],
-  ["Portable artifact", "Operational", "epsilon.evidence.v2 JSON with calculation and data fingerprints"],
+  ["Portable artifact", "Operational", "epsilon.evidence.v2 JSON with calculation checksum and data fingerprint"],
   ["Execution timing", "Documented", "Signals use information through the prior close; positions apply to the next return"],
   ["Real-capital execution", "Not connected", "Research instrument only; no orders, brokerage, or custody"],
 ];
@@ -41,7 +41,7 @@ export default function StatusPage() {
           <article><span>01</span><h3>Pre-register</h3><p>A claim is paired with a metric, comparison operator, threshold, and perturbation scope before computation.</p></article>
           <article><span>02</span><h3>Lag signals</h3><p>Historical strategies use only information available through the prior close. This prevents same-period look-ahead.</p></article>
           <article><span>03</span><h3>Perturb locally</h3><p>Four one-factor runs isolate sensitivity; one joint stress exposes execution interactions. Survival is evidence of local robustness, not proof.</p></article>
-          <article><span>04</span><h3>Keep the trail</h3><p>The export includes configuration, exact outcomes, baseline ledger, provider provenance, limitations, and deterministic fingerprints.</p></article>
+          <article><span>04</span><h3>Keep the trail</h3><p>The export includes configuration, exact outcomes, baseline ledger, provider provenance, limitations, and a deterministic checksum. The checksum detects changes; it is not a signature or proof of origin.</p></article>
         </div>
       </section>
 
