@@ -1,98 +1,38 @@
-# EPSILON Product Architecture
+# Current product architecture
 
-Status: `Product convergence · one public product`
+The production application lives in `instrument/`. React and TypeScript run through Vinext/Vite on OpenAI Sites. The Python desktop application and `website/` + `backend/` remain historical implementations in the same repository.
 
-EPSILON is a quantitative decision laboratory for forming a market claim,
-testing it against explicit inputs and evidence boundaries, challenging the
-interpretation, and retesting without rewriting prior results.
+| Surface | Current responsibility |
+|---|---|
+| `/` | Explain the method and open the lab |
+| `/lab` | Define a claim and machine rule; compute, inspect, and export evidence |
+| `/status` | Disclose the method, data mode, and limitations |
+| `/impact` | Separate anonymous use, external challenges, and feedback-led changes |
+| `/api/health` | Report configuration and build identity, not provider success |
+| `/api/evidence/run` | Validate a historical request, fetch adjusted daily bars server-side, return six computations |
+| `/api/impact/*` | First-party bounded telemetry and aggregated public counts |
 
-## Canonical product path
+## Two explicit computation paths
 
-```text
-/landing
-    ↓
-/dashboard                 Market / Observe + Frame
-    ↓
-/dashboard/backtest        Strategy Lab / Test
-    ↓
-/dashboard/ai              Interrogate / Challenge
-    ↓
-Refine the claim and retest
-```
+- Browser-local demonstration: `lib/synthetic.ts` produces illustrative deterministic arithmetic. It is never empirical history.
+- Historical data: the server obtains Massive adjusted daily closes, applies `lib/backtest.ts`, and returns derived evidence. Provider credentials never enter client code. A disabled, unavailable, over-budget, or failed provider request returns an error, not synthetic fallback.
 
-There is no separate demo product. The sensitivity protocol that previously
-powered the presentation route is integrated into the Dashboard as a real
-validation action.
+Both paths use `lib/evidence-contract.ts` for rule evaluation, canonical evidence identity, and artifact checksums. Build-time metadata from `scripts/build-metadata.ts` is embedded in the browser and server via Vite. See [release identity](RELEASE_IDENTITY.md).
 
-## Route roles
+## Experiment lifecycle
 
-| Route | Product role | Public status |
-|---|---|---|
-| `/landing` | Canonical product explanation and workspace entry | Indexed |
-| `/dashboard` | Market evidence, hypothesis, rejection rule, and simulated action | Working product |
-| `/dashboard/backtest` | Strategy and structure tests with attached provenance | Working product |
-| `/dashboard/ai` | Structured interrogation of the current claim and test artifact | Working product |
-| `/download` | Source and desktop distribution support | Indexed support |
-| `/auth/*` | Optional account access for persistent workspaces | Not indexed |
-| `/demo` | Retired presentation URL → `/dashboard/backtest` | Redirect only |
-| `/simulator` | Retired legacy URL → `/dashboard` | Redirect only |
-| `/video` | Retired presentation URL → `/landing` | Redirect only |
+Define inputs and a rule → submit once → compute baseline and five perturbations → lock successful evidence → download or challenge → explicitly start a revised experiment.
 
-## Research state contract
+Inputs are disabled while pending and after success. The reference-case button loads inputs only, without fetching data or asserting an outcome. Failed computation exposes an error and permits correction. Revising an experiment clears its displayed result rather than attaching old evidence to new inputs.
 
-The active research object keeps four things together:
+## Method boundaries
 
-1. the selected subject;
-2. the user-authored hypothesis;
-3. the pre-committed rejection condition;
-4. the most recent successful test artifact and its provenance.
+Stresses are fee ×5, slippage ×5, start/end dates +30 calendar days, the first half of the supplied universe (rounded up), and a joint fee/slippage/window change. The shifted window overlaps the baseline: this is sensitivity testing, not independent out-of-sample replication. Universe order matters. Historical signals use information through the previous close; the model omits intraday execution, market impact, taxes, and borrow constraints.
 
-Changing the subject, hypothesis, or rejection condition makes existing
-evidence stale. A failed attempt does not overwrite the last successful
-artifact. Only a successful run matching the current research object becomes
-current evidence.
+Real data is not equivalent to an unbiased design. User-selected tickers do not establish a point-in-time universe. Artifacts omit raw licensed price bars. Checksums are not signatures or external preregistrations. These remain limitations, not completed features.
 
-## Evidence boundaries
+## Evidence and privacy
 
-The interface separates:
+Claims/configurations are processed for computation, not persisted as user research records. The impact ledger stores limited events and hashed evidence identifiers, not raw prices or full claims. Site visits, lab opens, historical runs, unique people, independent reproductions, replies, and completed tests are different quantities. Maintainer checks are not independent validation; contact and application records remain outside this public application.
 
-- submitted inputs;
-- computed outputs;
-- data and execution provenance;
-- interpretation and critique.
-
-Guest sessions use a deterministic browser-local simulation and local
-interrogation heuristic. They are labeled as synthetic and do not claim live
-market data, historical validation, real AI/web retrieval, profitability, or
-financial advice.
-
-## Legacy continuity
-
-The original desktop application, assets, and historical implementations stay
-in the same repository. They are development history and source-distribution
-material, not competing public products. Before removing legacy capability,
-consult:
-
-- `docs/LEGACY_CAPABILITY_MAP.md`;
-- `docs/LEGACY_ASSET_MANIFEST.md`;
-- `docs/HISTORICAL_VALIDATION_PROTOCOL.md`.
-
-## Product states
-
-- `READY`: a workspace or protocol is available.
-- `RUNNING`: an operation is executing while known context remains visible.
-- `COMPLETE`: evidence is available for inspection.
-- `STALE`: evidence belongs to an earlier research definition.
-- `INCONCLUSIVE`: the protocol did not support a valid conclusion.
-- `FAILED`: an operational error occurred without deleting prior evidence.
-
-An unfavorable financial result is evidence, not an application error.
-
-## Product principle
-
-```text
-observe ambiguity → frame a claim → test it → expose its limits → revise
-```
-
-EPSILON is not a recommendation engine. Its purpose is to make it harder to
-confuse an output with a conclusion that deserves to be trusted.
+The [old Dashboard route map](legacy/PRODUCT_ARCHITECTURE_PRE_INSTRUMENT.md) is archived, not a second public product.

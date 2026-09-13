@@ -1,6 +1,7 @@
 export const runtime = "edge";
 
 import { providerBudgetLimit } from "../../../lib/provider-budget";
+import { SOFTWARE_BUILD } from "../../../lib/build-info";
 
 const DAY = 86_400_000;
 
@@ -15,7 +16,8 @@ export async function GET() {
   return Response.json(
     {
       status: "operational",
-      instrument: "epsilon.evidence.v2",
+      instrument: SOFTWARE_BUILD.evidenceFormat,
+      software: SOFTWARE_BUILD,
       publicMode: process.env.HISTORICAL_DATA_ENABLED === "true" && Boolean(process.env.MASSIVE_API_KEY) ? "historical-evaluation" : "deterministic-demonstration",
       historicalAdapter: {
         configured: Boolean(process.env.MASSIVE_API_KEY),

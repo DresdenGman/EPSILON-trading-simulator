@@ -10,7 +10,7 @@
     "build": "vinext build",
     "start": "wrangler dev --config dist/server/wrangler.json",
     "test": "node --test tests/*.test.ts",
-    "check": "npm run test && tsc --noEmit && oxlint app lib tests next.config.ts vite.config.ts",
+    "check": "npm run test && tsc --noEmit && oxlint app lib scripts tests next.config.ts vite.config.ts",
     "lint": "oxlint",
     "format": "oxfmt"
   },

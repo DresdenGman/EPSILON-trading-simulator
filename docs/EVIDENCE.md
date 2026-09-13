@@ -1,5 +1,7 @@
 # EPSILON Evidence Matrix
 
+> Historical implementation evidence, including the dated synthetic snapshot below. It is not validation of today's public historical-data instrument. See [current reproduction](REPRODUCIBILITY.md) and keep old observations separate.
+
 This file maps claims to concrete implementation evidence and limitations. It is not a claim that the whole application is production-ready.
 
 ## Observed flagship snapshot

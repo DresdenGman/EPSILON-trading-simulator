@@ -1,5 +1,5 @@
 import { runBacktest, stripLedger, type BacktestConfig, type Bar, type RunConfig, type Strategy } from "../../../../lib/backtest";
-import { createEvidenceArtifact, describeRule, evidenceDigest, EVIDENCE_LIMITATIONS, EPSILON_SOFTWARE_REVISION, evaluateEvidence, type FalsificationRule } from "../../../../lib/evidence-contract";
+import { createEvidenceArtifact, describeRule, evidenceDigest, EVIDENCE_LIMITATIONS, EPSILON_SOFTWARE_REVISION, EPSILON_EVIDENCE_FORMAT, evaluateEvidence, type FalsificationRule } from "../../../../lib/evidence-contract";
 import { checkRateLimit } from "../../../../lib/rate-limit";
 import { consumeProviderBudget } from "../../../../lib/provider-budget";
 import { missingProviderSymbols } from "../../../../lib/provider-cache";
@@ -123,7 +123,7 @@ export async function POST(request: Request) {
     const evidenceRuns = computed.map(stripLedger);
     const dataFingerprint = await evidenceDigest(Object.fromEntries(loaded.map(([symbol, bars]) => [symbol, bars.map((bar) => [bar.timestamp, bar.close])])));
     const core = {
-      format: "epsilon.evidence.v2" as const,
+      format: EPSILON_EVIDENCE_FORMAT,
       softwareRevision: EPSILON_SOFTWARE_REVISION,
       claim,
       falsification: describeRule(rule),

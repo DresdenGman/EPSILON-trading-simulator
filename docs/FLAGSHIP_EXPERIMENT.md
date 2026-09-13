@@ -1,5 +1,7 @@
 # EXP-001 — Flagship Experiment Protocol
 
+> Historical CSP-v1 protocol, not the current `instrument/` historical-data case. Preserved without rewriting its results. Start with [current reproduction](REPRODUCIBILITY.md) or [fixed historical case 001](REFERENCE_CASE.md).
+
 This document is the protocol, not a marketing description. The protocol is fixed before the observed result is interpreted.
 
 ## Research question

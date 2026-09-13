@@ -100,6 +100,7 @@ footer a:hover { color:var(--ink); }
 .run-button:disabled { cursor:default; opacity:.55; }
 .edit-button { width:100%; border:1px solid var(--rule); background:transparent; color:var(--ink); padding:.7rem 1rem; font-weight:600; cursor:pointer; }
 .edit-button:hover { border-color:var(--ink); }
+.edit-button:disabled { opacity:.45; cursor:not-allowed; border-color:var(--rule); }
 .run-status { display:block; margin-top:.8rem; color:var(--dim); font:.53rem/1.4 var(--font-geist-mono),monospace; letter-spacing:.08em; text-transform:uppercase; }
 .empty-evidence { display:flex; min-height:100%; flex-direction:column; justify-content:center; max-width:52rem; margin:auto; }
 .empty-evidence h2 { margin-top:1rem; font-size:clamp(2rem,4vw,4.4rem); color:#777871; }

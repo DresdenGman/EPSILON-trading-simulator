@@ -57,6 +57,8 @@ EPSILON is not a trading recommendation engine. Its purpose is to make assumptio
 
 ## Start here
 
+[Documentation index: current instrument vs. historical records](docs/README.md)
+
 | Surface | Purpose |
 |---|---|
 | [`/`](https://epsilonfield.space) | Understand the perturbation method and enter the instrument |
@@ -95,24 +97,15 @@ Inspect exact metrics, provenance, limitations, and the nearest failure. Export 
 
 Start a revised experiment or submit an external methodological challenge. Reproduction mismatches, rejected claims, and inconclusive results remain valid evidence.
 
-## Integrated sensitivity validation
+## Reproduce and challenge the current instrument
 
-The working product includes a controlled validation protocol that asks:
+Start with [current reproduction instructions](docs/REPRODUCIBILITY.md), then [fixed historical case 001](docs/REFERENCE_CASE.md). The case fixes SPY/QQQ, dates, costs, strategy, and a rejection rule before running; a rejected or failed attempt is still worth reporting.
 
-> Does the conclusion remain unchanged when execution friction increases slightly?
+The current lab computes one baseline and five perturbations. Its +30-day window overlaps the baseline and is a sensitivity test, not independent out-of-sample replication. Demonstration arithmetic is explicitly separate from server-fetched historical bars. Current health configuration does not by itself prove a completed historical run.
 
-It runs the same momentum configuration twice, changes only execution slippage, evaluates a pre-specified return-sign rule, and repeats the protocol on a non-overlapping window.
-
-Here, ε simply denotes the small increase in slippage used to test whether the conclusion survives.
-
-The experiment currently uses the deterministic controlled synthetic path `CSP-v1`. It tests experimental sensitivity; it is not historical market validation, statistical significance, evidence of profitability, or proof of predictive performance.
-
-The protocol now lives inside the Dashboard as part of the research workflow rather than as a separate public demo. Read the supporting records:
-
-- [Flagship experiment protocol](docs/FLAGSHIP_EXPERIMENT.md)
-- [Evidence matrix](docs/EVIDENCE.md)
-- [Reproducibility instructions](docs/REPRODUCIBILITY.md)
-- [Product architecture](docs/PRODUCT_ARCHITECTURE.md)
+- [Build and evidence identity](docs/RELEASE_IDENTITY.md) — compare source, data, and artifact fingerprints
+- [Current architecture](docs/PRODUCT_ARCHITECTURE.md) — `instrument/`, `/lab`, `/status`, and `/impact`
+- [Historical CSP-v1 protocol](docs/FLAGSHIP_EXPERIMENT.md) and [historical evidence matrix](docs/EVIDENCE.md) — earlier synthetic work, not current historical validation
 
 ## Evidence discipline
 
@@ -150,7 +143,7 @@ Prerequisites: Node.js 22.13+ and npm.
 
 ```bash
 cd instrument
-npm install
+npm ci
 npm run dev
 ```
 
@@ -159,16 +152,13 @@ The public evidence workflow requires no account. Historical-data mode requires 
 ## Verification
 
 ```bash
-# Core Python evidence paths
-backend/venv/bin/python -m unittest tests.test_stock_data_manager tests.test_demo_runtime -v
-
-# Website type and behavior checks
-cd website
-npx tsc --noEmit
-npx vitest run
+cd instrument
+npm ci
+npm run check
+npm run build
 ```
 
-The web tests cover the research context lifecycle, stale evidence handling, atomic retesting, AI evidence boundaries, route convergence, authenticated navigation, and distribution truthfulness.
+Current checks cover prior-close signal timing, execution costs, zero-cost demonstration perturbations, rule evaluation, canonical hashes, build identity, fixed-case inputs, request limits, telemetry boundaries, and provider-budget accounting. They verify implementation behavior, not independent market evidence. Earlier Python and `website/` commands remain in the [archived reproduction guide](docs/legacy/REPRODUCIBILITY_PRE_INSTRUMENT.md).
 
 ## What EPSILON does not claim
 

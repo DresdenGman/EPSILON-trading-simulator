@@ -73,3 +73,7 @@ jobs:
       - name: Run tests, type checking, and lint
         if: steps.changes.outputs.instrument == 'true'
         run: npm run check
+
+      - name: Build the current instrument
+        if: steps.changes.outputs.instrument == 'true'
+        run: npm run build

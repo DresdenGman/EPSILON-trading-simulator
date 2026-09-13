@@ -1,8 +1,11 @@
+import { SOFTWARE_BUILD } from "./build-info.ts";
+
 export type Metric = "net_return" | "max_drawdown" | "sharpe";
 export type Operator = "gt" | "gte" | "lt" | "lte";
 export type PerturbationScope = "any" | "all";
 
-export const EPSILON_SOFTWARE_REVISION = "epsilon-instrument-2026.08.30";
+export const EPSILON_SOFTWARE_REVISION = SOFTWARE_BUILD.engineRevision;
+export const EPSILON_EVIDENCE_FORMAT = SOFTWARE_BUILD.evidenceFormat;
 export const EVIDENCE_LIMITATIONS = [
   "Adjusted daily close-to-close bars do not model intraday liquidity, market impact, taxes, borrow constraints, or partial fills.",
   "The artifact checksum detects content changes but is not a digital signature or proof of EPSILON origin.",
@@ -124,9 +127,10 @@ export async function evidenceDigest(value: unknown) {
 }
 
 export async function createEvidenceArtifact<T extends object>(core: T, generatedAt = new Date().toISOString()) {
-  const evidenceId = await evidenceDigest(core);
+  const identifiedCore = { ...core, software: SOFTWARE_BUILD };
+  const evidenceId = await evidenceDigest(identifiedCore);
   const covered = {
-    ...core,
+    ...identifiedCore,
     evidenceId,
     generatedAt,
     integrity: {

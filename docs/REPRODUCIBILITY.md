@@ -1,54 +1,44 @@
-# Reproduce EXP-001
+# Reproduce the current EPSILON instrument
 
-This is a local, read-only reproduction path. It does not require production credentials, a production database, or user data.
+The current public product is `instrument/`, served at [epsilonfield.space/lab](https://epsilonfield.space/lab). It does not require the older Python API, PostgreSQL, `website/`, or an account.
 
-## Runtime
+## 1. Run an exact checkout
 
-From the repository root, start the API:
-
-```bash
-backend/venv/bin/uvicorn backend.main:app --host 127.0.0.1 --port 8000
-```
-
-The API continues in backtest-only mode if local PostgreSQL is stopped. `/api/health` should return `{"status":"ok","version":"0.9.0"}`.
-
-In another terminal:
+Prerequisites: Git, Node.js 22.13 or newer, and npm. Use an exact reviewed commit when comparing results, and record `node --version` and `git rev-parse HEAD`.
 
 ```bash
-cd website
-NEXT_PUBLIC_API_URL=http://127.0.0.1:8000 npm run dev
-```
-
-Open [http://localhost:3000/demo](http://localhost:3000/demo).
-
-## Expected interaction
-
-1. Read the hypothesis, fixed configuration, CSP-v1 provenance, and ε definition.
-2. Click `Run primary ε test` once. The page makes two requests through the active backtest adapter.
-3. Read the primary evidence and local diagnosis.
-4. Confirm that the replication rule and `2026-01-01 → 2026-03-31` window are visible before running them.
-5. Click `Run pre-specified replication`. The page makes two additional requests through the same adapter.
-6. Read `REPLICATED`, `NOT REPLICATED`, or `INCONCLUSIVE` without any fallback result.
-
-The exact observed numbers may change if the controlled configuration or model version changes. Do not tune code to recover an old snapshot.
-
-The public Guest-first deployment uses a browser-local deterministic adapter: no network backtest service is implied. Its synthetic return and equity path depend on the pre-specified start/end dates, strategy, and universe, so changing the replication window is a real model input rather than a label-only replay. A configured local backend uses the CSP-v1 `/api/backtest` path described above.
-
-## Verification commands
-
-```bash
-backend/venv/bin/python -m unittest tests.test_stock_data_manager tests.test_demo_runtime -v
-
-cd website
-npm test -- --run lib/experiment.test.ts
-npx tsc --noEmit
+git clone https://github.com/DresdenGman/EPSILON-trading-simulator.git
+cd EPSILON-trading-simulator/instrument
+npm ci
+npm run check
 npm run build
+npm run dev
 ```
 
-The Python tests cover weekday-only history, OHLC consistency, temporal continuity, exact repeatability, fixed non-overlapping replication windows, and different `PYTHONHASHSEED` processes. The web tests cover local diagnosis, deterministic repeatability, date-window sensitivity, and cross-window replication cases.
+Open the local URL printed by the development server, then `/lab`. `npm run check` runs unit tests, TypeScript checks, and lint. The build is a separate check. Neither command is empirical market validation.
 
-## Reproducibility contract
+## 2. Choose the right data mode
 
-Same commit/worktree, experiment protocol, active synthetic-model version, fixed windows, universe, capital, fee assumptions, slippage values, and strategy configuration should produce the same controlled experiment outputs across restarts and processes.
+**Offline demonstration:** without provider configuration, choose “Deterministic demonstration,” define the claim and rule, then run and download evidence. This path uses illustrative deterministic arithmetic, not observed prices. Its artifact must say `mode: controlled-synthetic`. It is a workflow check only.
 
-Changing the market-model version invalidates direct result comparison and requires a new evidence snapshot. The model is a controlled synthetic instrument, not a historical-data claim.
+**Historical experiment:** the server needs `MASSIVE_API_KEY` and `HISTORICAL_DATA_ENABLED=true`, plus a data entitlement allowing the intended use. See `instrument/.env.example`; use local environment configuration or the hosting service's secret settings, never a browser-visible variable or committed key. Set `MASSIVE_CALLS_PER_MINUTE` to the permitted budget. The public workflow uses the Massive adapter; installing a finance plugin or buying an unrelated provider does not configure it.
+
+Inspect `/api/health`: `historicalAdapter.configured` and `.enabled` describe configuration, not a successful provider fetch. A completed historical experiment must independently return `mode: historical-market-data`, `provenance.provider: Massive`, six runs, and a data fingerprint. Errors must stay errors; do not relabel a demonstration as historical evidence.
+
+For a shared, predeclared input set, follow [fixed historical case 001](REFERENCE_CASE.md). No CSV upload is required.
+
+## 3. Compare the right fields
+
+Record the exact request, `software`, `softwareRevision`, `mode`, `provenance`, all six run metrics, `verdict`, `evidenceId`, and `artifactHash`. [Build identity](RELEASE_IDENTITY.md) explains the distinctions between product release, evidence format, engine revision, build commit, and source fingerprint.
+
+- The same algorithm, request, normalized source data, and build identity should reproduce the same `evidenceId` and computed outputs.
+- `generatedAt` changes on a new run, so the complete artifact checksum normally changes even if the evidence ID is unchanged.
+- Different build commits or source fingerprints change evidence identity. Compare normalized inputs, data fingerprints, and numerical results before concluding that the engine regressed.
+- Provider-adjusted history may be revised. A different data fingerprint is a data difference, not automatically a software bug. The export contains derived outputs and a fingerprint, not raw source bars; exact independent recomputation requires equivalent licensed source data.
+- A checksum detects modification relative to the saved checksum. It does not establish who produced an artifact, certify the provider, or independently timestamp a preregistration.
+
+Report mismatches with these fields, runtime, date, and reproduction steps. Remove credentials and private information. Rejection, fragility, provider-access failures, and inconclusive attempts are valid reports, not reasons to tune the case after seeing its result.
+
+## Historical material
+
+[Earlier reproduction protocol](legacy/REPRODUCIBILITY_PRE_INSTRUMENT.md) and [earlier architecture](legacy/PRODUCT_ARCHITECTURE_PRE_INSTRUMENT.md) document the former Dashboard/CSP-v1 path. They are not instructions for today's deployment or evidence of current historical-data validation.
