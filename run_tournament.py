@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Command-line tool for running strategy tournaments.
 
+This runner belongs to the original Python simulator. For the current
+public evidence instrument and reproduction workflow, see docs/README.md.
+
 Usage:
     python run_tournament.py [--start-date YYYY-MM-DD] [--end-date YYYY-MM-DD] [--strategies-dir DIR]
 """
