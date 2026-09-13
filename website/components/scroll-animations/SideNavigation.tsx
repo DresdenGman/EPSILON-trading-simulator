@@ -20,7 +20,7 @@ export function SideNavigation({ items, className = '' }: SideNavigationProps) {
   useEffect(() => {
     if (!navRef.current) return
 
-    // 为每个导航项创建 ScrollTrigger
+    // Create a ScrollTrigger for each navigation item.
     items.forEach((item, index) => {
       const section = document.getElementById(item.id)
       if (!section) return
@@ -30,7 +30,7 @@ export function SideNavigation({ items, className = '' }: SideNavigationProps) {
         start: 'top center',
         end: 'bottom center',
         onEnter: () => {
-          // 高亮当前导航项
+          // Highlight the active navigation item.
           itemsRef.current.forEach((el, i) => {
             if (el) {
               el.setAttribute('data-active', i === index ? 'true' : 'false')

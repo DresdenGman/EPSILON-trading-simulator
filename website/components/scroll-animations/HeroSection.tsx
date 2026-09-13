@@ -33,7 +33,7 @@ export function HeroSection({
     if (!sectionRef.current) return
 
     const ctx = gsap.context(() => {
-      // 标题从中心放大淡入
+      // Scale and fade in the title from the center.
       if (titleRef.current) {
         gsap.fromTo(
           titleRef.current,
@@ -58,7 +58,7 @@ export function HeroSection({
         )
       }
 
-      // 副标题从下方滑入
+      // Slide in the subtitle from below.
       if (subtitleRef.current) {
         gsap.fromTo(
           subtitleRef.current,
@@ -82,7 +82,7 @@ export function HeroSection({
         )
       }
 
-      // 描述文字淡入
+      // Fade in the description.
       if (descriptionRef.current) {
         gsap.fromTo(
           descriptionRef.current,
@@ -106,7 +106,7 @@ export function HeroSection({
         )
       }
 
-      // 背景图片视差效果
+      // Background image parallax effect.
       if (imageRef.current) {
         gsap.to(imageRef.current, {
           scale: 1.2,
@@ -132,7 +132,7 @@ export function HeroSection({
       ref={sectionRef}
       className={`relative min-h-screen flex items-center justify-center overflow-hidden ${className}`}
     >
-      {/* 背景图片 */}
+      {/* Background image */}
       {backgroundImage && (
         <div
           ref={imageRef}
@@ -147,7 +147,7 @@ export function HeroSection({
         </div>
       )}
 
-      {/* 内容 */}
+      {/* Content */}
       <div className="relative z-10 max-w-4xl px-8 text-center">
         <h1
           ref={titleRef}

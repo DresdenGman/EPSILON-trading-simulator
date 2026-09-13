@@ -204,16 +204,16 @@ def format_period_description(period_days: float) -> str:
         period_days: Period in days
     
     Returns:
-        Formatted string like "30天周期" or "2.5周周期"
+        Formatted string like "30-day cycle" or "2.5-week cycle"
     """
     if period_days < 7:
-        return f"{period_days:.1f}天周期"
+        return f"{period_days:.1f}-day cycle"
     elif period_days < 30:
         weeks = period_days / 7
-        return f"{weeks:.1f}周周期"
+        return f"{weeks:.1f}-week cycle"
     elif period_days < 365:
         months = period_days / 30
-        return f"{months:.1f}月周期"
+        return f"{months:.1f}-month cycle"
     else:
         years = period_days / 365
-        return f"{years:.1f}年周期"
+        return f"{years:.1f}-year cycle"
