@@ -43,3 +43,16 @@ Sensitive content is handled as follows. Reporters must not include credentials,
 ## Development checks
 
 Before a pull request, run the relevant tests for the surface you changed. For the current web evidence instrument, the public acceptance criteria are a working no-login path, explicit provenance, a pre-specified rejection rule, and an exportable evidence artifact.
+
+## Repository language
+
+Write interface labels, errors, documentation, code comments, and new commit
+messages in English. Run `python3 utils/check_english.py` to check tracked text
+and filenames for Han characters, including common escaped representations.
+The English text CI check runs on pull requests and main-branch pushes.
+
+Review screenshots, PDFs, and videos separately; the text guard does not perform
+OCR or inspect audio. Preserve historical commits and original evidence rather
+than rewriting history to change old wording. Do not translate another person's
+public feedback in place without their permission; provide a labeled translation
+if needed.

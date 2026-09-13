@@ -210,7 +210,7 @@ I'd love to connect with anyone interested in fintech, developer tools, or tradi
 | **FreeCodeCamp Tutorial** | Write a step-by-step guide, submit to their publication |
 | **Dev.to/Medium** | Cross-post the blog articles |
 | **TikTok Short** | 30s screen recording with trending audio |
-| **GitHub Star Growth** | Share on Chinese platforms (掘金,知乎) for massive reach |
+| **GitHub Star Growth** | Share on Chinese platforms (Juejin, Zhihu) for massive reach |
 | **Discord Community** | Create a server for traders using the platform |
 
 ---

@@ -10,9 +10,9 @@ This pack keeps every public description of EPSILON aligned with one product tru
 
 > **I do not build systems to make answers look more certain. I build systems that make conclusions easier to challenge.**
 
-Chinese:
+Alternative wording:
 
-> **我不是在制造更肯定的答案，而是在设计一种让结论经得起质疑的系统。**
+> **I am not making answers sound more certain; I am designing a system whose conclusions can withstand scrutiny.**
 
 ### The recurring way of working
 
@@ -43,9 +43,9 @@ EPSILON should be used as evidence of four qualities—not as a claim that its b
 
 > When a result looks convincing, what would have to be true for it to deserve our trust?
 
-Chinese:
+Alternative wording:
 
-> 当一个结果看起来很有说服力时，究竟还需要满足什么条件，它才值得被相信？
+> When a result looks persuasive, what additional conditions must it meet before it deserves to be trusted?
 
 ## 2. Canonical positioning
 
@@ -53,9 +53,9 @@ Chinese:
 
 **EPSILON is an open-source quantitative decision lab that turns a market idea into a falsifiable research loop: observe, define, test, challenge, and retest.**
 
-Chinese:
+Alternative wording:
 
-**EPSILON 是一个开源量化决策实验室，把市场直觉转化为可证伪的研究循环：观察、定义、测试、质疑与重新测试。**
+**EPSILON is an open-source quantitative decision lab that turns market intuition into a falsifiable research loop: observe, define, test, challenge, and retest.**
 
 ### Twenty-five words
 
@@ -118,16 +118,16 @@ Every public claim should be demonstrable through one of these links:
 > Laboratory: https://epsilonfield.space/lab
 > Source: https://github.com/DresdenGman/EPSILON-trading-simulator
 
-### Short Chinese post
+### Alternative short post
 
-> 我做 EPSILON，源于一个一直困扰我的问题：当一个回测结果看起来很有说服力时，究竟还需要满足什么条件，它才值得被相信？
+> I built EPSILON because of a question that kept bothering me: when a backtest looks persuasive, what additional conditions must it meet before it deserves our trust?
 >
-> EPSILON 把市场直觉转化为一个可证伪的循环：观察、定义、测试、质疑、重新测试。问题、配置、证据边界和失败条件始终与结果绑定，而不是让一个漂亮数字脱离假设单独存在。
+> EPSILON turns market intuition into a falsifiable loop: observe, define, test, challenge, and retest. The question, configuration, evidence boundaries, and failure conditions remain attached to the result instead of leaving an attractive number detached from its assumptions.
 >
-> 项目已经开源，访客无需注册即可体验。我最希望得到的不是一句“做得不错”，而是：**你会首先质疑这个研究流程中的哪一个假设？**
+> The project is open source and visitors can try it without registering. Rather than hearing that it looks good, I would like to know: **which assumption in this research workflow would you challenge first?**
 >
-> 产品：https://epsilonfield.space
-> 源码：https://github.com/DresdenGman/EPSILON-trading-simulator
+> Product: https://epsilonfield.space
+> Source: https://github.com/DresdenGman/EPSILON-trading-simulator
 
 ## 5. Technical community version
 
@@ -171,9 +171,9 @@ https://github.com/DresdenGman/EPSILON-trading-simulator
 
 > EPSILON began as a trading simulator, but I realized the more interesting problem was not how to produce another result—it was how to stop a result from becoming detached from the assumptions behind it. I rebuilt it as a quantitative decision lab. A user defines a claim and failure condition, tests it, sees the evidence boundaries, challenges the interpretation, and retests without erasing history. The product reflects how I like to build: turn ambiguity into an explicit system, then design that system to question itself.
 
-### Chinese introduction
+### Alternative introduction
 
-> EPSILON 最初是一个交易模拟器，但我后来发现，更值得解决的问题不是怎样再生成一个结果，而是怎样防止结果脱离它背后的假设。我把它重构成了一个量化决策实验室：用户先定义命题和失败条件，再测试、查看证据边界、质疑解释，并在不抹去历史的情况下重新测试。这个产品也代表了我的做事方式：把模糊问题变成明确系统，再让这个系统具备质疑自身结论的能力。
+> EPSILON started as a trading simulator, but I later found a more worthwhile problem: not how to generate another result, but how to prevent a result from becoming detached from its assumptions. I rebuilt it as a quantitative decision lab: users define a claim and failure conditions, test it, inspect the evidence boundaries, question the interpretation, and retest without erasing history. The product also reflects how I work: turn an ambiguous problem into an explicit system, then give that system the ability to question its own conclusions.
 
 ### Investor follow-up answers
 
@@ -223,11 +223,11 @@ This framing makes EPSILON one piece of a repeatable intellectual pattern across
 >
 > https://epsilonfield.space/lab
 
-### Chinese tester invitation
+### Alternative tester invitation
 
-> 我刚发布了 EPSILON v2.0，一个开源量化决策实验室。我现在想验证一个很具体的问题：把问题、失败条件、测试配置和证据边界放在一起，是否真的能降低用户误读结果的可能性？
+> I have just released EPSILON v2.0, an open-source quantitative decision lab. I want to test a specific question: does keeping the question, failure conditions, test configuration, and evidence boundaries together actually reduce the chance that users misinterpret a result?
 >
-> 如果你愿意花五分钟体验访客流程，我只想请你回答一个问题：**你最先会质疑哪一个假设？** 我更需要具体反对意见，而不是一句表扬。
+> If you are willing to spend five minutes trying the guest workflow, I would like you to answer one question: **which assumption would you challenge first?** I need a concrete objection more than a compliment.
 >
 > https://epsilonfield.space
 
@@ -239,7 +239,7 @@ This framing makes EPSILON one piece of a repeatable intellectual pattern across
 
 **Working title:** `The Backtest Was Precise. The Question Was Not.`
 
-Chinese title: `回测结果很精确，但问题并不精确`
+Alternative title: `The Backtest Result Was Precise, but the Question Was Not`
 
 1. The moment a clean result felt less trustworthy, not more.
 2. Why conventional output-first interfaces encourage over-interpretation.

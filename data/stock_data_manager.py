@@ -60,7 +60,7 @@ class StockDataManager:
             try:
                 with open(self.events_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                    # 期望结构：list[{"code":..., "start":"YYYY-MM-DD", "days":N, "impact_pct":+/-x}]
+                    # Expected structure: list[{"code":..., "start":"YYYY-MM-DD", "days":N, "impact_pct":+/-x}]
                     if isinstance(data, list):
                         return data
             except (json.JSONDecodeError, IOError, OSError) as e:
@@ -272,7 +272,7 @@ class StockDataManager:
         base_price = 50 + (self._stable_code_value(code) % 250)
         change_percent = round(rng.uniform(-4.5, 4.5), 2)
 
-        # 应用事件脚本：在事件持续期间对日涨跌幅做偏移
+        # Apply scripted events: shift daily returns during each event.
         if self.events:
             for ev in self.events:
                 if ev.get("code") != code:
@@ -306,7 +306,7 @@ class StockDataManager:
     def add_event(self, code: str, start_date: datetime.date, days: int, impact_pct: float) -> None:
         """Add a good/bad news event for a stock.
 
-        impact_pct: 正数表示在原有日涨跌幅基础上增加（利好），负数表示减少（利空）。
+        impact_pct: Positive values increase the original daily return; negative values decrease it.
         """
         if days <= 0:
             return
@@ -320,7 +320,7 @@ class StockDataManager:
         self.events.append(event)
         self._save_events()
 
-        # 为了让事件立即生效，清除该股票在事件区间内的本地价格缓存
+        # Clear cached prices for this stock within the event window so it takes effect immediately.
         try:
             for i in range(days):
                 d = start_date + datetime.timedelta(days=i)

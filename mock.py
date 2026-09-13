@@ -4262,7 +4262,7 @@ class StockTradeSimulator:
             
             # Create settings window
             settings_window = tk.Toplevel(self.root)
-            settings_window.title("压力测试设置 (Stress Test Settings)")
+            settings_window.title("Stress Test Settings")
             settings_window.geometry("550x750")
             settings_window.transient(self.root)
             settings_window.configure(bg=self.bg_color)
@@ -4274,7 +4274,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 header_frame,
-                text="⚡ 压力测试设置 - 跳跃扩散模型",
+                text="⚡ Stress Test Settings - Jump Diffusion Model",
                 font=('Segoe UI', 12, 'bold'),
                 bg=self.header_bg,
                 fg=self.text_color
@@ -4291,7 +4291,7 @@ class StockTradeSimulator:
             enabled_var = tk.BooleanVar(value=current_config.get('enabled', False))
             enabled_check = tk.Checkbutton(
                 content_frame,
-                text="启用压力测试 (Enable Stress Testing)",
+                text="Enable Stress Testing",
                 variable=enabled_var,
                 bg=self.panel_bg,
                 fg=self.text_color,
@@ -4303,7 +4303,7 @@ class StockTradeSimulator:
             # Jump probability
             tk.Label(
                 content_frame,
-                text="跳跃概率 (Jump Probability):",
+                text="Jump Probability:",
                 bg=self.panel_bg,
                 fg=self.text_color,
                 font=('Segoe UI', 10, 'bold')
@@ -4322,7 +4322,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 content_frame,
-                text="(例如: 0.02 = 2% 概率触发跳跃)",
+                text="(Example: 0.02 = 2% probability of a jump)",
                 bg=self.panel_bg,
                 fg='#666666',
                 font=('Segoe UI', 8)
@@ -4331,7 +4331,7 @@ class StockTradeSimulator:
             # Jump sizes
             tk.Label(
                 content_frame,
-                text="跳跃幅度 (Jump Sizes):",
+                text="Jump Sizes:",
                 bg=self.panel_bg,
                 fg=self.text_color,
                 font=('Segoe UI', 10, 'bold')
@@ -4352,7 +4352,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 content_frame,
-                text="(例如: -0.20, -0.15, -0.10 表示 -20%, -15%, -10% 暴跌)",
+                text="(Example: -0.20, -0.15, -0.10 means drops of 20%, 15%, 10%)",
                 bg=self.panel_bg,
                 fg='#666666',
                 font=('Segoe UI', 8)
@@ -4361,7 +4361,7 @@ class StockTradeSimulator:
             # Jump direction
             tk.Label(
                 content_frame,
-                text="跳跃方向 (Jump Direction):",
+                text="Jump Direction:",
                 bg=self.panel_bg,
                 fg=self.text_color,
                 font=('Segoe UI', 10, 'bold')
@@ -4373,7 +4373,7 @@ class StockTradeSimulator:
             
             tk.Radiobutton(
                 direction_frame,
-                text="下跌 (Down)",
+                text="Down",
                 variable=direction_var,
                 value='down',
                 bg=self.panel_bg,
@@ -4384,7 +4384,7 @@ class StockTradeSimulator:
             
             tk.Radiobutton(
                 direction_frame,
-                text="上涨 (Up)",
+                text="Up",
                 variable=direction_var,
                 value='up',
                 bg=self.panel_bg,
@@ -4395,7 +4395,7 @@ class StockTradeSimulator:
             
             tk.Radiobutton(
                 direction_frame,
-                text="双向 (Both)",
+                text="Both",
                 variable=direction_var,
                 value='both',
                 bg=self.panel_bg,
@@ -4410,7 +4410,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 content_frame,
-                text="极值分布 (Extreme Value Distribution) - Stage 2",
+                text="Extreme Value Distribution - Stage 2",
                 bg=self.panel_bg,
                 fg=self.accent_color,
                 font=('Segoe UI', 10, 'bold')
@@ -4419,7 +4419,7 @@ class StockTradeSimulator:
             # Extreme probability
             tk.Label(
                 content_frame,
-                text="极值事件概率 (Extreme Probability):",
+                text="Extreme Event Probability:",
                 bg=self.panel_bg,
                 fg=self.text_color,
                 font=('Segoe UI', 10, 'bold')
@@ -4438,7 +4438,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 content_frame,
-                text="(例如: 0.01 = 1% 概率触发极值事件)",
+                text="(Example: 0.01 = 1% probability of an extreme event)",
                 bg=self.panel_bg,
                 fg='#666666',
                 font=('Segoe UI', 8)
@@ -4447,7 +4447,7 @@ class StockTradeSimulator:
             # Extreme distribution type
             tk.Label(
                 content_frame,
-                text="分布类型 (Distribution Type):",
+                text="Distribution Type:",
                 bg=self.panel_bg,
                 fg=self.text_color,
                 font=('Segoe UI', 10, 'bold')
@@ -4492,7 +4492,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 content_frame,
-                text="(GEV: 广义极值分布, Pareto: 帕累托分布, Simple: 简单阈值)",
+                text="(GEV: generalized extreme value; Pareto: Pareto; Simple: threshold)",
                 bg=self.panel_bg,
                 fg='#666666',
                 font=('Segoe UI', 8)
@@ -4501,7 +4501,7 @@ class StockTradeSimulator:
             # Extreme threshold
             tk.Label(
                 content_frame,
-                text="极值阈值 (Extreme Threshold):",
+                text="Extreme Threshold:",
                 bg=self.panel_bg,
                 fg=self.text_color,
                 font=('Segoe UI', 10, 'bold')
@@ -4520,7 +4520,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 content_frame,
-                text="(例如: -0.15 表示 -15% 的极值阈值)",
+                text="(Example: -0.15 means an extreme threshold of -15%)",
                 bg=self.panel_bg,
                 fg='#666666',
                 font=('Segoe UI', 8)
@@ -4532,7 +4532,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 content_frame,
-                text="分位数回归 (Quantile Regression) - Stage 3",
+                text="Quantile Regression - Stage 3",
                 bg=self.panel_bg,
                 fg=self.accent_color,
                 font=('Segoe UI', 10, 'bold')
@@ -4542,7 +4542,7 @@ class StockTradeSimulator:
             use_qr_var = tk.BooleanVar(value=current_config.get('use_quantile_regression', False))
             use_qr_check = tk.Checkbutton(
                 content_frame,
-                text="启用分位数回归 (Enable Quantile Regression)",
+                text="Enable Quantile Regression",
                 variable=use_qr_var,
                 bg=self.panel_bg,
                 fg=self.text_color,
@@ -4554,7 +4554,7 @@ class StockTradeSimulator:
             # Quantile level
             tk.Label(
                 content_frame,
-                text="分位数水平 (Quantile Level):",
+                text="Quantile Level:",
                 bg=self.panel_bg,
                 fg=self.text_color,
                 font=('Segoe UI', 10, 'bold')
@@ -4573,7 +4573,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 content_frame,
-                text="(例如: 0.01 = 1% 尾部风险, 0.05 = 5% 尾部风险)",
+                text="(Example: 0.01 = 1% tail, 0.05 = 5% tail)",
                 bg=self.panel_bg,
                 fg='#666666',
                 font=('Segoe UI', 8)
@@ -4581,12 +4581,12 @@ class StockTradeSimulator:
             
             # Info text
             info_text = (
-                "压力测试包含三个阶段：\n"
-                "阶段1 (跳跃扩散): 随机添加大幅价格跳跃\n"
-                "阶段2 (极值分布): 使用统计分布生成尾部风险\n"
-                "阶段3 (分位数回归): 使用机器学习预测极端分位数\n\n"
-                "注意：启用后需要重新生成数据才能看到效果。\n"
-                "阶段3需要 scikit-learn (可选，有回退方法)。"
+                "Stress testing includes three stages:\n"
+                "Stage 1 (Jump Diffusion): randomly add large price jumps\n"
+                "Stage 2 (Extreme Values): generate tail risk from statistical distributions\n"
+                "Stage 3 (Quantile Regression): use machine learning to predict extreme quantiles\n\n"
+                "Note: regenerate the data after enabling this setting to see its effect.\n"
+                "Stage 3 uses scikit-learn (optional; a fallback is available)."
             )
             tk.Label(
                 content_frame,
@@ -4614,11 +4614,11 @@ class StockTradeSimulator:
                     
                     # Validate
                     if jump_prob < 0 or jump_prob > 1:
-                        messagebox.showerror("错误", "跳跃概率必须在 0 到 1 之间")
+                        messagebox.showerror("Error", "Jump probability must be between 0 and 1.")
                         return
                     
                     if not jump_sizes:
-                        messagebox.showerror("错误", "至少需要指定一个跳跃幅度")
+                        messagebox.showerror("Error", "Specify at least one jump size.")
                         return
                     
                     # Parse extreme value settings
@@ -4632,12 +4632,12 @@ class StockTradeSimulator:
                     
                     # Validate extreme settings
                     if extreme_prob < 0 or extreme_prob > 1:
-                        messagebox.showerror("错误", "极值概率必须在 0 到 1 之间")
+                        messagebox.showerror("Error", "Extreme event probability must be between 0 and 1.")
                         return
                     
                     # Validate quantile level
                     if quantile_level < 0 or quantile_level > 1:
-                        messagebox.showerror("错误", "分位数水平必须在 0 到 1 之间")
+                        messagebox.showerror("Error", "Quantile level must be between 0 and 1.")
                         return
                     
                     # Apply settings
@@ -4653,16 +4653,16 @@ class StockTradeSimulator:
                         quantile_level=quantile_level
                     )
                     
-                    messagebox.showinfo("成功", "压力测试设置已保存！\n\n注意：需要重新加载股票数据才能看到效果。")
+                    messagebox.showinfo("Success", "Stress test settings saved!\n\nNote: reload stock data to see the changes.")
                     settings_window.destroy()
                 except ValueError as e:
-                    messagebox.showerror("错误", f"请输入有效的数值：\n{str(e)}")
+                    messagebox.showerror("Error", f"Enter a valid numeric value:\n{str(e)}")
                 except Exception as e:
-                    messagebox.showerror("错误", f"保存设置失败：\n{str(e)}")
+                    messagebox.showerror("Error", f"Failed to save settings:\n{str(e)}")
             
             tk.Button(
                 btn_frame,
-                text="保存 (Save)",
+                text="Save",
                 command=save_stress_settings,
                 bg=self.accent_color,
                 fg='white',
@@ -4675,7 +4675,7 @@ class StockTradeSimulator:
             
             tk.Button(
                 btn_frame,
-                text="取消 (Cancel)",
+                text="Cancel",
                 command=settings_window.destroy,
                 bg='#6B7280',
                 fg='white',
@@ -4687,9 +4687,9 @@ class StockTradeSimulator:
             ).pack(side=tk.LEFT)
             
         except ImportError as e:
-            messagebox.showerror("模块未找到", f"压力测试模块未找到：\n{str(e)}\n\n请确保 analysis/stress_test.py 文件存在。")
+            messagebox.showerror("Module Not Found", f"Stress test module not found:\n{str(e)}\n\nMake sure analysis/stress_test.py exists.")
         except Exception as e:
-            messagebox.showerror("错误", f"打开压力测试设置失败：\n{str(e)}")
+            messagebox.showerror("Error", f"Failed to open stress test settings:\n{str(e)}")
     
     def open_spectral_analysis(self):
         """Open spectral analysis window for current stock"""
@@ -4699,7 +4699,7 @@ class StockTradeSimulator:
             # Check if a stock is selected
             selected_indices = self.stock_listbox.curselection()
             if not selected_indices:
-                messagebox.showwarning("No Stock Selected", "请先选择一个股票进行分析。")
+                messagebox.showwarning("No Stock Selected", "Select a stock before starting the analysis.")
                 return
             
             # Get selected stock code
@@ -4711,7 +4711,7 @@ class StockTradeSimulator:
             
             # Create spectral analysis window
             spectral_window = tk.Toplevel(self.root)
-            spectral_window.title(f"频谱分析 - {stock_code} ({stock_name})")
+            spectral_window.title(f"Spectral Analysis - {stock_code} ({stock_name})")
             spectral_window.geometry("1000x700")
             spectral_window.transient(self.root)
             spectral_window.configure(bg=self.bg_color)
@@ -4723,7 +4723,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 header_frame,
-                text=f"📈 频谱分析 - {stock_code} ({stock_name})",
+                text=f"📈 Spectral Analysis - {stock_code} ({stock_name})",
                 font=('Segoe UI', 14, 'bold'),
                 bg=self.header_bg,
                 fg=self.text_color
@@ -4747,14 +4747,14 @@ class StockTradeSimulator:
                     )
                     
                     if hist_data is None or len(hist_data) < 10:
-                        messagebox.showerror("数据不足", f"无法获取足够的股票数据进行分析。\n需要至少10天的数据，当前数据量：{len(hist_data) if hist_data is not None else 0}")
+                        messagebox.showerror("Insufficient Data", f"Could not retrieve enough stock data for analysis.\nAt least 10 days are required. Available days: {len(hist_data) if hist_data is not None else 0}")
                         return
                     
                     # Show loading
                     results_text.config(state=tk.NORMAL)
                     results_text.delete(1.0, tk.END)
-                    results_text.insert(tk.END, "正在分析...\n")
-                    results_text.insert(tk.END, f"数据量: {len(hist_data)} 天\n")
+                    results_text.insert(tk.END, "Analyzing...\n")
+                    results_text.insert(tk.END, f"Data: {len(hist_data)} days\n")
                     results_text.config(state=tk.DISABLED)
                     analyze_btn.config(state=tk.DISABLED)
                     
@@ -4786,23 +4786,23 @@ class StockTradeSimulator:
                             results_text.config(state=tk.NORMAL)
                             results_text.delete(1.0, tk.END)
                             
-                            results_text.insert(tk.END, f"📊 频谱分析结果 - {stock_code}\n", "header")
+                            results_text.insert(tk.END, f"📊 Spectral Analysis Results - {stock_code}\n", "header")
                             results_text.insert(tk.END, "=" * 60 + "\n\n")
                             
                             if result['dominant_cycles']:
-                                results_text.insert(tk.END, "🎯 主要交易周期:\n\n", "subheader")
+                                results_text.insert(tk.END, "🎯 Dominant Trading Cycles:\n\n", "subheader")
                                 for i, (period, freq, power) in enumerate(result['dominant_cycles'], 1):
                                     period_desc = format_period_description(period)
                                     power_pct = (power / result['total_power'] * 100) if result['total_power'] > 0 else 0
-                                    results_text.insert(tk.END, f"{i}. {period_desc} ({period:.2f}天)\n")
-                                    results_text.insert(tk.END, f"   频率: {freq:.6f} 周期/天\n")
-                                    results_text.insert(tk.END, f"   功率占比: {power_pct:.2f}%\n\n")
+                                    results_text.insert(tk.END, f"{i}. {period_desc} ({period:.2f} days)\n")
+                                    results_text.insert(tk.END, f"   Frequency: {freq:.6f} cycles/day\n")
+                                    results_text.insert(tk.END, f"   Power share: {power_pct:.2f}%\n\n")
                             else:
-                                results_text.insert(tk.END, "⚠️ 未检测到明显的周期性模式\n\n")
+                                results_text.insert(tk.END, "⚠️ No clear cyclical pattern detected\n\n")
                             
-                            results_text.insert(tk.END, f"总功率: {result['total_power']:.2f}\n")
+                            results_text.insert(tk.END, f"Total power: {result['total_power']:.2f}\n")
                             if result['dominant_period']:
-                                results_text.insert(tk.END, f"主导周期: {format_period_description(result['dominant_period'])}\n")
+                                results_text.insert(tk.END, f"Dominant cycle: {format_period_description(result['dominant_period'])}\n")
                             
                             results_text.config(state=tk.DISABLED)
                             
@@ -4822,14 +4822,14 @@ class StockTradeSimulator:
                                 power_display = result['power_spectrum'][valid_range]
                                 
                                 # Plot power spectrum
-                                ax.plot(periods_display, power_display, 'b-', linewidth=1.5, label='功率谱')
+                                ax.plot(periods_display, power_display, 'b-', linewidth=1.5, label='Power spectrum')
                                 
                                 # Mark dominant cycles
                                 for period, freq, power in result['dominant_cycles']:
                                     if 2 <= period <= 365:
                                         # Find closest point in spectrum
                                         idx = np.argmin(np.abs(periods_display - period))
-                                        ax.plot(periods_display[idx], power_display[idx], 'ro', markersize=10, label='主要周期' if period == result['dominant_cycles'][0][0] else '')
+                                        ax.plot(periods_display[idx], power_display[idx], 'ro', markersize=10, label='Dominant cycle' if period == result['dominant_cycles'][0][0] else '')
                                         ax.annotate(
                                             format_period_description(period),
                                             xy=(periods_display[idx], power_display[idx]),
@@ -4840,9 +4840,9 @@ class StockTradeSimulator:
                                             arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0')
                                         )
                                 
-                                ax.set_xlabel('周期 (天)', fontsize=11)
-                                ax.set_ylabel('功率', fontsize=11)
-                                ax.set_title(f'{stock_code} 价格频谱分析', fontsize=13, fontweight='bold')
+                                ax.set_xlabel('Period (days)', fontsize=11)
+                                ax.set_ylabel('Power', fontsize=11)
+                                ax.set_title(f'{stock_code} Price Spectral Analysis', fontsize=13, fontweight='bold')
                                 ax.grid(True, alpha=0.3)
                                 ax.legend()
                                 
@@ -4855,7 +4855,7 @@ class StockTradeSimulator:
                             else:
                                 tk.Label(
                                     chart_frame,
-                                    text="需要 matplotlib 来显示频谱图",
+                                    text="Install matplotlib to display the spectrum chart.",
                                     bg=self.panel_bg,
                                     fg=self.text_color,
                                     font=('Segoe UI', 10)
@@ -4869,7 +4869,7 @@ class StockTradeSimulator:
                     def show_error(error_msg):
                         results_text.config(state=tk.NORMAL)
                         results_text.delete(1.0, tk.END)
-                        results_text.insert(tk.END, f"❌ 分析失败:\n{error_msg}\n", "error")
+                        results_text.insert(tk.END, f"❌ Analysis failed:\n{error_msg}\n", "error")
                         results_text.config(state=tk.DISABLED)
                         analyze_btn.config(state=tk.NORMAL)
                     
@@ -4878,11 +4878,11 @@ class StockTradeSimulator:
                     analysis_thread.start()
                     
                 except Exception as e:
-                    messagebox.showerror("错误", f"频谱分析失败:\n{str(e)}")
+                    messagebox.showerror("Error", f"Spectral analysis failed:\n{str(e)}")
             
             analyze_btn = tk.Button(
                 analyze_btn_frame,
-                text="🔍 开始分析",
+                text="🔍 Start Analysis",
                 command=run_analysis,
                 bg=self.accent_color,
                 fg='white',
@@ -4896,7 +4896,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 analyze_btn_frame,
-                text="使用FFT分析价格序列，识别主要交易周期",
+                text="Use FFT to analyze prices and identify dominant trading cycles.",
                 bg=self.panel_bg,
                 fg='#666666',
                 font=('Segoe UI', 9)
@@ -4912,7 +4912,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 left_frame,
-                text="分析结果",
+                text="Analysis Results",
                 bg=self.panel_bg,
                 fg=self.text_color,
                 font=('Segoe UI', 11, 'bold')
@@ -4941,7 +4941,7 @@ class StockTradeSimulator:
             
             tk.Label(
                 right_frame,
-                text="频谱图",
+                text="Spectrum Chart",
                 bg=self.panel_bg,
                 fg=self.text_color,
                 font=('Segoe UI', 11, 'bold')
@@ -4952,15 +4952,15 @@ class StockTradeSimulator:
             
             # Initial message
             results_text.config(state=tk.NORMAL)
-            results_text.insert(tk.END, "点击「开始分析」按钮进行频谱分析\n\n")
-            results_text.insert(tk.END, "分析将使用最近365天的价格数据\n")
-            results_text.insert(tk.END, "识别主要交易周期（如30天周期、7天周期等）\n")
+            results_text.insert(tk.END, "Click Start Analysis to run spectral analysis.\n\n")
+            results_text.insert(tk.END, "The analysis uses price data from the last 365 days.\n")
+            results_text.insert(tk.END, "Identify dominant trading cycles (such as 30-day or 7-day cycles).\n")
             results_text.config(state=tk.DISABLED)
             
         except ImportError as e:
-            messagebox.showerror("模块未找到", f"频谱分析模块未找到:\n{str(e)}\n\n请确保 analysis/spectral.py 文件存在。")
+            messagebox.showerror("Module Not Found", f"Spectral analysis module not found:\n{str(e)}\n\nMake sure analysis/spectral.py exists.")
         except Exception as e:
-            messagebox.showerror("错误", f"打开频谱分析窗口失败:\n{str(e)}")
+            messagebox.showerror("Error", f"Failed to open the spectral analysis window:\n{str(e)}")
     
     def open_strategy_tournament(self):
         """Open strategy tournament window"""

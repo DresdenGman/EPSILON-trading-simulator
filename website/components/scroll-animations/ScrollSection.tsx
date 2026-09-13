@@ -4,7 +4,7 @@ import { useEffect, useRef, ReactNode } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-// 注册 ScrollTrigger 插件
+// Register the ScrollTrigger plugin.
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
@@ -21,7 +21,7 @@ export function ScrollSection({ children, className = '', id }: ScrollSectionPro
   useEffect(() => {
     if (!sectionRef.current) return
 
-    // 刷新 ScrollTrigger 以确保正确计算位置
+    // Refresh ScrollTrigger to calculate positions correctly.
     ScrollTrigger.refresh()
   }, [])
 

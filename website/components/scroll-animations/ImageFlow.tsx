@@ -22,8 +22,8 @@ export function ImageFlow({ images, className = '' }: ImageFlowProps) {
     if (!containerRef.current) return
 
     const ctx = gsap.context(() => {
-      // 创建横向滚动的图片流
-      const totalWidth = images.length * 100 // 每张图片占100vw
+      // Create a horizontally scrolling image flow.
+      const totalWidth = images.length * 100 // Each image occupies 100vw.
       
       gsap.to(containerRef.current, {
         x: () => `-${totalWidth - 100}vw`,
@@ -37,7 +37,7 @@ export function ImageFlow({ images, className = '' }: ImageFlowProps) {
         },
       })
 
-      // 每张图片的淡入淡出效果
+      // Fade each image in and out.
       images.forEach((_, index) => {
         const image = imagesRef.current[index]
         if (!image) return

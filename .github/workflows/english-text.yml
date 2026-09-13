@@ -1,0 +1,19 @@
+name: English text
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  english-text:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Test the text guard
+        run: python3 -m unittest tests.test_english_text
+      - name: Check tracked text and filenames
+        run: python3 utils/check_english.py

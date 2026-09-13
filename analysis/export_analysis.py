@@ -264,9 +264,9 @@ class ExportAnalyzer:
                 if not api_key:
                     messagebox.showinfo(
                         "API Key Required",
-                        "AI 分析功能需要先配置对应服务商的 API Key。\n\n"
-                        "您已取消输入，当前不会调用 AI 接口。\n\n"
-                        "详细获取与配置步骤请查看项目根目录中的：\n"
+                        "AI analysis requires an API key for the selected provider.\n\n"
+                        "You canceled key entry, so no AI API request will be made.\n\n"
+                        "For key setup instructions, see these files in the project root:\n"
                         "- AI_ANALYSIS_GUIDE.md\n"
                         "- AI_PROVIDERS_GUIDE.md",
                     )
@@ -341,21 +341,21 @@ class ExportAnalyzer:
         """Show AI setup dialog"""
         messagebox.showinfo(
             "AI Feature Setup",
-            "要使用 AI 分析功能，需要先安装至少一个 AI 库并获取对应的 API Key。\n\n"
-            "可选服务商：\n\n"
+            "To use AI analysis, install at least one provider library and obtain its API key.\n\n"
+            "Available providers:\n\n"
             "1. OpenAI (GPT-3.5/GPT-4):\n"
             "   pip install openai\n"
-            "   获取 API Key: https://platform.openai.com/api-keys\n\n"
-            "2. Qwen (DashScope)（推荐，国内可用）：\n"
+            "   Get an API key: https://platform.openai.com/api-keys\n\n"
+            "2. Qwen (DashScope):\n"
             "   pip install dashscope\n"
-            "   获取 API Key: https://dashscope.console.aliyun.com/apiKey\n\n"
+            "   Get an API key: https://dashscope.console.aliyun.com/apiKey\n\n"
             "3. Google Gemini:\n"
             "   pip install google-generativeai\n"
-            "   获取 API Key: https://makersuite.google.com/app/apikey\n\n"
-            "详细安装与配置步骤请参见项目根目录：\n"
+            "   Get an API key: https://makersuite.google.com/app/apikey\n\n"
+            "For installation and setup instructions, see the project root:\n"
             "- AI_ANALYSIS_GUIDE.md\n"
             "- AI_PROVIDERS_GUIDE.md\n\n"
-            "安装完成后请重启程序。"
+            "Restart the application after installation."
         )
     
     def _select_ai_provider(self):
@@ -655,4 +655,3 @@ Please answer in English, language should be professional but understandable, su
             messagebox.showinfo("Save Success", f"AI analysis report saved to:\n{report_file}")
         except Exception as e:
             messagebox.showerror("Save Failed", f"Error saving report:\n{str(e)}")
-

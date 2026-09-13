@@ -36,11 +36,11 @@ export default function HeroSection({ isScrolling }: HeroSectionProps) {
 
     const section = sectionRef.current
     
-    // 初始化 CSS 变量
+    // Initialize CSS variables.
     section.style.setProperty('--bgsProgress', '1')
     section.style.setProperty('--bgEndProgress', '0')
 
-    // Hero 文字动画
+    // Hero text animation.
     if (titleRef.current) {
       gsap.to(titleRef.current, {
         opacity: 1,
@@ -60,7 +60,7 @@ export default function HeroSection({ isScrolling }: HeroSectionProps) {
       })
     }
 
-    // 自动滚动逻辑
+    // Automatic scrolling logic.
     const startAutoScroll = () => {
       if (autoScrollRef.current || !section) return
 
@@ -91,12 +91,12 @@ export default function HeroSection({ isScrolling }: HeroSectionProps) {
       })
     }
 
-    // 启动自动滚动
+    // Start automatic scrolling.
     if (window.scrollY < window.innerHeight * 0.8) {
       startAutoScroll()
     }
 
-    // ScrollTrigger 用于滚动时的背景切换
+    // Use ScrollTrigger to switch backgrounds while scrolling.
     ScrollTrigger.create({
       trigger: section,
       start: 'top top',
@@ -109,7 +109,7 @@ export default function HeroSection({ isScrolling }: HeroSectionProps) {
       },
     })
 
-    // Hero 内容淡出效果
+    // Hero content fade-out effect.
     ScrollTrigger.create({
       trigger: section,
       start: 'top top',
@@ -152,7 +152,7 @@ export default function HeroSection({ isScrolling }: HeroSectionProps) {
       className={styles.hero}
       style={{ '--bgsProgress': 1, '--bgEndProgress': 0 } as React.CSSProperties}
     >
-      {/* 背景层 */}
+      {/* Background layer */}
       <div className={styles.backgroundLayer}>
         <div
           className={styles.backgroundStart}
@@ -198,7 +198,7 @@ export default function HeroSection({ isScrolling }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* 内容层 */}
+      {/* Content layer */}
       <div className={styles.content}>
         <h1
           ref={titleRef}

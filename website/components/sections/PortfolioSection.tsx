@@ -27,7 +27,7 @@ export default function PortfolioSection() {
 
     const totalWidth = images.length * 100 - 20
 
-    // 横向滚动动画
+    // Horizontal scrolling animation.
     const container = flowRef.current.parentElement
     if (!container) return
 
@@ -45,7 +45,7 @@ export default function PortfolioSection() {
       },
     })
 
-    // 图片淡入淡出效果
+    // Image fade-in and fade-out effects.
     flowRef.current.querySelectorAll(`.${styles.imageWrapper}`).forEach((imgWrapper: Element, index: number) => {
       const img = imgWrapper as HTMLElement
       if (index === 0) return

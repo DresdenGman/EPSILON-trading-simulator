@@ -35,7 +35,7 @@ export function TextReveal({
 
     const from = directions[direction]
 
-    // 设置初始状态
+    // Set the initial state.
     gsap.set(ref.current, {
       opacity: 0,
       ...from,
@@ -55,7 +55,7 @@ export function TextReveal({
           start: 'top 85%',
           end: 'top 50%',
           scrub: 1,
-          markers: false, // 设置为 true 可以看到触发点
+          markers: false, // Set to true to display trigger markers.
         },
       }
     )

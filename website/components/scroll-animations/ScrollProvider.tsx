@@ -10,12 +10,12 @@ if (typeof window !== 'undefined') {
 
 export function ScrollProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    // 确保 ScrollTrigger 在页面加载后刷新
+    // Refresh ScrollTrigger after the page loads.
     const timer = setTimeout(() => {
       ScrollTrigger.refresh()
     }, 100)
 
-    // 监听窗口大小变化
+    // Listen for window size changes.
     const handleResize = () => {
       ScrollTrigger.refresh()
     }
