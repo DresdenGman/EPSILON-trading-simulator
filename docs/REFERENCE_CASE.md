@@ -55,3 +55,9 @@ Public artifact or redacted supporting record:
 ```
 
 Revised inputs require a new identifier. Do not overwrite this case to improve returns. A maintainer's successful run proves the path was exercised, not external or independent confirmation.
+
+## First maintainer observation — September 13, 2026
+
+The [maintainer check](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/24#issuecomment-5652344901) returned a net baseline of −7.75%, with 0/5 passing perturbations and a `rejected` verdict. Inputs were not changed after observing that result.
+
+The baseline itself already fails. This case therefore does **not** demonstrate a profitable baseline overturned by small assumption changes. It provides a fixed workflow to inspect and reproduce; it is not evidence of independent validation or investment performance. Any later case testing that different question needs its own identifier and protocol, while retaining this result.

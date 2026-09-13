@@ -2,9 +2,19 @@
 
 Purpose: recruit small, high-quality pilot sessions that produce verified research workflows, reproduction attempts, and methodological challenges. This is not a mass-email list.
 
+## September 13, 2026 route audit
+
+These are prospects, not partners or confirmed participants. Current official pages were checked for UCF, Rochester QFC, Michigan MFAMS, NYU QFS, DataSC, and the University of South Carolina Libraries series. A published contact address is not evidence of a reply, delivery, or willingness to participate. Other rows below remain research leads and require a fresh check before contact.
+
+- **Correction:** the listed USC Libraries ReproducibiliTea series is at the **University of South Carolina**, not the University of Southern California in Los Angeles. Its [fall 2026 announcement](https://www.sc.edu/about/offices_and_divisions/university_libraries/exhibits_events_news/news/2026/reproducibilitea.php) identifies the institution and current program.
+- The former UF Statistics Club URL returned HTTP 410 in this audit. Do not send using that old row until a current official route is verified.
+- Use [fixed historical case 001](REFERENCE_CASE.md) for the first browser attempt. Keep the request to one result or failure plus one concrete criticism; a group does not need to schedule an event to help.
+- A 15–20 minute exercise is an intended time budget, not a measured outside-user completion time.
+- Keep individual messages, recipient details, consent, and send receipts in the private EPSILON register. Do not reuse another project's contacts or conversion history.
+
 ## Contact rule
 
-Send at most one tailored invitation and one follow-up. Ask for a 20-minute falsification exercise, not promotion, endorsement, Stars, or social sharing. Record outreach conversion only after delivery; do not add private contact details to the public ledger.
+Send at most one tailored invitation and one follow-up after at least seven days. Start with an optional self-guided attempt by one or two members, not promotion, endorsement, Stars, or social sharing. Record sent, delivery unknown/confirmed, substantive reply, test start, and completed evidence separately; follow the [metric definitions](IMPACT_SPRINT_30D.md#diagnostic-metrics--definition-correction-september-13-2026). Do not add private contact details to the public ledger.
 
 ## Priority A — local and high-fit
 
@@ -13,14 +23,13 @@ Send at most one tailored invitation and one follow-up. Ask for a 20-minute fals
 | USC DataSC | Los Angeles; data science, mathematics, and challenge-based education | https://engage.usc.edu/datasc/home/ | Ask one project group to run the 20-minute evidence challenge and identify the first unjustified inference. |
 | UCLA Statistics Club | Official statistics and data-science student organization; strong methods fit | https://linktr.ee/statistics.ucla | Ask for a rejection-rule and perturbation-design critique, not a finance presentation. |
 | UCSB ReproducibiliTea | U.S. chapter in the global open-research journal-club network | https://reproducibilitea.org/ | Ask members to reproduce one fixed artifact and challenge the evidence boundary. |
-| USC Libraries ReproducibiliTea | Los Angeles and explicitly focused on reproducibility | https://reproducibilitea.org/ | Offer a short case study on what a machine-readable research receipt does and does not prove. |
 
 ## Priority B — quantitative-finance clubs
 
 | Organization | Public evidence of fit | Public contact route | Proposed ask |
 |---|---|---|---|
-| UCF Quantitative Finance Club | Student-led research initiatives and Python/quant workshops | https://quantucf.com/ · info@quantucf.com | Invite 3–5 members to test transaction-cost, timing, and universe perturbations. |
-| UF Quant Club | 100+ STEM members; trading-system and backtesting track | https://www.ufquant.org/ · ufquantclub@gmail.com | Offer a 20-minute backtest-fragility exercise for the Quant Dev League. |
+| UCF Quantitative Finance Club | Student-led research initiatives and Python/quant workshops | https://quantucf.com/ · info@quantucf.com | Ask one or two members to try the fixed case and identify a procedural or interpretation problem. |
+| UF Quant Club | Candidate quant-education audience; current program and contact require verification | https://www.ufquant.org/ | Check the current program before proposing an exercise; no membership count asserted. |
 | Georgetown Quant Club | Undergraduate quant club with hands-on workshops and competitions | https://www.georgetownquants.com/ | Ask the education team to challenge the sign-based rejection rule. |
 | Michigan Finance and Mathematics Society | Explicit mathematics–finance intersection and project teams | https://www.mfams-umich.com/ · mfams-board@umich.edu | Frame EPSILON as applied sensitivity analysis and request one public group critique. |
 | University of Rochester Quantitative Finance Club | Structured curriculum, risk management, stress testing, and capstone peer review | https://urochesterquant.com/ · urochesterquant@gmail.com | Ask for an independent fixed-release reproduction plus one stress-test critique. |
@@ -32,7 +41,8 @@ Send at most one tailored invitation and one follow-up. Ask for a 20-minute fals
 
 | Organization | Why it fits | Public route | Proposed ask |
 |---|---|---|---|
-| UF Statistics Club | Official ASA undergraduate student chapter; workshops and education | https://club.stat.ufl.edu/ · ufstatsclub@gmail.com | Ask for criticism of the decision rule, effect threshold, and evidence interpretation. |
+| University of South Carolina Libraries ReproducibiliTea | Fall 2026 discussions include analytic flexibility and reproducibility | https://www.sc.edu/about/offices_and_divisions/university_libraries/exhibits_events_news/news/2026/reproducibilitea.php | Ask whether the provenance-versus-reproduction example fits the series; no institutional endorsement requested. |
+| UF Statistics Club | Historical lead; current organization/contact status not verified | Former URL https://club.stat.ufl.edu/ returned HTTP 410 on 2026-09-13 | Hold outreach until a current official route is verified. |
 | Stanford ReproducibiliTea | U.S. open-research chapter | https://reproducibilitea.org/ | Ask for one independent reproduction and one critique of the provenance contract. |
 | University of Chicago ReproducibiliTea | U.S. open-research chapter | https://reproducibilitea.org/ | Offer a short case on preserving negative and inconclusive evidence. |
 | UCSD ReproducibiliTea | U.S. open-research chapter | https://reproducibilitea.org/ | Ask whether the exported receipt is sufficient for an outsider to audit a claim. |
@@ -44,15 +54,16 @@ Send at most one tailored invitation and one follow-up. Ask for a 20-minute fals
 
 > Hello [name/team],
 >
-> I built EPSILON, an open-source quantitative evidence instrument that asks a narrow applied-mathematics question: when a backtest conclusion looks clean, which nearby change in cost, timing, window, or universe makes it stop holding?
+> I maintain EPSILON, an open-source tool for examining backtest assumptions. [Add one verified reason the exercise fits this group's actual work.]
 >
-> I am not asking for endorsement or promotion. I am looking for 3–5 people willing to spend 20 minutes trying to falsify one fixed experiment. Each participant defines a rejection rule, runs the perturbation field, exports the evidence artifact, and records the first assumption or inference they do not trust.
+> Would one or two members try fixed historical case 001, export a result or record the step that fails, and identify one assumption they would challenge? The intended time budget is 15–20 minutes, not yet measured with outside users. The case already produced a negative baseline in a maintainer check; it is not an example of profitability or independent validation.
 >
 > Public instrument: https://epsilonfield.space/lab
 > Source and reproduction record: https://github.com/DresdenGman/EPSILON-trading-simulator
+> Fixed case: https://github.com/DresdenGman/EPSILON-trading-simulator/blob/main/docs/REFERENCE_CASE.md
 > Challenge protocol: https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8
 >
-> A mismatch, negative result, or criticism is more valuable than praise. If this does not fit your program, a one-line reason would also help me improve the exercise.
+> A mismatch, negative result, or criticism is useful. Private feedback will not be quoted or attributed without permission. No endorsement or promotion is requested, and there is no obligation if this does not fit your program.
 >
 > Thank you,
 > Dresden E. Goehner
