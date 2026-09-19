@@ -10,6 +10,7 @@ type Summary = { status: "live" | "initializing"; updatedAt: string; metrics: Re
 const empty: Summary = { status: "initializing", updatedAt: "", metrics: {} };
 
 function value(summary: Summary, event: string, field: keyof Count = "sessions") {
+  if (summary.status !== "live") return "—";
   return summary.metrics[event]?.[field] ?? 0;
 }
 
@@ -39,7 +40,7 @@ export default function ImpactPage() {
         <article><span>Anonymous lab signals</span><strong>{value(summary, "lab_opened")}</strong><p>Deduplicated, unverified browser sessions that opened the instrument.</p></article>
         <article><span>Verified historical experiments</span><strong>{value(summary, "verified_historical_run", "events")}</strong><p>Unique real-data evidence configurations completed and recorded by the server.</p></article>
         <article><span>Challenge-link signals</span><strong>{value(summary, "challenge_opened")}</strong><p>Unverified sessions that opened the external review channel.</p></article>
-        <article><span>Public reproductions</span><strong>0</strong><p>Reserved for independently linkable reproduction records, never browser clicks.</p></article>
+        <article><span>Public reproductions</span><strong>Review log</strong><p><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/blob/main/docs/INDEPENDENT_REVIEW_LOG.md">Inspect dated external records ↗</a>. This is not inferred from browser clicks.</p></article>
       </section>
 
       <section className="impact-layers">
@@ -54,7 +55,7 @@ export default function ImpactPage() {
 
       <section className="impact-challenge">
         <div><p className="eyebrow">Falsification challenge / open</p><h2>Find the assumption<br />we failed to expose.</h2></div>
-        <div><p>The most valuable contribution is not praise. Run one evidence field, identify one weakness, and leave a challenge another person can inspect.</p><div className="impact-action-stack"><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8" target="_blank" rel="noreferrer" className="primary-button" onClick={() => void recordImpactEvent("challenge_opened")}>Open the challenge protocol <span>↗</span></a><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/issues/new?template=reproduction-report.yml" target="_blank" rel="noreferrer" className="text-link" onClick={() => void recordImpactEvent("reproduce_opened")}>File an independent reproduction →</a></div><p className="impact-integrity">No purchased traffic · no coordinated votes · no investment claims · no account identifiers · coarse source categories only · rolling 90-day measurement window.</p></div>
+        <div><p>Start with a question about a backtest conclusion. Describe the claim, the assumption you distrust, and an optional public example. A code contribution is not required. Completed experiments and feedback-led changes need their own records.</p><div className="impact-action-stack"><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8" target="_blank" rel="noreferrer" className="primary-button" onClick={() => void recordImpactEvent("challenge_opened")}>Bring a question <span>↗</span></a><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/issues/new?template=reproduction-report.yml" target="_blank" rel="noreferrer" className="text-link" onClick={() => void recordImpactEvent("reproduce_opened")}>File an independent reproduction →</a></div><p className="impact-integrity">Participation requires no stars or endorsements. No investment claims. No account identifiers in the measurement ledger; coarse source categories only; rolling 90-day measurement window. Unavailable measurements display a dash, not zero.</p></div>
       </section>
 
       <footer><span>{summary.status === "live" ? "Measurement live" : "Measurement initializing"}{summary.updatedAt ? ` · ${new Date(summary.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}` : ""}</span><div><Link href="/">Home →</Link><Link href="/lab">Run an evidence field →</Link></div></footer>

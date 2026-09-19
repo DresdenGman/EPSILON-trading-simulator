@@ -4,13 +4,16 @@ EPSILON welcomes criticism before expansion. The most useful contribution is a r
 
 ## Choose a contribution path
 
+- **Bring a question:** use the [three-prompt question guide](docs/community/BRING_A_QUESTION.md). No code, runtime details, or reproduction artifact is required just to start a discussion.
+- **Try a small-group session:** adapt the [Assumption Clinic kit](docs/community/ASSUMPTION_CLINIC.md) and report what actually happened, including blockers.
+
 - **Reproduce a fixed release:** use the Reproduction Report issue form. A mismatch and an inability to complete the procedure are both valid results.
 - **Challenge the method:** use the Methodological Challenge issue form or [Falsification Challenge Discussion #8](https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8).
 - **Fix code or documentation:** open an issue first when the change alters the evidence contract, data provenance, execution model, or public claims.
 
 ## Evidence standard
 
-Please include:
+For technical reproduction reports and code defects, please include the following when available. Exploratory questions can start with the shorter guide above:
 
 1. the exact release, tag, or commit SHA;
 2. your operating system and relevant runtime versions;

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import './overview.css';
 import { ImpactTracker } from '../components/impact-tracker';
 
 const geistSans = Geist({
@@ -16,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://epsilonfield.space'),
   title: { default: 'EPSILON — Quantitative Evidence Instrument', template: '%s · EPSILON' },
-  description: 'Test whether a market conclusion survives nearby changes in costs, timing, and universe assumptions.',
+  description: 'Explore EPSILON: an open-source quantitative decision lab, its development history, Diamond Challenge Beijing recognition, reproducible cases, and ways to contribute.',
   applicationName: 'EPSILON',
   authors: [{ name: 'Dresden E. Goehner' }],
   creator: 'Dresden E. Goehner',
