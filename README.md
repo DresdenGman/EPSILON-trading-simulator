@@ -5,6 +5,10 @@
 
 [Explore the project](https://epsilonfield.space) · [Open the lab](https://epsilonfield.space/lab) · [Bring a question](https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8) · [Inspect the evidence](docs/REFERENCE_CASE.md)
 
+[![EPSILON current project homepage](docs/screenshots/current/overview.png)](https://epsilonfield.space)
+
+**See it first:** [Current-interface video tour (30 seconds)](https://github.com/DresdenGman/EPSILON-trading-simulator/raw/refs/heads/main/docs/screenshots/current/interface-tour.mp4) · [Original v2.0 product film (30 seconds)](https://github.com/DresdenGman/EPSILON-trading-simulator/releases/download/v2.0.0/epsilon-decision-lab-30s.mp4) · [Screenshot tour below](#visual-product-tour)
+
 EPSILON is a quantitative decision lab built by **Dresden E. Goehner**, with open-source contributions. It turns a market idea into an explicit claim, tests nearby assumptions, and preserves the evidence—even when the claim fails.
 
 The project began as a Python trading simulator in the repository's December 2025 records. It has evolved into a public, no-login evidence instrument. The central question is no longer simply **“What return did this strategy produce?”** but **“Which assumptions does that conclusion depend on, and what would make us reject it?”**
@@ -18,6 +22,76 @@ The project began as a Python trading simulator in the repository's December 202
 | **Boundaries** | Educational research; no real-money execution, personalized investment advice, or profitability guarantee. |
 
 **Navigate:** [Problem](#why-this-exists) · [Method](#what-the-instrument-does) · [Evidence](#a-negative-result-worth-preserving) · [Timeline](#development-and-recognition) · [Participate](#help-shape-the-work) · [Architecture](#project-map) · [Run locally](#run-and-verify) · [Limits](#limits-and-next-steps)
+
+## Visual product tour
+
+The screenshots below show the **current instrument interface**, captured locally on September 18, 2026. Click any image to inspect it at full resolution. The lab is shown in **deterministic demonstration mode**: positive values illustrate the interface, not observed returns. Local impact counters are not production statistics. [Capture notes](docs/screenshots/current/README.md).
+
+### Watch: current interface and project evolution
+
+<table>
+  <tr>
+    <td width="50%"><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/raw/refs/heads/main/docs/screenshots/current/interface-tour.mp4"><img src="docs/screenshots/current/lab-evidence.png" alt="Play the current EPSILON interface slideshow"></a></td>
+    <td width="50%"><a href="https://github.com/DresdenGman/EPSILON-trading-simulator/releases/download/v2.0.0/epsilon-decision-lab-30s.mp4"><img src="docs/media/epsilon-demo-30s/epsilon-decision-lab-30s-poster.jpg" alt="Play the historical August 2026 EPSILON product film"></a></td>
+  </tr>
+  <tr>
+    <td><strong>▶ Current-interface tour · 30 seconds</strong><br>Six real screenshots in a silent slideshow: overview, setup, evidence, timeline, disclosure, and impact. Not a continuous interaction recording.</td>
+    <td><strong>▶ Original product film · 30 seconds</strong><br>The August 2026 v2.0 presentation. Preserved to show the project's evolution; it depicts an earlier interface.</td>
+  </tr>
+</table>
+
+Video posters are clickable links to MP4 files. If a browser downloads the file instead of playing it inline, open the downloaded MP4 in a video player.
+
+### 1. Define the experiment
+
+![Experiment configuration: claim, data mode, and rejection rule](docs/screenshots/current/lab-setup.png)
+
+The setup panel places the **claim and rejection rule beside the inputs**. Users choose the metric, comparison, threshold, strategy, assets, dates, fees, and slippage. The data-mode label stays explicit. In this local capture, historical mode is unavailable because provider credentials are absent; the fixed historical case is deliberately disabled rather than run with fabricated market data.
+
+### 2. Inspect the evidence, not just the curve
+
+![Demonstration evidence: normalized paths and exact perturbation outcomes](docs/screenshots/current/lab-evidence.png)
+
+The result pairs a normalized-equity chart with an exact comparison table. Every row identifies the changed input, return, Sharpe, drawdown, and cost. This makes it possible to ask **which assumption changed the answer**, rather than only whether a line went up. The evidence workflow also exposes fingerprints and export actions. The illustration above is separate from the documented **negative historical case 001** below.
+
+| Visible component | What a visitor can inspect | Why it matters |
+|---|---|---|
+| Claim + machine rule | The threshold for rejecting a statement | Makes the evaluation criterion explicit before computation |
+| Data-mode label | Demonstration versus historical data | Prevents illustrative arithmetic from masquerading as market evidence |
+| Baseline + five stresses | Individual and combined assumption changes | Shows a limited neighborhood, not universal robustness |
+| Equity chart + exact table | Visual behavior alongside numerical outcomes | Keeps the chart tied to inspectable numbers |
+| Evidence fingerprints + export | Artifact, data, and source identity | Helps compare results and investigate mismatches |
+| Public challenge path | A place to report uncertainty or failure | Connects the instrument to accountable discussion |
+
+### 3. Understand the history and limits
+
+<table>
+  <tr>
+    <td width="50%"><a href="docs/screenshots/current/timeline.png"><img src="docs/screenshots/current/timeline.png" alt="Current development timeline and regional recognition"></a></td>
+    <td width="50%"><a href="docs/screenshots/current/disclosure.png"><img src="docs/screenshots/current/disclosure.png" alt="Current method and data disclosure interface"></a></td>
+  </tr>
+  <tr>
+    <td><strong>Development and recognition</strong><br>Dated milestones link to source records and the original regional award certificate. The complete chronology appears below.</td>
+    <td><strong>Method and disclosure</strong><br>Data availability, implementation assumptions, and interpretation boundaries remain accessible alongside the lab.</td>
+  </tr>
+</table>
+
+### 4. Separate visibility from demonstrated impact
+
+![Impact-record interface captured locally, not production statistics](docs/screenshots/current/impact.png)
+
+The impact page distinguishes browser signals, completed historical configurations, and public review records. **The numbers in this local screenshot are not audience or beneficiary totals.** For current production measurements, visit the [live impact page](https://epsilonfield.space/impact); for attributable criticism and changes, inspect the [review log](docs/INDEPENDENT_REVIEW_LOG.md).
+
+### Choose your route
+
+| If you want to… | Start here | Then inspect |
+|---|---|---|
+| Understand the complete project | [Project homepage](https://epsilonfield.space) | Timeline, recognition, method, and participation sections |
+| Try the workflow | [Decision lab](https://epsilonfield.space/lab) | Explicit mode, inputs, baseline, and perturbations |
+| Check a documented real-data case | [Fixed case 001](docs/REFERENCE_CASE.md) | Inputs, negative result, reporting procedure, and limitations |
+| Offer a question or criticism | [Discussion #8](https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8) | Question guide and maintainer response |
+| Use it with a group | [Assumption Clinic kit](docs/community/ASSUMPTION_CLINIC.md) | Worksheet, scope, consent, and outcome-recording guidance |
+| Review or extend the implementation | [Architecture](docs/PRODUCT_ARCHITECTURE.md) | Source, verification commands, and contribution guidance |
 
 ## Why this exists
 
