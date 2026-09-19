@@ -1,5 +1,12 @@
 # Documentation index
 
+## Understand the project
+
+- [Project history](PROJECT_HISTORY.md): dated development milestones and source links.
+- [Recognition](RECOGNITION.md): Diamond Challenge Beijing Third Prize, original certificate, and provenance boundaries.
+- [Bring a question](community/BRING_A_QUESTION.md): a low-barrier starting point; no code required.
+- [Assumption Clinic](community/ASSUMPTION_CLINIC.md): a reusable small-group pilot format, not a completed-program claim.
+
 ## Current public instrument
 
 - [Reproduce `/lab`](REPRODUCIBILITY.md): runtime, commands, data modes, comparison rules.
