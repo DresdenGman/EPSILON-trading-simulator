@@ -4,6 +4,8 @@ Status: `Open ledger · no independent review claimed yet`
 
 This ledger records substantive external challenges to EPSILON and what happened next. It exists to preserve criticism, decisions, and product changes—not to manufacture endorsements.
 
+Private, no-registration site feedback is recorded separately in the [Feedback-to-Change Log](FEEDBACK_TO_CHANGE_LOG.md). Its paraphrased themes and resulting site corrections do not satisfy the public-link and reviewer-verification rules below; do not add them to the independent-review count or quote private submissions here.
+
 ## Counting rules
 
 A response counts as an independent challenge only when:
@@ -28,6 +30,8 @@ Praise, Stars, impressions, anonymous claims without evidence, and duplicate res
 ## Current scorecard
 
 Snapshot: **August 13, 2026**
+
+This is a dated historical scorecard, not a current participation total.
 
 | Metric | Count | Source |
 |---|---:|---|

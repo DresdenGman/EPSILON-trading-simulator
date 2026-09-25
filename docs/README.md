@@ -6,6 +6,7 @@
 - [Recognition](RECOGNITION.md): Diamond Challenge Beijing Third Prize, original certificate, and provenance boundaries.
 - [Bring a question](community/BRING_A_QUESTION.md): a low-barrier starting point; no code required.
 - [Assumption Clinic](community/ASSUMPTION_CLINIC.md): a reusable small-group pilot format, not a completed-program claim.
+- [Feedback-to-change log](FEEDBACK_TO_CHANGE_LOG.md): privacy-safe criticism, maintainer decisions, verified changes, and unresolved questions.
 
 ## Current public instrument
 
