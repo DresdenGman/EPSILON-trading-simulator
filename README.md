@@ -19,9 +19,10 @@ The project began as a Python trading simulator in the repository's December 202
 | **Current product** | A claim, a pre-specified rejection rule, one baseline and five perturbations, and an exportable evidence artifact. |
 | **Recorded result** | Fixed case 001: baseline **−7.75%**, **0/5** perturbations passing, **Rejected**. A maintainer observation, not an independent reproduction. |
 | **Open participation** | Submit a question, attempt a reproduction, challenge an assumption, or adapt the small-group clinic kit. |
+| **Feedback → change** | Private participant criticism led to clearer case evidence, better claim judgments, and a precise reproduction boundary. [See the decision and release record](docs/FEEDBACK_TO_CHANGE_LOG.md). |
 | **Boundaries** | Educational research; no real-money execution, personalized investment advice, or profitability guarantee. |
 
-**Navigate:** [Problem](#why-this-exists) · [Method](#what-the-instrument-does) · [Evidence](#a-negative-result-worth-preserving) · [Timeline](#development-and-recognition) · [Participate](#help-shape-the-work) · [Architecture](#project-map) · [Run locally](#run-and-verify) · [Limits](#limits-and-next-steps)
+**Navigate:** [Problem](#why-this-exists) · [Method](#what-the-instrument-does) · [Evidence](#a-negative-result-worth-preserving) · [Timeline](#development-and-recognition) · [Feedback → change](#feedback-that-changed-the-activity) · [Participate](#help-shape-the-work) · [Architecture](#project-map) · [Run locally](#run-and-verify) · [Limits](#limits-and-next-steps)
 
 ## Visual product tour
 
@@ -89,7 +90,7 @@ The impact page distinguishes browser signals, completed historical configuratio
 | Understand the complete project | [Project homepage](https://epsilonfield.space) | Timeline, recognition, method, and participation sections |
 | Try the workflow | [Decision lab](https://epsilonfield.space/lab) | Explicit mode, inputs, baseline, and perturbations |
 | Check a documented real-data case | [Fixed case 001](docs/REFERENCE_CASE.md) | Inputs, negative result, reporting procedure, and limitations |
-| Offer a question or criticism | [Discussion #8](https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8) | Question guide and maintainer response |
+| Offer a question or criticism | [No-login participation page](https://epsilonfield.space/participate) or [Discussion #8](https://github.com/DresdenGman/EPSILON-trading-simulator/discussions/8) | Private receipt for site submissions; public thread for GitHub discussions |
 | Use it with a group | [Assumption Clinic kit](docs/community/ASSUMPTION_CLINIC.md) | Worksheet, scope, consent, and outcome-recording guidance |
 | Review or extend the implementation | [Architecture](docs/PRODUCT_ARCHITECTURE.md) | Source, verification commands, and contribution guidance |
 
@@ -165,6 +166,7 @@ Dates below describe documented milestones, not undocumented inception dates. [F
 | **August 10–13, 2026** | Quantitative decision lab: hypotheses, experiments, public documentation, and evidence records. | [Source record](https://github.com/DresdenGman/EPSILON-trading-simulator/commit/0560eac) |
 | **August 30–September 2, 2026** | Current evidence instrument: baseline plus perturbations, export, historical-data path. | [PR #15](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/15) |
 | **September 7–13, 2026** | Contributor-led checks/reporting improvements, fixed case, build identity, reproduction guidance, and English-language cleanup. | [PR #22](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/22) · [#23](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/23) · [#24](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/24) · [#26](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/26) |
+| **September 25, 2026** | Private feedback prompted clearer case figures, claim-review choices, and independent-recomputation guidance on the live activity. | [Feedback-to-change record](docs/FEEDBACK_TO_CHANGE_LOG.md) · [Live activity](https://epsilonfield.space/participate) |
 
 <details>
 <summary><strong>View the Diamond Challenge certificate</strong></summary>
@@ -174,6 +176,12 @@ The certificate names Dresden Goehner and states “THIRD PRIZE.” The organize
 <img src="instrument/public/evidence/diamond-challenge-2026-beijing-third-prize.jpg" alt="Certificate awarding Dresden Goehner Third Prize in Diamond Challenge" width="480">
 
 </details>
+
+## Feedback that changed the activity
+
+Participant criticism is useful only if readers can see what decision followed it. Recent private submissions identified three practical problems: `0/5` hid the already-negative baseline and individual stress results; the activity blurred “unsupported” and “contradicted”; and it did not clearly distinguish a hosted rerun from an independent recomputation.
+
+The [live activity](https://epsilonfield.space/participate) now displays the baseline and all five recorded returns, defines four evidence judgments, and states the reproduction boundary. The new answer choice passed a regression test alongside earlier submissions. The [feedback-to-change log](docs/FEEDBACK_TO_CHANGE_LOG.md) records each theme, decision, verification, release, and remaining limitation without publishing private responses. This is a documented product correction—not proof of learning, unique participant counts, or independent validation.
 
 ## Help shape the work
 
@@ -195,7 +203,7 @@ Do not post API keys, brokerage credentials, personal account data, or material 
 
 Repository stars and forks indicate **attention**, not beneficiaries. Anonymous browser sessions are not distinct people. Server-completed configurations are not automatically independent reproductions. Public feedback, resulting changes, and external reuse require separate evidence.
 
-[Live impact record](https://epsilonfield.space/impact) · [Independent review log](docs/INDEPENDENT_REVIEW_LOG.md)
+[Live impact record](https://epsilonfield.space/impact) · [Feedback-to-change log](docs/FEEDBACK_TO_CHANGE_LOG.md) · [Independent review log](docs/INDEPENDENT_REVIEW_LOG.md)
 
 We distinguish **planned → submitted → reviewed → tested → changed → independently reused**, with links where available. EPSILON records are not combined with other projects' contacts, participants, or outcomes.
 
@@ -247,7 +255,7 @@ Checks cover signal timing, execution costs, perturbations, rule evaluation, has
 **Next-stage goals, not completed outcomes:**
 
 - Work through the first three scoped community questions.
-- Publish a feedback-led correction with the original question and verification attached.
+- Follow up on the first feedback-led correction, and publish a second one when a new, consent-safe challenge warrants it.
 - Pilot a short assumption clinic and record what participants actually did.
 - Make a session reusable by another host and document any confirmed reuse separately.
 
