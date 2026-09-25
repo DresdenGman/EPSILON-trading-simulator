@@ -10,7 +10,7 @@ This log shows how EPSILON handles criticism after it is received. It records th
 4. Link the resulting issue, document, release, or public page. Separate a proposed fix from a tested change and a deployed change.
 5. Record what remains unresolved. Add a later follow-up rather than rewriting an earlier decision.
 
-As of September 25, the live database contains **three anonymous activity submissions**, all with public quotation permission off. That is a count of submissions, **not** a verified count of distinct people. All three private receipt statuses remain `received`, with no direct maintainer response recorded. The entries below therefore paraphrase recurring technical concerns, not individual responses or conversations.
+As of September 25, the live database contains **four anonymous activity submissions**, all with public quotation permission off. That is a count of submissions, **not** a verified count of distinct people. All four private receipt statuses remain `received`, with no direct maintainer response recorded. The entries below therefore paraphrase technical concerns, not individual responses or conversations.
 
 ## Case 001: make a failed backtest inspectable
 
@@ -34,6 +34,17 @@ As of September 25, the live database contains **three anonymous activity submis
 | September 25, 2026 | **Deployed** | Public [participation page](https://epsilonfield.space/participate), Sites release **version 11**, source revision `55d6dd1935667851aa3e2e64457b9353d7d30d49`. The release changes explanation and response choices; it does not add a new market-data experiment. |
 
 **Outcome boundary:** A more inspectable task and compatible submission flow were delivered. Direct follow-up to the private contributors remains open. We have not measured whether participants learned more, whether reviewers independently reproduced the case, or whether this change increased external adoption. Those outcomes require separate evidence.
+
+## September 25 follow-up: execution identity and comparison criteria
+
+A fourth anonymous activity submission used the new `contradicted` answer for statements 2 and 4 and raised a further technical concern. This shows that the revised options were used in **one submission**; it does not establish improved learning or a distinct new person. The response is private and is paraphrased below.
+
+| Theme, paraphrased | Disposition and reason | Next action | Status |
+|---|---|---|---|
+| Six reported returns appear on the activity page without the run timestamp, data fingerprint, and artifact checksum needed to inspect their common execution identity. | **Accepted as a provenance gap.** The [original maintainer report](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/24#issuecomment-5652344901) contains a run timestamp, evidence ID, and artifact checksum, but the review page does not show them. A data fingerprint for that observation has not been established by the public record. | [Issue #32](https://github.com/DresdenGman/EPSILON-trading-simulator/issues/32) tracks displaying or linking only existing fields and explicitly marking missing fields. It also asks whether the six outcomes can be tied to one data snapshot. | **Open; not deployed.** No new provenance claim is made. |
+| “Equivalent source data” and a matching result have no predeclared operational definition for an independent recomputation. | **Needs protocol and comparison test.** A different vendor's adjusted bars, matching verdict, or close-looking return is not automatically reproduction of case 001. | [Issue #32](https://github.com/DresdenGman/EPSILON-trading-simulator/issues/32) tracks the data-equivalence contract and a justified numerical comparison rule set before seeing a candidate result. | **Open.** No independent reproduction is claimed. |
+
+The public-data [D1 demonstration](PUBLIC_DATA_DEMONSTRATION_D1.md) uses another data source and stays separate from the provider-data case 001. It does not close either issue above. This follow-up has been **received and triaged**, not replied to through the private receipt, implemented, tested, or deployed.
 
 ## Add the next record
 
