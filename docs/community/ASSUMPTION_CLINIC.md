@@ -67,6 +67,10 @@ This is an artifact inspection, not a full recomputation. If your group complete
 ### What this does NOT cover
 
 - **Multiple testing / data snooping:** this worksheet inspects one predeclared case. It does not adjust for trying many strategies and reporting only the best. Discussion: if a researcher tested 50 strategies and showed you the winner, which parts of this worksheet still apply, and which break?
+
+  Optional follow-up: the [Winner Selection Lab](WINNER_SELECTION_LAB.md)
+  uses reproducible synthetic null scores to expose the selection history and
+  inspect an independent holdout. It adds no market-performance claim.
 - **Regime change and live-vs-backtest gaps:** a backtest that survives all five perturbations can still fail live. Discussion: name one assumption (e.g., "fees stay constant", "I can trade at the close") that no historical perturbation can fully test.
 
 ### No passing case yet — design your own
