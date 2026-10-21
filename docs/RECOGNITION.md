@@ -21,3 +21,11 @@ The organizer's email titled **Diamond Challenge 2026 Beijing Pitch Event – Ce
 The certificate image itself does **not** print a date or the word Beijing. Year, regional context, and email date come from the accompanying organizer correspondence, retained privately. Email addresses and unrelated correspondence are not published here. The generic email subject does not replace the **THIRD PRIZE** wording on the attached certificate.
 
 This is recognition of the competition entry at that stage of development. It is not an endorsement of later software releases, an independently verified market result, or a guarantee of profitability. An invitation to apply for another program is not an appointment or additional award.
+
+## awesome-quant resource inclusion
+
+On **October 19, 2026 at 12:42:41 UTC**, the maintainer of [awesome-quant](https://github.com/wilsonfreitas/awesome-quant) merged [PR #735](https://github.com/wilsonfreitas/awesome-quant/pull/735), adding EPSILON under **“Reproducing Works, Training & Books.”** The entry highlights the 25-minute Assumption Clinic worksheet and its use of published failed cases to inspect backtest assumptions.
+
+The proposal disclosed that its author maintains EPSILON. The final change was one README entry, preserved in [merge commit fdd486b5](https://github.com/wilsonfreitas/awesome-quant/commit/fdd486b5a53ef8af36882b4935bc1e2405c045d6) and the [merged directory entry](https://github.com/wilsonfreitas/awesome-quant/blob/fdd486b5a53ef8af36882b4935bc1e2405c045d6/README.md#L686).
+
+This is **independent directory inclusion**, distinct from the competition award above. It is not evidence of learner adoption, completed teaching sessions, independent reproduction, investment performance, or endorsement of every project claim. It is also not counted as an upstream engineering-code contribution.
