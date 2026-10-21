@@ -16,6 +16,7 @@ The project began as a Python trading simulator in the repository's December 202
 | At a glance | |
 |---|---|
 | **Recognition** | **Third Prize — 2026 Diamond Challenge Beijing Pitch Event**. Regional recognition; not a global placement. [Certificate and provenance](docs/RECOGNITION.md). |
+| **Curated resource inclusion** | The 25-minute Assumption Clinic is [included in awesome-quant](https://github.com/wilsonfreitas/awesome-quant/pull/735), merged October 19, 2026. Directory inclusion, not evidence of adoption or validated trading performance. |
 | **Current product** | A claim, a pre-specified rejection rule, one baseline and five perturbations, and an exportable evidence artifact. |
 | **Recorded result** | Fixed case 001: baseline **−7.75%**, **0/5** perturbations passing, **Rejected**. A maintainer observation, not an independent reproduction. |
 | **Open participation** | Submit a question, attempt a reproduction, challenge an assumption, or adapt the small-group clinic kit. |
@@ -167,6 +168,7 @@ Dates below describe documented milestones, not undocumented inception dates. [F
 | **August 30–September 2, 2026** | Current evidence instrument: baseline plus perturbations, export, historical-data path. | [PR #15](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/15) |
 | **September 7–13, 2026** | Contributor-led checks/reporting improvements, fixed case, build identity, reproduction guidance, and English-language cleanup. | [PR #22](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/22) · [#23](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/23) · [#24](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/24) · [#26](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/26) |
 | **September 25, 2026** | Private feedback prompted clearer case figures, claim-review choices, and independent-recomputation guidance on the live activity. | [Feedback-to-change record](docs/FEEDBACK_TO_CHANGE_LOG.md) · [Live activity](https://epsilonfield.space/participate) |
+| **October 19, 2026** | The Assumption Clinic worksheet was included in awesome-quant's “Reproducing Works, Training & Books” section. External directory inclusion, not measured educational impact or software validation. | [Merged PR #735](https://github.com/wilsonfreitas/awesome-quant/pull/735) · [Inclusion record](docs/RECOGNITION.md#awesome-quant-resource-inclusion) |
 
 <details>
 <summary><strong>View the Diamond Challenge certificate</strong></summary>
