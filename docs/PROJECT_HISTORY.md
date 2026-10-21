@@ -1,6 +1,6 @@
 # EPSILON project history
 
-Last reviewed: September 18, 2026. This timeline distinguishes source history, competition recognition, maintainer observations, and future plans. It does not infer user adoption from commits or awards.
+Resource-inclusion record updated: October 21, 2026 (UTC). Earlier timeline entries retain their original evidence. This timeline distinguishes source history, competition recognition, maintainer observations, and future plans. It does not infer user adoption from commits or awards.
 
 | Date | Recorded milestone | Primary record |
 |---|---|---|
@@ -16,6 +16,7 @@ Last reviewed: September 18, 2026. This timeline distinguishes source history, c
 | September 7, 2026 | Merged community contributions to checks and reporting forms. These are software contributions, not participant totals. | [PR #22](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/22) · [PR #23](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/23) |
 | September 13, 2026 | Reproduction guidance, fixed case 001, source/build identity, community guidance, and English-language cleanup. | [PR #24](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/24) · [#25](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/25) · [#26](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/26) · [#27](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/27) |
 | September 13, 2026 | First documented maintainer result for case 001: −7.75% baseline net return, 0/5 perturbations passing, Rejected. This is not an independent external reproduction. | [Case record and original report](REFERENCE_CASE.md) |
+| October 19, 2026 | EPSILON and its 25-minute Assumption Clinic worksheet were included in awesome-quant under “Reproducing Works, Training & Books.” This is directory inclusion, not proof of teaching use or independent validation. | [Merged PR #735](https://github.com/wilsonfreitas/awesome-quant/pull/735) · [Inclusion record](RECOGNITION.md#awesome-quant-resource-inclusion) |
 
 ## Current direction
 
