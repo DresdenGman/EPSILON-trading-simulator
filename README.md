@@ -263,6 +263,12 @@ Checks cover signal timing, execution costs, perturbations, rule evaluation, has
 
 These goals focus on useful, inspectable work rather than treating visibility as validation.
 
+## Previous version
+
+![Previous version: the desktop simulator interface](screenshots/main_interface.png)
+
+The previous version was a desktop simulator — portfolio, order entry, and price chart in one window (captured early 2026). It was superseded by the current web research instrument documented above. Further captures of the earlier versions are kept in [screenshots/](screenshots/).
+
 <details>
 <summary>Historical media and release assets</summary>
 
