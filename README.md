@@ -15,7 +15,7 @@ The project began as a Python trading simulator in the repository's December 202
 
 | At a glance | |
 |---|---|
-| **Recognition** | **Third Prize — 2026 Diamond Challenge Beijing Pitch Event**. Regional recognition; not a global placement. [Certificate and provenance](docs/RECOGNITION.md). |
+| **Recognition** | **Third Prize — 2026 Diamond Challenge Semifinal Event (Beijing)**. Regional recognition; not a global placement. [Certificate and provenance](docs/RECOGNITION.md). |
 | **Curated resource inclusion** | The 25-minute Assumption Clinic is [included in awesome-quant](https://github.com/wilsonfreitas/awesome-quant/pull/735), merged October 19, 2026. Directory inclusion, not evidence of adoption or validated trading performance. |
 | **Current product** | A claim, a pre-specified rejection rule, one baseline and five perturbations, and an exportable evidence artifact. |
 | **Recorded result** | Fixed case 001: baseline **−7.75%**, **0/5** perturbations passing, **Rejected**. A maintainer observation, not an independent reproduction. |
@@ -162,7 +162,7 @@ Dates below describe documented milestones, not undocumented inception dates. [F
 |---|---|---|
 | **December 9, 2025** | Python desktop simulator: order handling, performance metrics, and equity curves. | [Source record](https://github.com/DresdenGman/EPSILON-trading-simulator/commit/fc81b85) |
 | **January–February 2026** | EPSILON branding, web presentation, and reorganized strategy/analysis modules. | [Branding commit](https://github.com/DresdenGman/EPSILON-trading-simulator/commit/9e06432) |
-| **March 2026** | **Third Prize, Diamond Challenge Beijing Pitch Event.** Event scheduled March 7; award certificate emailed March 13. | [Original certificate and context](docs/RECOGNITION.md) |
+| **March 2026** | **Third Prize, Diamond Challenge Semifinal Event (Beijing).** Event scheduled March 7; award certificate emailed March 13. | [Original certificate and context](docs/RECOGNITION.md) |
 | **June 14, 2026** | FastAPI/PostgreSQL and Next.js full-stack implementation. | [Source record](https://github.com/DresdenGman/EPSILON-trading-simulator/commit/9579fc9) |
 | **August 10–13, 2026** | Quantitative decision lab: hypotheses, experiments, public documentation, and evidence records. | [Source record](https://github.com/DresdenGman/EPSILON-trading-simulator/commit/0560eac) |
 | **August 30–September 2, 2026** | Current evidence instrument: baseline plus perturbations, export, historical-data path. | [PR #15](https://github.com/DresdenGman/EPSILON-trading-simulator/pull/15) |

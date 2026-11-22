@@ -23,7 +23,7 @@ export default function Home() {
           <dl>
             <div><dt>Built by</dt><dd>Dresden E. Goehner, with open-source contributions</dd></div>
             <div><dt>First source records</dt><dd>December 2025</dd></div>
-            <div><dt>Recognition</dt><dd>Diamond Challenge 2026<br /><strong>Third Prize · Beijing Pitch Event</strong></dd></div>
+            <div><dt>Recognition</dt><dd>Diamond Challenge 2026<br /><strong>Third Prize · Semifinal Event (Beijing)</strong></dd></div>
             <div><dt>Current focus</dt><dd>Assumption sensitivity, reproducible evidence, and external critique</dd></div>
           </dl>
           <a href="#timeline">Follow the development record ↓</a>
