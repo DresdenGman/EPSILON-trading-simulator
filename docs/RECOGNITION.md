@@ -1,6 +1,6 @@
 # Recognition
 
-## Third Prize — 2026 Diamond Challenge Beijing Pitch Event
+## Third Prize — 2026 Diamond Challenge Semifinal Event (Beijing)
 
 **Recipient printed on certificate:** Dresden Goehner.
 
@@ -8,7 +8,7 @@
 
 **Award wording printed on certificate:** THIRD PRIZE in Diamond Challenge.
 
-**Scope:** Beijing Pitch Event, regional recognition; not a global third-place claim.
+**Scope:** Semifinal Event in Beijing, regional recognition; not a global third-place claim.
 
 [View the original certificate](../instrument/public/evidence/diamond-challenge-2026-beijing-third-prize.jpg)
 
@@ -16,7 +16,7 @@
 
 ### Provenance and timing
 
-The organizer's email titled **Diamond Challenge 2026 Beijing Pitch Event – Certificate of Participation**, dated **March 13, 2026**, addresses Team EPSILON and attaches the award certificate. Event notices scheduled the online Beijing pitch for **March 7, 2026**. The certificate was inspected against the original attachment on September 18, 2026 and is reproduced unchanged.
+The organizer's email titled **Diamond Challenge 2026 Beijing Pitch Event – Certificate of Participation**, dated **March 13, 2026**, addresses Team EPSILON and attaches the award certificate. The email text describes the event as the “2026 Diamond Challenge Semi final Event in Beijing”. Event notices scheduled the online Beijing pitch for **March 7, 2026**. The certificate was inspected against the original attachment on September 18, 2026 and is reproduced unchanged.
 
 The certificate image itself does **not** print a date or the word Beijing. Year, regional context, and email date come from the accompanying organizer correspondence, retained privately. Email addresses and unrelated correspondence are not published here. The generic email subject does not replace the **THIRD PRIZE** wording on the attached certificate.
 
